@@ -1,0 +1,30 @@
+:mod:`log4tailer.py` -- A multicolored log4j tailer
+===================================================
+
+.. module:: log4tailer
+   :platform: Unix, Linux
+   :synopsis: Tails log4J logs in a multicolored output
+.. moduleauthor:: Jordi Carrillo <jordilin@jordiet.com>
+
+This is the main entry point for the Log4Tailer project. It's
+a simple script that uses the other modules to provide
+all the functionalities
+
+./log4tailer [-s (silence mode) -c(- -config) configfile -p(- - pause) integer] logpaths
+
+logpaths can be provided with command line globbing
+
+configfile is optional and defines the colors to be used for each level,
+namely:
+
+* warn = yellow
+* info = green
+* debug = black
+* error = magenta
+* fatal = red
+
+The above ones are the defaults and work well with a white or clear
+terminal color background
+
+
+

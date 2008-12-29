@@ -1,0 +1,37 @@
+:mod:`LogColors.py` -- colors to be used in a log
+===================================================
+
+.. module:: LogColors
+   :platform: Unix, Linux
+   :synopsis: defines what colors will be used for an specific log
+.. moduleauthor:: Jordi Carrillo <jordilin@jordiet.com>
+
+LogColors class
+-----------------
+
+.. class:: LogColors
+   
+   Defines the colors that will be used to tail the logs.
+   By default it defines the next colors:
+
+   * warn = yellow
+   * info = green
+   * debug = black
+   * error = magenta
+   * fatal = red
+   
+   .. method:: parseConfig(configfile)
+
+      Parses the config file containing user defined color levels.
+      The config file must be specified in the following format:
+
+      * warn = yellow
+      * info = green
+      * debug = black
+      * error = magenta
+      * fatal = red
+
+      If any of the levels is missing, log4tailer will grab the default ones.
+
+
+
