@@ -91,16 +91,18 @@ class Log:
             res = self.patarget.search(line)
             if res:
                 print self.color.backgroundemph+line+self.color.reset
+                return
+        
+        # tail the other lines (levels)
+        if self.loglevel == "WARN":
+            print self.color.warn+line+self.color.reset
+        elif self.loglevel == "FATAL":
+            print self.color.fatal+line+self.color.reset
+        elif self.loglevel == "INFO":
+            print self.color.info+line+self.color.reset
+        elif self.loglevel == "ERROR":
+            print self.color.error+line+self.color.reset
+        elif self.loglevel == "DEBUG":
+            print self.color.debug+line+self.color.reset
         else:
-            if self.loglevel == "WARN":
-                print self.color.warn+line+self.color.reset
-            elif self.loglevel == "FATAL":
-                print self.color.fatal+line+self.color.reset
-            elif self.loglevel == "INFO":
-                print self.color.info+line+self.color.reset
-            elif self.loglevel == "ERROR":
-                print self.color.error+line+self.color.reset
-            elif self.loglevel == "DEBUG":
-                print self.color.debug+line+self.color.reset
-            else:
-                print line
+            print line
