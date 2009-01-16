@@ -22,9 +22,19 @@ Basic functionality
 
 Options:
 
+Normal functionality:
+
+log4tailer.py pathToLogs 
+
+will tail the logs with colors. 
+
+log4tailer.py -t "regex" pathToLogs
+
+will tail the logs with colors and will emphasize the line that complies with the regex 
+
 Silent Mode:
 
-log4tailer -s fullpathToLogs
+log4tailer.py -s fullpathToLogs
 
 Silent Mode activates SMTP email action and alerts will be sent to 
 the address specified. Log4Tailer will request for the SMTP options 
@@ -49,14 +59,8 @@ fatal = red
 
 The above are the defaults and work well with a white or clear terminal background.
 
+Other options, please refer to the wiki in the project webpage.
 
+Enjoy
 
-
-
-
-
-
-
-
-
-
+Jordi
