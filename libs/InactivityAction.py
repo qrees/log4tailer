@@ -16,3 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
+class InactivityAction:
+    def __init__(self,inactivityTime):
+        pass
+
