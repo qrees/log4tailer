@@ -36,9 +36,7 @@ class MailAction:
 
     def triggerAction(self,message):
         '''msg to print, send by email, whatever...'''
-        fh = open('/home/jordilin/mailog','w')
-        fh.write("got "+message.getPlainMessage())
-        fh.close()
+        
         body = message.getPlainMessage()
         #if message.getMessageLevel != 'FATAL':
         #    return
@@ -48,10 +46,6 @@ class MailAction:
                 return
             self.conn.sendmail(self.fro,self.to,msg)
         except:
-            fh = open('/home/jordilin/mailogerror','w')
-            fh.write("got "+message.getPlainMessage())
-            fh.close()
-
             print "error sending email"
             self.conn.quit()
             sys.exit()
