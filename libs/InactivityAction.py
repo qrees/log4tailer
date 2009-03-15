@@ -15,8 +15,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
+from Timer import Timer
 
 class InactivityAction:
+    '''sends an email or print
+    alert in case too much inactivity
+    in the log.
+    This action must be triggered everytime 
+    we scan in the log.'''
+
     def __init__(self,inactivityTime):
-        pass
+        self.inactivityTime = inactivityTime
+        self.timer = Timer(inactivityTime)
+        self.timer.startTimer()
+
+    def triggerAction(message):
+        if not message.getPlainMessage():
+            if self.timer.ellapsed() > self.inactivityTime:
+                print "Inactivity in log"
+        # else if we got sth in message then, means we got 
+        # some kind of activity, so do nothing
+
+
+
 
