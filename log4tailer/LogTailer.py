@@ -143,7 +143,7 @@ class LogTailer:
         if self.silence:
             self.daemonize()
         try:
-            while (True):
+            while True:
                 found = 0
                 for log in self.arrayLog:
                     if self.hasRotated(log):

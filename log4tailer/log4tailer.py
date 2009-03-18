@@ -24,12 +24,10 @@
 
 import os,sys,re,getpass
 from optparse import OptionParser
-from Action import *
 from Log import Log
 from LogTailer import LogTailer
 from LogColors import LogColors
-from PrintAction import PrintAction
-from MailAction import MailAction
+from Actions import PrintAction,MailAction
 import resource	
 
 def startupNotice():
@@ -56,7 +54,7 @@ def main():
     pause = 1
     silence = False 
     # default action is printing STDOUT
-    action = PrintAction()
+    action = PrintAction.PrintAction()
     nlines = False
     target = None
     fromAddress = None
@@ -76,7 +74,7 @@ def main():
         pwd = getpass.getpass()
         fromAddress = raw_input("Alerts send From Address:\n")
         toAddress = raw_input("Alerts send To Address:\n")
-        action = MailAction(fromAddress,toAddress,hostname,username,pwd)
+        action = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
         action.connectSMTP()
         silence = True
     if options.tailnlines:
