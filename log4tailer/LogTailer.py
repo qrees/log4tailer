@@ -24,7 +24,7 @@ from LogColors import LogColors
 
 class LogTailer:
     '''Tails the log provided by Log class'''
-    def __init__(self, pause = 1, silence = False, action = None, fromAddress = None, toAddress = None):
+    def __init__(self, pause = 1, throttleTime = 0, silence = False, action = None, fromAddress = None, toAddress = None):
         self.arrayLog = []
         self.debug = re.compile(r'debug',re.I)
         self.info = re.compile(r'info',re.I)
@@ -36,6 +36,7 @@ class LogTailer:
         self.action = action
         self.fromAddress = fromAddress
         self.toAddress = toAddress
+        self.throttleTime = throttleTime 
 
     def addLog(self,log):
         self.arrayLog.append(log)
@@ -145,6 +146,10 @@ class LogTailer:
         try:
             while True:
                 found = 0
+                # throttleTime is when our app
+                # logs very fast and we want to slow
+                # down the tailing
+                time.sleep(self.throttleTime)
                 for log in self.arrayLog:
                     if self.hasRotated(log):
                         found = 0

@@ -45,6 +45,7 @@ def main():
     parser = OptionParser()
     parser.add_option("-c","--config",dest="configfile",help="config file with colors")
     parser.add_option("-p","--pause",dest="pause",help="pause between tails")
+    parser.add_option("--throttle",dest="throttle",help="throttle output, slowsdown")
     parser.add_option("-s","--silence",action="store_true",dest="silence",help="tails in silence, no printing")
     parser.add_option("-n",dest="tailnlines",help="prints last N lines from log")
     parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
@@ -53,6 +54,7 @@ def main():
     # defaults 
     pause = 1
     silence = False 
+    throttle = 0
     # default action is printing STDOUT
     action = PrintAction.PrintAction()
     nlines = False
@@ -65,6 +67,8 @@ def main():
         color.parseConfig(options.configfile)
     if options.pause:
         pause = int(options.pause)
+    if options.throttle:
+        throttle = int(options.throttle)
     if options.silence:
         # silence mode enables sendSmtp Action.
         # There could be other actions like Post to Web Page
@@ -83,7 +87,7 @@ def main():
         target = options.target
 
     
-    tailer = LogTailer(pause,silence,action,fromAddress,toAddress)
+    tailer = LogTailer(pause,throttle,silence,action,fromAddress,toAddress)
     for i in args:
         log = Log(i,color,target)
         tailer.addLog(log)
