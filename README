@@ -32,6 +32,12 @@ log4tailer.py -t "regex" pathToLogs
 
 will tail the logs with colors and will emphasize the line that complies with the regex 
 
+Throttling:
+
+log4tailer.py --throttle secs pathToLogs
+
+It will slow down the tailing if your application logs very fast
+
 Silent Mode:
 
 log4tailer.py -s fullpathToLogs
