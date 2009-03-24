@@ -24,10 +24,8 @@
 
 import os,sys,re,getpass
 from optparse import OptionParser
-from Log import Log
-from LogTailer import LogTailer
-from LogColors import LogColors
-from Actions import PrintAction,MailAction
+from log4tailer import LogTailer,LogColors,Log
+from log4tailer.Actions import PrintAction,MailAction
 import resource	
 
 def startupNotice():
@@ -41,11 +39,12 @@ def main():
     if len(sys.argv[1:]) == 0:
         print "Provide at least one log"
         sys.exit()
-    color = LogColors()
+    color = LogColors.LogColors()
     parser = OptionParser()
     parser.add_option("-c","--config",dest="configfile",help="config file with colors")
     parser.add_option("-p","--pause",dest="pause",help="pause between tails")
     parser.add_option("--throttle",dest="throttle",help="throttle output, slowsdown")
+    parser.add_option("-i","--inact",dest="inactivity",help="monitors inactivity in log")
     parser.add_option("-s","--silence",action="store_true",dest="silence",help="tails in silence, no printing")
     parser.add_option("-n",dest="tailnlines",help="prints last N lines from log")
     parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
@@ -87,9 +86,9 @@ def main():
         target = options.target
 
     
-    tailer = LogTailer(pause,throttle,silence,action,fromAddress,toAddress)
+    tailer = LogTailer.LogTailer(pause,throttle,silence,action,fromAddress,toAddress)
     for i in args:
-        log = Log(i,color,target)
+        log = Log.Log(i,color,target)
         tailer.addLog(log)
     #startupNotice()
     if nlines:
