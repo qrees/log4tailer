@@ -18,7 +18,7 @@
 
 import sys
 from smtplib import *
-from Timer import *
+from log4tailer import Timer
 
 class MailAction:
     """Common actions to be taken
@@ -31,7 +31,7 @@ class MailAction:
         self.user = user
         self.passwd = passwd
         self.conn = None
-        self.timer = Timer(5)
+        self.timer = Timer.Timer(5)
         self.timer.startTimer()
 
     def triggerAction(self,message):
