@@ -1,0 +1,5 @@
+release v05 March 09
+
+-Option throttle provided
+-Major refactoring for maintenability and scalability
+-fixed bug, could not parse config file
