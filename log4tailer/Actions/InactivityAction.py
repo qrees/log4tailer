@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
-from Timer import Timer
+from log4tailer import Timer
 
 class InactivityAction:
     '''sends an email or print
@@ -26,7 +26,7 @@ class InactivityAction:
 
     def __init__(self,inactivityTime):
         self.inactivityTime = inactivityTime
-        self.timer = Timer(inactivityTime)
+        self.timer = Timer.Timer(inactivityTime)
         self.timer.startTimer()
 
     def triggerAction(message):
