@@ -40,7 +40,6 @@ class Property:
             sys.exit()
         # Generator expression, so does not matter if huge or not actually.
         lines = (k.rstrip() for k in fd if not self.blankpat.search(k))
-        fd.close()
         for i in lines:
             vals = re.split(self.resep,i) 
             key = vals[0].strip()
@@ -49,6 +48,7 @@ class Property:
                 raise keyAlreadyExistsException(key+" is duplicated")
             else:
                 self.dictproperties[key] = value
+        fd.close()
         self.keys = self.dictproperties.keys()
 
     def getValue(self,key):
