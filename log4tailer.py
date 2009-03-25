@@ -39,7 +39,7 @@ def main():
     if len(sys.argv[1:]) == 0:
         print "Provide at least one log"
         sys.exit()
-    color = LogColors.LogColors()
+    logcolors = LogColors.LogColors()
     parser = OptionParser()
     parser.add_option("-c","--config",dest="configfile",help="config file with colors")
     parser.add_option("-p","--pause",dest="pause",help="pause between tails")
@@ -63,7 +63,7 @@ def main():
 
 
     if options.configfile:
-        color.parseConfig(options.configfile)
+        logcolors.parseConfig(options.configfile)
     if options.pause:
         pause = int(options.pause)
     if options.throttle:
@@ -86,9 +86,9 @@ def main():
         target = options.target
 
     
-    tailer = LogTailer.LogTailer(color,pause,throttle,silence,action,fromAddress,toAddress)
+    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,action,fromAddress,toAddress)
     for i in args:
-        log = Log.Log(i,color,target)
+        log = Log.Log(i,logcolors,target)
         tailer.addLog(log)
     #startupNotice()
     if nlines:
