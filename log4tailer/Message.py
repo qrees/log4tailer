@@ -50,7 +50,8 @@ class Message:
         elif self.messageLevel == "DEBUG":
             return self.color.debug+self.plainMessage+self.color.reset
         else:
-            return line
+            return self.plainMessage
+
 
     def getMessageLevel(self):
         return self.messageLevel
