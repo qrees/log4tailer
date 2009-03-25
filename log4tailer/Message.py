@@ -17,14 +17,17 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from ColorParser import ColorParser
+import re
 
 class Message:
     '''the message to be actioned
     and showed being by email, stdout,...'''
 
-    def __init__(self,logcolor,patarget = None):
+    def __init__(self,logcolor,target = None):
         
-        self.patarget = patarget
+        self.patarget = None
+        if target:
+            self.patarget = re.compile(target)
         self.color = logcolor
         self.plainMessage = None
         self.colorizedMessage = None
