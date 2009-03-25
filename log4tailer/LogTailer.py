@@ -24,8 +24,9 @@ from LogColors import LogColors
 
 class LogTailer:
     '''Tails the log provided by Log class'''
-    def __init__(self, pause = 1, throttleTime = 0, silence = False, action = None, fromAddress = None, toAddress = None):
+    def __init__(self,logcolors, pause = 1, throttleTime = 0, silence = False, action = None, fromAddress = None, toAddress = None):
         self.arrayLog = []
+        self.logcolors = logcolors
         self.debug = re.compile(r'debug',re.I)
         self.info = re.compile(r'info',re.I)
         self.warn = re.compile(r'warn',re.I)
@@ -139,7 +140,7 @@ class LogTailer:
 
     def tailer(self):
         '''Stdout multicolor tailer'''
-        message = Message(LogColors())
+        message = Message(self.logcolors)
         self.posEnd()
         if self.silence:
             self.daemonize()
