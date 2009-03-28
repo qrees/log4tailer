@@ -24,19 +24,12 @@ from stat import *
 class Log:
     '''Class that defines a common
     structure in a log'''
-    def __init__(self,path,colors,target):
-        ''' if we want to emphasize a target line
-        '''
+    def __init__(self,path):
         self.path = path
         self.fh = None
         self.inode = None
         self.size = None
-        self.color = colors
         self.loglevel = None
-        self.target = target
-        self.patarget = None
-        if self.target:
-            self.patarget = re.compile(target)
 
     def getcurrInode(self):
         try:
@@ -76,7 +69,35 @@ class Log:
         # should be 2 for versions 
         # older than 2.5 SEEK_END = 2
         self.fh.seek(0,2)
-
+    
+    def seekLogNearlyEnd(self):
+        currpos = self.__getLast10Lines()
+        self.fh.seek(currpos,0)
+    
+    def __getLast10Lines(self):
+        linesep = '\n'
+        self.seekLogEnd()
+        charRead = ''
+        currpos = self.fh.tell()
+        numLines = 0
+        # read one char at a time
+        # as we get only last 10 lines
+        # is not gonna be a lot of effort
+        blockReadSize = 1
+        blockCount = 1;
+        self.fh.seek(-blockReadSize,2)
+        while (numLines < 10):
+            charRead = self.fh.read(blockReadSize)
+            blockCount += 1
+            if charRead == linesep:
+                numLines += 1
+            self.fh.seek(-blockReadSize*blockCount,2)
+        # add 2, to get rid of the last seek -1 
+        # and the following \n
+        currpos = self.fh.tell()+2
+        return currpos
+        
+        
     def numLines(self):
         clines = os.popen("wc -l "+self.path)
         count = clines.readline().split(" ")
