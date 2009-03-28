@@ -41,7 +41,7 @@ class LogTailer:
         to the end'''
         for log in self.arrayLog:
             log.openLog()
-            log.seekLogEnd()
+            log.seekLogNearlyEnd()
 
     def hasRotated(self,log):
         """Returns True if log has rotated
