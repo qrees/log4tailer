@@ -1,10 +1,19 @@
-release v06 March 09
+====================================
+release v07 
+====================================
+- Multiple targets
+- tails last 10 lines at startup
+- some refactoring
 
--Option target available again
+====================================
+release v06 March 09
+====================================
+- Option target available again
 after a bug fix in v05
 
+====================================
 release v05 March 09
-
--Option throttle provided
--Major refactoring for maintenability and scalability
--fixed bug, could not parse config file
+====================================
+- Option throttle provided
+- Major refactoring for maintenability and scalability
+- fixed bug, could not parse config file
