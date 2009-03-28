@@ -88,7 +88,7 @@ def main():
     
     tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,action)
     for i in args:
-        log = Log.Log(i,logcolors,target)
+        log = Log.Log(i)
         tailer.addLog(log)
     #startupNotice()
     if nlines:
