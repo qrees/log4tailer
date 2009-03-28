@@ -24,19 +24,12 @@ from LogColors import LogColors
 
 class LogTailer:
     '''Tails the log provided by Log class'''
-    def __init__(self,logcolors, target, pause = 1, throttleTime = 0, silence = False, action = None, fromAddress = None, toAddress = None):
+    def __init__(self,logcolors, target, pause = 1, throttleTime = 0, silence = False, action = None):
         self.arrayLog = []
         self.logcolors = logcolors
-        self.debug = re.compile(r'debug',re.I)
-        self.info = re.compile(r'info',re.I)
-        self.warn = re.compile(r'warn',re.I)
-        self.error = re.compile(r'error',re.I)
-        self.fatal = re.compile(r'fatal',re.I)
         self.pause = pause
         self.silence = silence
         self.action = action
-        self.fromAddress = fromAddress
-        self.toAddress = toAddress
         self.throttleTime = throttleTime 
         self.target = target
 
@@ -49,21 +42,6 @@ class LogTailer:
         for log in self.arrayLog:
             log.openLog()
             log.seekLogEnd()
-
-    def parse(self,line):
-        if (self.debug.search(line)):
-            return 'DEBUG'
-        elif (self.info.search(line)):
-            return 'INFO'
-        elif (self.warn.search(line)):
-            return 'WARN'
-        elif (self.error.search(line)):
-            return 'ERROR'
-        elif (self.fatal.search(line)):
-            return 'FATAL'
-        else:
-            return ''
-    
 
     def hasRotated(self,log):
         """Returns True if log has rotated
