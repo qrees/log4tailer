@@ -86,7 +86,7 @@ def main():
         target = options.target
 
     
-    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,action,fromAddress,toAddress)
+    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,action)
     for i in args:
         log = Log.Log(i,logcolors,target)
         tailer.addLog(log)
