@@ -20,9 +20,7 @@
 import unittest
 import os,sys
 
-
 sys.path.append('..')
-
 from log4tailer.Log import Log
 
 class TestLog(unittest.TestCase):
@@ -83,8 +81,6 @@ class TestLog(unittest.TestCase):
         while log.readLine():
             count += 1
         self.assertEqual(10,count)
-
-
 
     def tearDown(self):
         os.remove(self.logname)
