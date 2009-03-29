@@ -78,20 +78,26 @@ class Log:
         linesep = '\n'
         self.seekLogEnd()
         charRead = ''
-        currpos = self.fh.tell()
         numLines = 0
         # read one char at a time
         # as we get only last 10 lines
         # is not gonna be a lot of effort
         blockReadSize = 1
-        blockCount = 1;
+        blockCount = 1
         self.fh.seek(-blockReadSize,2)
-        while (numLines < 10):
+        while (numLines <= 10):
             charRead = self.fh.read(blockReadSize)
+            posactual = self.fh.tell()
             blockCount += 1
             if charRead == linesep:
                 numLines += 1
-            self.fh.seek(-blockReadSize*blockCount,2)
+            try:
+                self.fh.seek(-blockReadSize*blockCount,2)
+            except IOError:
+                # already reached beginning 
+                # of file
+                currpos = self.fh.tell()-posactual
+                return currpos
         # add 2, to get rid of the last seek -1 
         # and the following \n
         currpos = self.fh.tell()+2
@@ -109,26 +115,5 @@ class Log:
         #self.fh.seek(0)
         return nlines
 
-    def getTarget(self):
-        return self.target
     
-    def printa(self,line):
-        if self.patarget:
-            res = self.patarget.search(line)
-            if res:
-                print self.color.backgroundemph+line+self.color.reset
-                return
-        
-        # tail the other lines (levels)
-        if self.loglevel == "WARN":
-            print self.color.warn+line+self.color.reset
-        elif self.loglevel == "FATAL":
-            print self.color.fatal+line+self.color.reset
-        elif self.loglevel == "INFO":
-            print self.color.info+line+self.color.reset
-        elif self.loglevel == "ERROR":
-            print self.color.error+line+self.color.reset
-        elif self.loglevel == "DEBUG":
-            print self.color.debug+line+self.color.reset
-        else:
-            print line
+    
