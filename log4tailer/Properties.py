@@ -45,7 +45,7 @@ class Property:
             key = vals[0].strip()
             value = vals[1].strip()
             if self.dictproperties.has_key(key):
-                raise keyAlreadyExistsException(key+" is duplicated")
+                raise KeyAlreadyExistsException(key+" is duplicated")
             else:
                 self.dictproperties[key] = value
         fd.close()
@@ -55,7 +55,7 @@ class Property:
         if key in self.dictproperties:
             return self.dictproperties[key]
         else:
-            raise keyNotFoundException(key+" key not found")
+            raise KeyNotFoundException(key+" key not found")
     
     def getKeysLower(self):
         return [k.lower() for k in self.keys]
