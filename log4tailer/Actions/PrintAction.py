@@ -8,7 +8,9 @@ class PrintAction:
     def triggerAction(self,message):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
-        print message.getColorizedMessage();
+        if message.getColorizedMessage():
+            print message.getColorizedMessage()
+
 
 
 

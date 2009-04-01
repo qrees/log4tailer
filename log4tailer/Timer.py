@@ -22,10 +22,10 @@ class Timer:
     """Class implementing several
     timing methods"""
 
-    def __init__(self, end):
-        self.end = end
+    def __init__(self, gapNotification):
         self.start = 0
         self.count = 0
+        self.gapNotification = gapNotification
 
     def startTimer(self):
         """sets the start time in epoch seconds"""
@@ -33,6 +33,11 @@ class Timer:
                         
     def ellapsed(self):
         """return the number of seconds ellapsed"""
+        # the count is to avoid not sending 
+        # an alert when is the first time you call
+        # ellapsed and is below the gap notification time
+
+        self.count += 1
         now = time.time()
         ellapsed = now-self.start
         self.start = now
@@ -41,11 +46,14 @@ class Timer:
     def stopTimer(self):
         self.start = 0
 
-    def timedOut(self):
+    def awaitSend(self):
         """return True if we have timed out
         False otherwise"""
-        if self.ellapsed() >= self.end:
-            return True
-        else:
+        
+        if self.ellapsed() <= self.gapNotification and self.count == 0:
             return False
+
+        return True
+
+
 

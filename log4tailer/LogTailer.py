@@ -24,12 +24,12 @@ from LogColors import LogColors
 
 class LogTailer:
     '''Tails the log provided by Log class'''
-    def __init__(self,logcolors, target, pause = 1, throttleTime = 0, silence = False, action = None):
+    def __init__(self,logcolors, target, pause, throttleTime, silence, actions ):
         self.arrayLog = []
         self.logcolors = logcolors
         self.pause = pause
         self.silence = silence
-        self.action = action
+        self.actions = actions
         self.throttleTime = throttleTime 
         self.target = target
 
@@ -81,6 +81,7 @@ class LogTailer:
                     line = line.rstrip()
                     loglevel = self.parse(line)
                     log.loglevel = loglevel
+                    ## TODO this needs to be fixed
                     self.action.printStdOut(line,log)
                     count += 1
                     buff.append(line)
@@ -135,12 +136,13 @@ class LogTailer:
                         found = 0
                     line = log.readLine()
                     if line:
-                        line = line.rstrip()
-                        #loglevel = self.parse(line)
-                        message.parse(line)
-                        self.action.triggerAction(message)
                         found = 1
-                        log.size = log.getcurrSize()
+                        line = line.rstrip()
+                    
+                    message.parse(line)
+                    for action in self.actions:
+                        self.action.triggerAction(message)
+                    log.size = log.getcurrSize()
 
                 if found == 0:
                     #sleep for 1 sec

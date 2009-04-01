@@ -73,9 +73,15 @@ class Message:
     def parse(self,line):
         '''Need to parse the line
         and check in what level we are in'''
+        if line:
+            self.plainMessage = line
+            self.messageLevel = self.colorparser.parse(line)
+            return
         
-        self.plainMessage = line
-        self.messageLevel = self.colorparser.parse(line)
+        # if we don't have anything in line
+        # just set current Message to unknown
+        self.plainMessage = None
+        self.messageLevel = 'UNKNOWN'
         
                 
 

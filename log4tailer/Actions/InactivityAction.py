@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
-from log4tailer import Timer,LogColors()
+from log4tailer import Timer,LogColors
 
 class InactivityAction:
     '''sends an email or print
@@ -30,7 +30,7 @@ class InactivityAction:
         self.timer.startTimer()
         self.logColors = LogColors.LogColors()
 
-    def triggerAction(message):
+    def triggerAction(self,message):
         if not message.getPlainMessage():
             if self.timer.ellapsed() > self.inactivityTime:
                 # at this moment we will just print an emphasized alert in stdout
