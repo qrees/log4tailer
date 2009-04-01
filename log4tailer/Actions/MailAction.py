@@ -38,11 +38,17 @@ class MailAction:
         '''msg to print, send by email, whatever...'''
         
         body = message.getPlainMessage()
-        #if message.getMessageLevel != 'FATAL':
-        #    return
+        
+        # for the moment only send notifications
+        # when fatal level. Actually, it should 
+        # be decided by user.
+
+        if message.getMessageLevel != 'FATAL':
+            return
+        
         msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\n\r\n" % (self.fro,self.to)+body
         try:
-            if self.timer.ellapsed() < self.timer.end:
+            if self.timer.awaitSend():
                 return
             self.conn.sendmail(self.fro,self.to,msg)
         except:
@@ -74,9 +80,6 @@ class MailAction:
         #send email using SendMail
         return
 
-    def printStdOut(self, line, log = None):
-        if log:
-            log.printa(line)
 
 
 
