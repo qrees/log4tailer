@@ -25,7 +25,7 @@
 import os,sys,re,getpass
 from optparse import OptionParser
 from log4tailer import LogTailer,LogColors,Log
-from log4tailer.Actions import PrintAction,MailAction
+from log4tailer.Actions import PrintAction,MailAction,InactivityAction
 import resource	
 
 def startupNotice():
