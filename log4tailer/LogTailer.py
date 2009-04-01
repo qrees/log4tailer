@@ -141,7 +141,7 @@ class LogTailer:
                     
                     message.parse(line)
                     for action in self.actions:
-                        self.action.triggerAction(message)
+                        action.triggerAction(message)
                     log.size = log.getcurrSize()
 
                 if found == 0:
