@@ -44,10 +44,11 @@ def main():
     parser.add_option("-c","--config",dest="configfile",help="config file with colors")
     parser.add_option("-p","--pause",dest="pause",help="pause between tails")
     parser.add_option("--throttle",dest="throttle",help="throttle output, slowsdown")
-    parser.add_option("-i","--inact",dest="inactivity",help="monitors inactivity in log")
+    parser.add_option("-i","--inact",dest="inactivity",help="monitors inactivity in log given inactivity seconds")
     parser.add_option("-s","--silence",action="store_true",dest="silence",help="tails in silence, no printing")
     parser.add_option("-n",dest="tailnlines",help="prints last N lines from log")
     parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
+    #parser.add_option("-a","--action",dest="action",help="multiple actions to be triggered, defaults to print")
     (options,args) = parser.parse_args()
     
     # defaults 
@@ -55,7 +56,11 @@ def main():
     silence = False 
     throttle = 0
     # default action is printing STDOUT
-    action = PrintAction.PrintAction()
+    printAction = PrintAction.PrintAction()
+    inactivityAction = None
+    mailAction = None
+    # predefined actions
+    actions = [printAction,inactivityAction,mailAction]
     nlines = False
     target = None
     fromAddress = None
@@ -85,8 +90,12 @@ def main():
     if options.target:
         target = options.target
 
+    if options.inactivity:
+        inactivityAction = InactivityAction.InactivityAction(options.inactivity)
+
+    actions = [ k for k in actions if k ]
     
-    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,action)
+    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions)
     for i in args:
         log = Log.Log(i)
         tailer.addLog(log)

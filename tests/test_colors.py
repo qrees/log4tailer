@@ -33,6 +33,13 @@ class TestColors(unittest.TestCase):
             line = line.rstrip()
             message.parse(line)
             action.triggerAction(message)
+        
+        line = log.readLine()
+        self.assertEqual('',line)
+        message.parse(line)
+        print "nothing to happen"
+        action.triggerAction(message)
+        
 
     def tearDown(self):
         os.remove(self.logfile)

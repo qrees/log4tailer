@@ -4,6 +4,7 @@ release v07
 - Multiple targets
 - tails last 10 lines at startup
 - some refactoring
+- added unit testing 
 
 ====================================
 release v06 March 09
