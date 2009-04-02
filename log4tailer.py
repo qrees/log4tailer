@@ -57,10 +57,8 @@ def main():
     throttle = 0
     # default action is printing STDOUT
     printAction = PrintAction.PrintAction()
-    inactivityAction = None
-    mailAction = None
     # predefined actions
-    actions = [printAction,inactivityAction,mailAction]
+    actions = [printAction]
     nlines = False
     target = None
     fromAddress = None
@@ -77,14 +75,17 @@ def main():
         # silence mode enables sendSmtp Action.
         # There could be other actions like Post to Web Page
         # by using Django.
+
         hostname = raw_input("Host name for your SMTP account?\n")
         username = raw_input("Your username?\n")
         pwd = getpass.getpass()
         fromAddress = raw_input("Alerts send From Address:\n")
         toAddress = raw_input("Alerts send To Address:\n")
-        action = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
-        action.connectSMTP()
+        mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
+        actions.append(mailAction)
+        mailAction.connectSMTP()
         silence = True
+        
     if options.tailnlines:
         nlines = int(options.tailnlines)
     if options.target:
@@ -92,8 +93,11 @@ def main():
 
     if options.inactivity:
         inactivityAction = InactivityAction.InactivityAction(options.inactivity)
+        actions.append(inactivityAction)
 
-    actions = [ k for k in actions if k ]
+    # are there more actions provided
+
+    
     
     tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions)
     for i in args:

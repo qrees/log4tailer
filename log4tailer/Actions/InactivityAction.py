@@ -29,14 +29,24 @@ class InactivityAction:
         self.timer = Timer.Timer(inactivityTime)
         self.timer.startTimer()
         self.logColors = LogColors.LogColors()
+        self.acumulativeTime = 0
 
     def triggerAction(self,message):
         if not message.getPlainMessage():
-            if self.timer.ellapsed() > self.inactivityTime:
+            ellapsedTime = self.timer.inactivityEllapsed()
+            print str(ellapsedTime)
+            if ellapsedTime > int(self.inactivityTime):
+                self.acumulativeTime += ellapsedTime
                 # at this moment we will just print an emphasized alert in stdout
-                print self.logColors.backgroundemph+"Inactivity in log"+self.logColors.reset
+                print self.logColors.backgroundemph+"Inactivity in the log for "+ str(self.acumulativeTime) + self.logColors.reset
+                self.timer.reset()
+
         # else if we got sth in message then, means we got 
         # some kind of activity, so do nothing
+        else:
+            #start the timer again
+            self.timer.reset()
+            self.acumulativeTime = 0
 
 
 

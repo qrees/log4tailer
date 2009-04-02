@@ -43,6 +43,12 @@ class Timer:
         self.start = now
         return ellapsed
 
+
+    def inactivityEllapsed(self):
+        now = time.time()
+        ellapsed = now-self.start
+        return ellapsed
+
     def stopTimer(self):
         self.start = 0
 
@@ -54,6 +60,11 @@ class Timer:
             return False
 
         return True
+
+    def reset(self):
+        '''actually the same 
+        as start timer method'''
+        self.start = time.time()
 
 
 
