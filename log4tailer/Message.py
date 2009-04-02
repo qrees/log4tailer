@@ -39,6 +39,10 @@ class Message:
     
 
     def getColorizedMessage(self):
+        
+        if not self.plainMessage:
+            return
+
         if self.patarget:
             res = self.patarget.search(self.plainMessage)
             if res:
