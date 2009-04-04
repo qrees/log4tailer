@@ -37,7 +37,7 @@ class InactivityAction:
             if ellapsedTime > int(self.inactivityTime):
                 self.acumulativeTime += ellapsedTime
                 # at this moment we will just print an emphasized alert in stdout
-                print self.logColors.backgroundemph+"Inactivity in the log for "+ str(self.acumulativeTime) + self.logColors.reset
+                print self.logColors.backgroundemph+"Inactivity in the log for "+ str(self.acumulativeTime) + " seconds"+self.logColors.reset
                 self.timer.reset()
 
         # else if we got sth in message then, means we got 
