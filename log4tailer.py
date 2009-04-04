@@ -70,7 +70,7 @@ def main():
     if options.pause:
         pause = int(options.pause)
     if options.throttle:
-        throttle = int(options.throttle)
+        throttle = float(options.throttle)
     if options.silence:
         # silence mode enables sendSmtp Action.
         # There could be other actions like Post to Web Page
