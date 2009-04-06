@@ -1,10 +1,9 @@
 ====================================
-release 1.2
+release 1.1 Maintenance release to 1.0
 ====================================
-- GTK gui that provides the command line 
-options to be copied and pasted into the 
-terminal
-- Documentation refactored
+- Provides installation (discutils)
+- Documentation includes development
+guide with class diagram.
 
 ====================================
 release 1.0
