@@ -34,7 +34,7 @@ class InactivityAction:
     def triggerAction(self,message):
         if not message.getPlainMessage():
             ellapsedTime = self.timer.inactivityEllapsed()
-            if ellapsedTime > int(self.inactivityTime):
+            if ellapsedTime > float(self.inactivityTime):
                 self.acumulativeTime += ellapsedTime
                 # at this moment we will just print an emphasized alert in stdout
                 print self.logColors.backgroundemph+"Inactivity in the log for "+ str(self.acumulativeTime) + " seconds"+self.logColors.reset
