@@ -115,5 +115,8 @@ class Log:
         #self.fh.seek(0)
         return nlines
 
+    def getLogPath(self):
+        return self.path
+
     
     

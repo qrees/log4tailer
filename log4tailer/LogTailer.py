@@ -36,12 +36,35 @@ class LogTailer:
     def addLog(self,log):
         self.arrayLog.append(log)
     
+    def __printHeaderLog(self,path):
+        print "==> "+path+" <=="
+
     def posEnd(self):
         '''Open the logs and position the cursor
         to the end'''
         for log in self.arrayLog:
             log.openLog()
             log.seekLogNearlyEnd()
+
+    def __initialize(self,message):
+        '''prints the last 10 
+        lines for each log, one log 
+        at a time'''
+        lenarray = len(self.arrayLog)
+        cont = 0
+        for log in self.arrayLog:
+            cont += 1
+            self.__printHeaderLog(log.getLogPath())
+            line = log.readLine()
+            while line != '':
+                line = line.rstrip()
+                message.parse(line)
+                for action in self.actions:
+                    action.triggerAction(message)
+                line = log.readLine()
+            # just to emulate the same behaviour as tail
+            if cont < lenarray:
+                print
 
     def hasRotated(self,log):
         """Returns True if log has rotated
@@ -125,6 +148,9 @@ class LogTailer:
         if self.silence:
             self.daemonize()
         try:
+            self.__initialize(message)
+            lastLogPathChanged = ""
+            curpath = ""
             while True:
                 found = 0
                 # throttleTime is when our app
@@ -132,13 +158,21 @@ class LogTailer:
                 # down the tailing
                 time.sleep(self.throttleTime)
                 for log in self.arrayLog:
+                    changed = 0
+                    curpath = log.getLogPath()
                     if self.hasRotated(log):
                         found = 0
                     line = log.readLine()
                     if line:
                         found = 1
                         line = line.rstrip()
+                        # to emulate the tail command
+                        if curpath != lastLogPathChanged:
+                            print
+                            self.__printHeaderLog(log.getLogPath())
+                        lastLogPathChanged = log.getLogPath()
                     
+                        
                     message.parse(line)
                     for action in self.actions:
                         action.triggerAction(message)

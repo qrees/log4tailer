@@ -14,13 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys 
 
-from distutils.core import setup
+try:
+    from distutils.core import setup
+except:
+    print "You need to install distutils python module"
+    sys.exit()
 
 PACKAGES = ("Actions Analytics").split()
 
 setup(name="log4tailer",
-      version="1.0",
+      version="1.01",
       description="Not just a simple log tailer",
       author="Jordi Carrillo",
       author_email = "jordilin@gmail.com",
