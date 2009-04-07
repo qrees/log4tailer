@@ -68,6 +68,25 @@ class TestInactivityAction(unittest.TestCase):
         inactivityAction.triggerAction(message)
         self.message_mocker.VerifyAll()
 
+    def testInactivityTimeCanBeFloatingPointNumberSeconds(self):
+        
+        message = self.message_mocker.CreateMock(Message)
+        
+        # when there is no message, inactivity action 
+        # is triggered if ellapsed time is greater than
+        # inactivity time
+        message.getPlainMessage().AndReturn(None)
+        self.message_mocker.ReplayAll()
+        print "setting inactivity monitoring time to 2.543"
+        inactivityAction = InactivityAction(2.543)
+        print "sleeping for 3 secs"
+        time.sleep(3)
+        print "we should see an emphasized alert in stdout"
+        inactivityAction.triggerAction(message)
+        self.message_mocker.VerifyAll()
+
+
+
 
 if __name__ == '__main__':
         unittest.main()
