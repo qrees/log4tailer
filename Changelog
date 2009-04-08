@@ -1,9 +1,7 @@
 ====================================
-release 1.01 Maintenance release to 1.0
+release 1.1 
 ====================================
 - Provides installation (discutils)
-- Documentation includes development
-guide with class diagram.
 - Emulates the same behaviour as tail 
 command when printing the log headers while
 tailing
