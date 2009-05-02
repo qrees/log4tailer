@@ -21,6 +21,7 @@ import os, re, time, sys
 import resource
 from Message import Message
 from LogColors import LogColors
+from Actions import PrintAction
 
 class LogTailer:
     '''Tails the log provided by Log class'''
@@ -50,6 +51,7 @@ class LogTailer:
         '''prints the last 10 
         lines for each log, one log 
         at a time'''
+        printAction = PrintAction.PrintAction()
         lenarray = len(self.arrayLog)
         cont = 0
         for log in self.arrayLog:
@@ -59,8 +61,9 @@ class LogTailer:
             while line != '':
                 line = line.rstrip()
                 message.parse(line)
-                for action in self.actions:
-                    action.triggerAction(message)
+                #for action in self.actions:
+                 #   action.triggerAction(message)
+                printAction.printInit(message)
                 line = log.readLine()
             # just to emulate the same behaviour as tail
             if cont < lenarray:

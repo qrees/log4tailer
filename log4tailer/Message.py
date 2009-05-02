@@ -17,6 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from ColorParser import ColorParser
+from Actions import PauseMode
 import re
 
 class Message:
@@ -36,31 +37,34 @@ class Message:
         self.colorizedMessage = None
         self.colorparser = ColorParser()
         self.messageLevel = None
-    
+        self.pauseMode = PauseMode.PauseMode()
 
     def getColorizedMessage(self):
         
         if not self.plainMessage:
-            return
+            return (0,'')
 
         if self.patarget:
             res = self.patarget.search(self.plainMessage)
             if res:
-                return self.color.backgroundemph+self.plainMessage+self.color.reset
+                return (self.pauseMode.getPause('TARGET'),self.color.backgroundemph+self.plainMessage+self.color.reset)
         
         # tail the other lines (levels)
+        levelcolor = ""
         if self.messageLevel == "WARN":
-            return self.color.warn+self.plainMessage+self.color.reset
+            levelcolor = self.color.warn
         elif self.messageLevel == "FATAL":
-            return self.color.fatal+self.plainMessage+self.color.reset
+            levelcolor = self.color.fatal
         elif self.messageLevel == "INFO":
-            return self.color.info+self.plainMessage+self.color.reset
+            levelcolor = self.color.info 
         elif self.messageLevel == "ERROR":
-            return self.color.error+self.plainMessage+self.color.reset
+            levelcolor = self.color.error 
         elif self.messageLevel == "DEBUG":
-            return self.color.debug+self.plainMessage+self.color.reset
+            levelcolor = self.color.debug 
         else:
-            return self.plainMessage
+            return (0,self.plainMessage)
+
+        return (self.pauseMode.getPause(self.messageLevel),levelcolor+self.plainMessage+self.color.reset)
 
         
     def __getMultipleTargets(self,target):

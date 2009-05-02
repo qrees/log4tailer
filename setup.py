@@ -25,7 +25,7 @@ except:
 PACKAGES = ("Actions Analytics").split()
 
 setup(name="log4tailer",
-      version="1.1",
+      version="1.1.1",
       description="Not just a simple log tailer",
       author="Jordi Carrillo",
       author_email = "jordilin@gmail.com",

@@ -27,7 +27,7 @@ class TestColors(unittest.TestCase):
         message = Message(logcolors,target)
         log = Log(self.logfile)
         log.openLog()
-        print "testing Colors..."
+        print "testing Colors with default pauseModes"
         for count in range(len(self.someLogTraces)):
             line = log.readLine()
             line = line.rstrip()

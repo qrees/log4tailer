@@ -1,4 +1,19 @@
 ====================================
+release 1.1.1
+====================================
+- New feature: PauseModes. For each 
+level it will pause the tailing. 
+debug and info no pause by default
+warn 2 seconds
+error 3 seconds
+fatal and targets 5 seconds
+
+- At very beginning (first tail) that 
+tails last 10 lines in logs, only 
+printAction is available with no 
+PauseModes.
+
+====================================
 release 1.1 
 ====================================
 - Provides installation (discutils)

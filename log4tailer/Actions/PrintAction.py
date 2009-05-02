@@ -1,4 +1,4 @@
-import os
+import os,time
 
 class PrintAction:
 
@@ -8,8 +8,16 @@ class PrintAction:
     def triggerAction(self,message):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
-        if message.getColorizedMessage():
-            print message.getColorizedMessage()
+        (pause, colormsg) = message.getColorizedMessage()
+        if colormsg:
+            print colormsg
+            time.sleep(pause)
+
+    def printInit(self,message):
+        (pause,colormsg) = message.getColorizedMessage()
+        pause = 0
+        if colormsg:
+            print colormsg
 
 
 
