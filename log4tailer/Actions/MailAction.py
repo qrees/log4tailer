@@ -43,7 +43,7 @@ class MailAction:
         # when fatal level. Actually, it should 
         # be decided by user.
 
-        if message.getMessageLevel != 'FATAL':
+        if message.getMessageLevel() != 'FATAL':
             return
         
         msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\n\r\n" % (self.fro,self.to)+body
@@ -51,10 +51,14 @@ class MailAction:
             if self.timer.awaitSend():
                 return
             self.conn.sendmail(self.fro,self.to,msg)
-        except:
-            print "error sending email"
-            self.conn.quit()
-            sys.exit()
+        except SMTPServerDisconnected:
+            # server could have disconnected
+            # after a long inactivity. Connect
+            # again and send the corresponding 
+            # alert
+            self.connectSMTP()
+            self.conn.sendmail(self.fro,self.to,msg)
+
         return
 
 

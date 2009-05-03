@@ -24,7 +24,7 @@ class Message:
     '''the message to be actioned
     and showed being by email, stdout,...'''
 
-    def __init__(self,logcolor,target = None):
+    def __init__(self,logcolor,target = None, properties = None):
         
         self.patarget = None
         if target:
@@ -38,9 +38,17 @@ class Message:
         self.colorparser = ColorParser()
         self.messageLevel = None
         self.pauseMode = PauseMode.PauseMode()
+        if properties:
+            self.pauseMode.parseConfig(properties)
 
     def getColorizedMessage(self):
-        
+        '''it returns a tuple, first 
+        element the pause associated 
+        with the level found and second 
+        element the colorized message
+        This method is mainly used 
+        by the PrintAction action'''
+
         if not self.plainMessage:
             return (0,'')
 

@@ -37,7 +37,6 @@ class Timer:
         # an alert when is the first time you call
         # ellapsed and is below the gap notification time
 
-        self.count += 1
         now = time.time()
         ellapsed = now-self.start
         self.start = now
@@ -56,9 +55,15 @@ class Timer:
         """return True if we have timed out
         False otherwise"""
         
-        if self.ellapsed() <= self.gapNotification and self.count == 0:
+        ellapsed = self.ellapsed()
+
+        if ellapsed <= self.gapNotification and self.count == 0:
+            self.count += 1
             return False
 
+        elif ellapsed > self.gapNotification:
+            return False
+        
         return True
 
     def reset(self):

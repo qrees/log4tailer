@@ -34,11 +34,13 @@ class LogColors:
         self.reset = self.color.reset
         self.backgroundemph = self.color.backgroundemph
 
-    def parseConfig(self,filename):
-        property = Property(filename)
-        property.parseProperties()
-        for key in property.getKeysLower():
-            code = self.color.getCode(property.getValue(key))
+    def parseConfig(self,properties):
+        
+        for key in properties.getKeysLower():
+            try:
+                code = self.color.getCode(properties.getValue(key))
+            except:
+                continue
             if key == "warn":
                 self.warn = code
             elif key == "info":

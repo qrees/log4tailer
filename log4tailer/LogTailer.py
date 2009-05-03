@@ -25,7 +25,7 @@ from Actions import PrintAction
 
 class LogTailer:
     '''Tails the log provided by Log class'''
-    def __init__(self,logcolors, target, pause, throttleTime, silence, actions ):
+    def __init__(self,logcolors, target, pause, throttleTime, silence, actions, properties):
         self.arrayLog = []
         self.logcolors = logcolors
         self.pause = pause
@@ -33,6 +33,7 @@ class LogTailer:
         self.actions = actions
         self.throttleTime = throttleTime 
         self.target = target
+        self.properties = properties
 
     def addLog(self,log):
         self.arrayLog.append(log)
@@ -146,7 +147,7 @@ class LogTailer:
 
     def tailer(self):
         '''Stdout multicolor tailer'''
-        message = Message(self.logcolors,self.target)
+        message = Message(self.logcolors,self.target,self.properties)
         self.posEnd()
         if self.silence:
             self.daemonize()

@@ -24,9 +24,24 @@
 
 import os,sys,re,getpass
 from optparse import OptionParser
-from log4tailer import LogTailer,LogColors,Log
+from log4tailer import LogTailer,LogColors,Log,Properties
 from log4tailer.Actions import PrintAction,MailAction,InactivityAction
 import resource	
+
+
+def configMail():
+    hostname = raw_input("Host name for your SMTP account?\n")
+    username = raw_input("Your username?\n")
+    pwd = getpass.getpass()
+    fromAddress = raw_input("Alerts send From Address:\n")
+    toAddress = raw_input("Alerts send To Address:\n")
+    return (fromAddress,toAddress,hostname,username,pwd)
+
+
+def parseConfig(configfile):
+    properties = Properties.Property(configfile)
+    properties.parseProperties()
+    return properties
 
 def startupNotice():
     notice = """Log4Tailer  Copyright (C) 2008 Jordi Bosch
@@ -48,6 +63,8 @@ def main():
     parser.add_option("-s","--silence",action="store_true",dest="silence",help="tails in silence, no printing")
     parser.add_option("-n",dest="tailnlines",help="prints last N lines from log")
     parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
+    parser.add_option("-m","--mail",action="store_true",dest="mail",help="notification by mail when a fatal is found")
+
     #parser.add_option("-a","--action",dest="action",help="multiple actions to be triggered, defaults to print")
     (options,args) = parser.parse_args()
     
@@ -63,10 +80,12 @@ def main():
     target = None
     fromAddress = None
     toAddress = None
-
+    properties = None
 
     if options.configfile:
-        logcolors.parseConfig(options.configfile)
+        properties = parseConfig(options.configfile)
+        logcolors.parseConfig(properties)
+
     if options.pause:
         pause = int(options.pause)
     if options.throttle:
@@ -75,16 +94,18 @@ def main():
         # silence mode enables sendSmtp Action.
         # There could be other actions like Post to Web Page
         # by using Django.
-
-        hostname = raw_input("Host name for your SMTP account?\n")
-        username = raw_input("Your username?\n")
-        pwd = getpass.getpass()
-        fromAddress = raw_input("Alerts send From Address:\n")
-        toAddress = raw_input("Alerts send To Address:\n")
+        
+        (fromAddress,toAddress,hostname,username,pwd) = configMail()
         mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
         actions.append(mailAction)
         mailAction.connectSMTP()
         silence = True
+
+    if options.mail:
+        (fromAddress,toAddress,hostname,username,pwd) = configMail()
+        mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
+        mailAction.connectSMTP()
+        actions.append(mailAction)
         
     if options.tailnlines:
         nlines = int(options.tailnlines)
@@ -99,7 +120,7 @@ def main():
 
     
     
-    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions)
+    tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions,properties)
     for i in args:
         log = Log.Log(i)
         tailer.addLog(log)
