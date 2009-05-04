@@ -49,7 +49,29 @@ class TestCommand(Command):
         tests = TestLoader().loadTestsFromNames(testfiles)
         t = TextTestRunner(verbosity = 2)
         t.run(tests)
+
+
+class CleanCommand(Command):
+    user_options = []
     
+    def initialize_options(self):
+        self.__toRemove = []
+        for root,path,files in os.walk("."):
+            for file in files:
+                if file.endswith(('~','pyc')):
+                    self.__toRemove.append(os.path.join(root,file))
+    
+    def finalize_options(self):
+        pass
+    
+    def run(self):
+        for file in self.__toRemove:
+            try:
+                print "removing "+file
+                os.unlink(file)
+            except:
+                pass
+                
 PACKAGES = ("Actions Analytics").split()
 
 setup(name="log4tailer",
@@ -61,4 +83,4 @@ setup(name="log4tailer",
       license = "GNU GPL v3",
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
       scripts = ["log4tail"],
-      cmdclass = {"test":TestCommand})
+      cmdclass = {"test":TestCommand, "clean":CleanCommand})
