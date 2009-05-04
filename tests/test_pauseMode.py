@@ -25,7 +25,7 @@ class TestPauseMode(unittest.TestCase):
         pauseMode = PauseMode()
         self.assertEqual(0,pauseMode.getPause('DEBUG'))
         self.assertEqual(0,pauseMode.getPause('INFO'))
-        self.assertEqual(2,pauseMode.getPause('WARN'))
+        self.assertEqual(1,pauseMode.getPause('WARN'))
         self.assertEqual(3,pauseMode.getPause('ERROR'))
         self.assertEqual(5,pauseMode.getPause('FATAL'))
         self.assertEqual(5,pauseMode.getPause('TARGET'))

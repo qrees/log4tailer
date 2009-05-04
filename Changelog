@@ -4,7 +4,7 @@ release 1.1.1
 - New feature: PauseModes. For each 
 level it will pause the tailing. 
 debug and info no pause by default
-warn 2 seconds
+warn 1 seconds
 error 3 seconds
 fatal and targets 5 seconds
 
@@ -12,6 +12,10 @@ fatal and targets 5 seconds
 tails last 10 lines in logs, only 
 printAction is available with no 
 PauseModes.
+
+- Bug fixes in mail Action. There 
+were some things not working 
+properly yet. 
 
 ====================================
 release 1.1 

@@ -16,12 +16,40 @@
 
 import sys 
 
+from distutils.core import Command
+from unittest import TextTestRunner, TestLoader
+from glob import glob
+from os.path import splitext, basename, join as pjoin, walk
+import os
+
 try:
     from distutils.core import setup
 except:
     print "You need to install distutils python module"
     sys.exit()
+    
+class TestCommand(Command):
+    user_options = []
 
+    def initialize_options(self):
+        self._dir = os.getcwd()
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        '''Finds all the tests modules in tests/, and runs them.
+        '''
+        testfiles = [ ]
+        for t in glob(pjoin(self._dir, 'tests', '*.py')):
+            if not t.endswith('__init__.py'):
+                testfiles.append('.'.join(
+                    ['tests', splitext(basename(t))[0]])
+                )
+        tests = TestLoader().loadTestsFromNames(testfiles)
+        t = TextTestRunner(verbosity = 2)
+        t.run(tests)
+    
 PACKAGES = ("Actions Analytics").split()
 
 setup(name="log4tailer",
@@ -32,4 +60,5 @@ setup(name="log4tailer",
       url = "http://code.google.com/p/log4tailer/",
       license = "GNU GPL v3",
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
-      scripts = ["log4tail"])
+      scripts = ["log4tail"],
+      cmdclass = {"test":TestCommand})
