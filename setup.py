@@ -38,13 +38,13 @@ class TestCommand(Command):
         pass
 
     def run(self):
-        '''Finds all the tests modules in tests/, and runs them.
+        '''Finds all the tests modules in test/, and runs them.
         '''
         testfiles = []
-        for t in glob(pjoin(self._dir, 'tests', '*.py')):
+        for t in glob(pjoin(self._dir, 'test', '*.py')):
             if not t.endswith('__init__.py'):
                 testfiles.append('.'.join(
-                    ['tests', splitext(basename(t))[0]])
+                    ['test', splitext(basename(t))[0]])
                 )
         tests = TestLoader().loadTestsFromNames(testfiles)
         t = TextTestRunner(verbosity = 2)

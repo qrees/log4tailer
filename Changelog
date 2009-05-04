@@ -17,6 +17,9 @@ PauseModes.
 were some things not working 
 properly yet. 
 
+- Tests provided in distribution.
+python setup.py test 
+
 ====================================
 release 1.1 
 ====================================
