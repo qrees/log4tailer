@@ -95,6 +95,17 @@ class Clean(Command):
         pass
     
     def run(self):
+        curdir = os.getcwd()
+        distdir = pjoin(curdir,"dist")
+        if os.path.exists(distdir):
+            print "removing distribution directory"
+            shutil.rmtree(distdir)
+        
+        manifest = pjoin(curdir,'MANIFEST')
+        if os.path.exists(manifest):
+            print "removing MANIFEST file"
+            os.unlink(manifest)
+
         for file in self.__toRemove:
             try:
                 print "removing "+file
