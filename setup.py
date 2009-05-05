@@ -133,4 +133,4 @@ setup(name="log4tailer",
       license = "GNU GPL v3",
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
       scripts = ["log4tail"],
-      cmdclass = {"release":Release,"test":Command, "clean":Command,"dodoc":Command})
+      cmdclass = {"release":Release,"test":Test, "clean":Clean,"dodoc":DoDoc})
