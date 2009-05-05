@@ -20,7 +20,10 @@ from distutils.core import Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import splitext, basename, join as pjoin, walk
-import os
+from subprocess import Popen,PIPE
+import os,shutil
+
+__version__='1.1.1'
 
 try:
     from distutils.core import setup
@@ -28,7 +31,7 @@ except:
     print "You need to install distutils python module"
     sys.exit()
     
-class TestCommand(Command):
+class Test(Command):
     user_options = []
 
     def initialize_options(self):
@@ -51,7 +54,34 @@ class TestCommand(Command):
         t.run(tests)
 
 
-class CleanCommand(Command):
+class DoDoc(Command):
+    user_options = []
+
+    def initialize_options(self):
+        # if you're not Jordi, I guess
+        # this is not gonna work for you
+        if not os.path.isdir('../userguide/'):
+            print "checkout userguide"
+            sys.exit()
+    
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        destdir = pjoin(os.getcwd(),"dist")
+        if not os.path.isdir(destdir):
+            print "making distribution dir"
+            os.mkdir(destdir)
+        os.chdir('../userguide')
+        pdfexec = 'pdflatex'
+        file = 'log4tailer.tex'
+        destfile = pjoin(destdir,'UserGuide-'+__version__+'.pdf')
+        docproc = Popen([pdfexec,file],stdout=PIPE)
+        out,err = docproc.communicate()
+        print out
+        shutil.copy('log4tailer.pdf',destfile)
+
+class Clean(Command):
     user_options = []
     
     def initialize_options(self):
@@ -71,11 +101,31 @@ class CleanCommand(Command):
                 os.unlink(file)
             except:
                 pass
-                
+
+class Release(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+    
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        # check everything is ok
+        self.run_command("test")
+        self.run_command("sdist")
+        if not os.path.isdir('dist'):
+            print "I just run sdist and no dist??"
+            sys.exit()
+        self.run_command("dodoc")
+
+
+
 PACKAGES = ("Actions Analytics").split()
 
 setup(name="log4tailer",
-      version="1.1.1",
+      version=__version__,
       description="Not just a simple log tailer",
       author="Jordi Carrillo",
       author_email = "jordilin@gmail.com",
@@ -83,4 +133,4 @@ setup(name="log4tailer",
       license = "GNU GPL v3",
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
       scripts = ["log4tail"],
-      cmdclass = {"test":TestCommand, "clean":CleanCommand})
+      cmdclass = {"release":Release,"test":Command, "clean":Command,"dodoc":Command})
