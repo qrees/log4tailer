@@ -20,6 +20,9 @@ properly yet.
 - Tests provided in distribution.
 python setup.py test 
 
+- More automated commands - clean, 
+release, test, compile docs
+
 ====================================
 release 1.1 
 ====================================
