@@ -36,7 +36,7 @@ class LogColors:
 
     def parseConfig(self,properties):
         
-        for key in properties.getKeysLower():
+        for key in properties.getKeys():
             try:
                 code = self.color.getCode(properties.getValue(key))
             except:

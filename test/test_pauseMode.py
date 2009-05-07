@@ -13,9 +13,9 @@ class TestPauseMode(unittest.TestCase):
         self.configfile = 'config.txt'
         self.configfh = open(self.configfile,'w')
         
-        self.overridenLevelPauses = {'pauseDEBUG':2, 'pauseINFO':3,
-                                     'pauseWARN':4, 'pauseERROR':5,
-                                     'pauseFATAL':6, 'pauseTARGET':7}
+        self.overridenLevelPauses = {'pausedebug':2, 'pauseinfo':3,
+                                     'pausewarn':4, 'pauseerror':5,
+                                     'pausefatal':6, 'pausetarget':7}
 
         for key,value in self.overridenLevelPauses.iteritems():
             self.configfh.write(key +'='+str(value)+'\n')
@@ -23,12 +23,12 @@ class TestPauseMode(unittest.TestCase):
     
     def testgetDefaultPauseModeLevels(self):
         pauseMode = PauseMode()
-        self.assertEqual(0,pauseMode.getPause('DEBUG'))
-        self.assertEqual(0,pauseMode.getPause('INFO'))
-        self.assertEqual(1,pauseMode.getPause('WARN'))
-        self.assertEqual(3,pauseMode.getPause('ERROR'))
-        self.assertEqual(5,pauseMode.getPause('FATAL'))
-        self.assertEqual(5,pauseMode.getPause('TARGET'))
+        self.assertEqual(0,pauseMode.getPause('debug'))
+        self.assertEqual(0,pauseMode.getPause('info'))
+        self.assertEqual(1,pauseMode.getPause('warn'))
+        self.assertEqual(3,pauseMode.getPause('error'))
+        self.assertEqual(5,pauseMode.getPause('fatal'))
+        self.assertEqual(5,pauseMode.getPause('target'))
 
     def testgetOverridePauseModeLevels(self):
         pauseMode = PauseMode()

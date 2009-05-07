@@ -20,7 +20,7 @@ class TestProperties(unittest.TestCase):
     def testparseProperties(self):
         property = Property(self.configfile)
         property.parseProperties()
-        configPropertyKeys = property.getKeysLower().sort()
+        configPropertyKeys = property.getKeys().sort()
         # my colorconfigs keys are already in lowercase
         self.assertEqual(self.configKeys,configPropertyKeys)
     

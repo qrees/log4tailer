@@ -23,13 +23,13 @@ class PauseMode:
     not miss a level'''
 
     def __init__(self):
-        self.defaultLevelPauses = {'DEBUG':0,'INFO':0, 'WARN':1, 'ERROR':3, 'FATAL':5, 'TARGET':5}
+        self.defaultLevelPauses = {'debug':0,'info':0, 'warn':1, 'error':3, 'fatal':5, 'target':5}
 
     def getPause(self,level):
         return self.defaultLevelPauses[level]
 
     def parseConfig(self,properties):
-        pauseKeys = ['pauseDEBUG','pauseINFO','pauseWARN','pauseERROR','pauseFATAL','pauseTARGET']
+        pauseKeys = ['pausedebug','pauseinfo','pausewarn','pauseerror','pausefatal','pausetarget']
         for pauseKey in pauseKeys:
             try:
                 level = pauseKey.split('pause')[1]

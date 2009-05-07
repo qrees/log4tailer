@@ -41,8 +41,9 @@ class Property:
         # Generator expression, so does not matter if huge or not actually.
         lines = (k.rstrip() for k in fd if not self.blankpat.search(k))
         for i in lines:
-            vals = re.split(self.resep,i) 
-            key = vals[0].strip()
+            vals = re.split(self.resep,i)
+            # we make it case insensitive.
+            key = vals[0].strip().lower()
             value = vals[1].strip()
             if self.dictproperties.has_key(key):
                 raise KeyAlreadyExistsException(key+" is duplicated")
@@ -57,8 +58,8 @@ class Property:
         else:
             raise KeyNotFoundException(key+" key not found")
     
-    def getKeysLower(self):
-        return [k.lower() for k in self.keys]
+    def getKeys(self):
+        return self.keys
 
     def isKey(self,key):
         if key in self.dictproperties:

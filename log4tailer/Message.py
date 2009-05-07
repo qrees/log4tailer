@@ -55,7 +55,7 @@ class Message:
         if self.patarget:
             res = self.patarget.search(self.plainMessage)
             if res:
-                return (self.pauseMode.getPause('TARGET'),self.color.backgroundemph+self.plainMessage+self.color.reset)
+                return (self.pauseMode.getPause('target'),self.color.backgroundemph+self.plainMessage+self.color.reset)
         
         # tail the other lines (levels)
         levelcolor = ""
@@ -72,7 +72,7 @@ class Message:
         else:
             return (0,self.plainMessage)
 
-        return (self.pauseMode.getPause(self.messageLevel),levelcolor+self.plainMessage+self.color.reset)
+        return (self.pauseMode.getPause(self.messageLevel.lower()),levelcolor+self.plainMessage+self.color.reset)
 
         
     def __getMultipleTargets(self,target):
