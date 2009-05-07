@@ -31,7 +31,7 @@ class MailAction:
         self.user = user
         self.passwd = passwd
         self.conn = None
-        self.timer = Timer.Timer(5)
+        self.timer = Timer.Timer(60)
         self.timer.startTimer()
 
     def triggerAction(self,message):
