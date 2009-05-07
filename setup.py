@@ -23,7 +23,7 @@ from os.path import splitext, basename, join as pjoin, walk
 from subprocess import Popen,PIPE
 import os,shutil
 
-__version__='1.1.1'
+__version__='1.2'
 
 try:
     from distutils.core import setup
