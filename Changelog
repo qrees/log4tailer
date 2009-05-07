@@ -23,6 +23,9 @@ python setup.py test
 - More automated commands - clean, 
 release, test, compile docs
 
+- Bug fix number 3 about making
+keys in config case insensitive
+
 ====================================
 release 1.1 
 ====================================
