@@ -76,9 +76,11 @@ class DoDoc(Command):
         pdfexec = 'pdflatex'
         file = 'log4tailer.tex'
         destfile = pjoin(destdir,'UserGuide-'+__version__+'.pdf')
-        docproc = Popen([pdfexec,file],stdout=PIPE)
-        out,err = docproc.communicate()
-        print out
+        for i in range(2):
+            # compile two times to fix cross references
+            docproc = Popen([pdfexec,file],stdout=PIPE)
+            out,err = docproc.communicate()
+            print out
         shutil.copy('log4tailer.pdf',destfile)
 
 class Clean(Command):
