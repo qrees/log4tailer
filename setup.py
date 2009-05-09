@@ -116,16 +116,28 @@ class Clean(Command):
                 pass
 
 class Release(Command):
-    user_options = []
+    user_options = [('rtag',None,"definitive version, tag and release")]
 
     def initialize_options(self):
-        pass
+        self.rtag = False
     
     def finalize_options(self):
         pass
 
     def run(self):
         # check everything is ok
+        if self.rtag:
+            # push release to svn 
+            # and tag it with release version
+            httpcurrdir = 'https://log4tailer.googlecode.com/svn/trunk/'
+            httpdestdir = 'https://log4tailer.googlecode.com/svn/tags/log4tailer-'+__version__
+            releasecomment = "Log4Tailer release version "+__version__
+            svncommand = ['svn','copy',httpcurrdir,httpdestdir,'-m',releasecomment]
+            svnproc = Popen(svncommand,stdout = PIPE)
+            print "tagging project into googlecode svn"
+            out,err = svnproc.communicate()
+            print out
+        
         self.run_command("test")
         self.run_command("sdist")
         if not os.path.isdir('dist'):
