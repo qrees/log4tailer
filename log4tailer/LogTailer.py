@@ -22,6 +22,7 @@ import resource
 from Message import Message
 from LogColors import LogColors
 from Actions import PrintAction
+from Analytics.Resume import Resume
 
 class LogTailer:
     '''Tails the log provided by Log class'''
@@ -148,6 +149,7 @@ class LogTailer:
     def tailer(self):
         '''Stdout multicolor tailer'''
         message = Message(self.logcolors,self.target,self.properties)
+        resume = Resume()
         self.posEnd()
         if self.silence:
             self.daemonize()
@@ -178,6 +180,7 @@ class LogTailer:
                     
                         
                     message.parse(line)
+                    resume.update(message.getMessageLevel())
                     for action in self.actions:
                         action.triggerAction(message)
                     log.size = log.getcurrSize()
@@ -191,4 +194,5 @@ class LogTailer:
                 log.closeLog()
             if self.silence:
                 self.action.quitSMTP()
+            resume.spit()
             print "Ended log4tailer, because colors are fun"
