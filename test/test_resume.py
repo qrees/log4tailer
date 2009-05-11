@@ -22,7 +22,7 @@ class TestColors(unittest.TestCase):
             fh.write(line+'\n')
         fh.close()
 
-    def testResume(self):
+    def testReportResume(self):
         fh = open(self.logfile)
         lines = [ line.rstrip() for line in fh.readlines() ]
         resume = Resume.Resume()
@@ -43,7 +43,7 @@ class TestColors(unittest.TestCase):
             self.assertEqual(info[key],res)
         
         print "you should see the resume output"
-        resume.spit()
+        resume.report()
         
 
     def tearDown(self):

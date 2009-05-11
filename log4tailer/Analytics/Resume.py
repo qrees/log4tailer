@@ -33,7 +33,7 @@ class Resume():
     def getInfo(self,messageLevel):
         return self.levels[messageLevel]
 
-    def spit(self):
+    def report(self):
         print "Analytics: "
         for key,val in self.levels.iteritems():
             print "level "+key+": "+str(val)

@@ -194,5 +194,5 @@ class LogTailer:
                 log.closeLog()
             if self.silence:
                 self.action.quitSMTP()
-            resume.spit()
+            resume.report()
             print "Ended log4tailer, because colors are fun"
