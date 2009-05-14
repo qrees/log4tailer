@@ -37,40 +37,22 @@ class Resume():
         return self.levels[messageLevel]
 
     def __hoursMinsFormat(self,secs):
-        min = 60
-        hour = min * 60
-        day = hour * 24
-        resDays = 0
-        resHours = 0
-        resMins = 0
-        resSecs = secs
+        years, secs = divmod(secs, 31556952)
+        min, secs = divmod(secs, 60)
+        h, min = divmod(min, 60)
+        d, h = divmod(h, 24)
+        return years, d, h, min, secs
 
-        if (hour < secs < day):
-            # return hour, min and secs
-            resHours = resSecs / hour
-            remain = resHours * hour - resSecs
-            if (0 < remain < min):
-                resSecs = remain
-            else:
-                resMins = remain / min
-                resSecs = resMins * min - resSecs
-
-        else:
-            resDays = resSecs / day
-            remain = resDays * day - resSecs
-            if (0 < remain < hour):
-
-
-                
             
     def __execTime(self):
         finish = time()
         ellapsed = finish-self.initTime
-        return ellapsed
+        return self.__hoursMinsFormat(ellapsed)
 
     def report(self):
         print "Analytics: "
-        print "log4tail execution time "+str(self.__execTime())
+        print "log4tail execution time = ",
+        print self.__execTime()
         for key,val in self.levels.iteritems():
             print "level "+key+": "+str(val)
 
