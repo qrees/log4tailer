@@ -37,9 +37,21 @@ class TestColors(unittest.TestCase):
         line = log.readLine()
         self.assertEqual('',line)
         message.parse(line)
-        print "nothing to happen"
+        print "nothing in next line"
         action.triggerAction(message)
+        print ""
+    
+    def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
+        # Test for fix 5
+        # Should give priority to FATAL in next trace
+        trace = "FATAL there could be an ERROR in the application"
+        logcolors = LogColors()
+        message = Message(logcolors)
+        action = PrintAction()
         
+        message.parse(trace)
+        print "Test: You should see a red log trace now: "
+        action.triggerAction(message)
 
     def tearDown(self):
         os.remove(self.logfile)
