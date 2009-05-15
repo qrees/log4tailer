@@ -23,7 +23,7 @@ class PauseMode:
     not miss a level'''
 
     def __init__(self):
-        self.defaultLevelPauses = {'debug':0,'info':0, 'warn':1, 'error':3, 'fatal':5, 'target':5}
+        self.defaultLevelPauses = {'debug':0,'info':0, 'warn':0, 'error':0, 'fatal':0, 'target':0}
 
     def getPause(self,level):
         return self.defaultLevelPauses[level]
