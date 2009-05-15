@@ -25,10 +25,10 @@ class TestPauseMode(unittest.TestCase):
         pauseMode = PauseMode()
         self.assertEqual(0,pauseMode.getPause('debug'))
         self.assertEqual(0,pauseMode.getPause('info'))
-        self.assertEqual(1,pauseMode.getPause('warn'))
-        self.assertEqual(3,pauseMode.getPause('error'))
-        self.assertEqual(5,pauseMode.getPause('fatal'))
-        self.assertEqual(5,pauseMode.getPause('target'))
+        self.assertEqual(0,pauseMode.getPause('warn'))
+        self.assertEqual(0,pauseMode.getPause('error'))
+        self.assertEqual(0,pauseMode.getPause('fatal'))
+        self.assertEqual(0,pauseMode.getPause('target'))
 
     def testgetOverridePauseModeLevels(self):
         pauseMode = PauseMode()
