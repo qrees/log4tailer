@@ -92,6 +92,9 @@ class LogTailer:
 
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
+
+        message = Message(self.logcolors)
+        action = PrintAction.PrintAction()
         for log in self.arrayLog:
             fd = log.openLog()
             numlines = log.numLines()
@@ -107,10 +110,8 @@ class LogTailer:
             for curpos,line in enumerate(fd):
                 if curpos >= pos:
                     line = line.rstrip()
-                    loglevel = self.parse(line)
-                    log.loglevel = loglevel
-                    ## TODO this needs to be fixed
-                    self.action.printStdOut(line,log)
+                    message.parse(line)
+                    action.triggerAction(message)
                     count += 1
                     buff.append(line)
                     if count%ttlines == 0:
