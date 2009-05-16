@@ -8,7 +8,7 @@ from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
 
-class TestColors(unittest.TestCase):
+class TestResume(unittest.TestCase):
     def setUp(self):
         self.logfile = 'out.log'
         fh = open(self.logfile,'w')
@@ -41,7 +41,7 @@ class TestColors(unittest.TestCase):
         os.remove(self.logfile)
 
 if __name__ == '__main__':
-        unittest.main()
+    unittest.main()
 
 
 
