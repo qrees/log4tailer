@@ -19,6 +19,7 @@
 import sys
 from smtplib import *
 from log4tailer import Timer
+import datetime
 
 class MailAction:
     """Common actions to be taken
@@ -45,8 +46,10 @@ class MailAction:
 
         if message.getMessageLevel() != 'FATAL':
             return
-        
-        msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\n\r\n" % (self.fro,self.to)+body
+
+        now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
+
+        msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
         try:
             if self.timer.awaitSend():
                 return
