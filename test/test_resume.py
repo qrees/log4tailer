@@ -7,7 +7,6 @@ from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
-import mox
 
 class TestColors(unittest.TestCase):
     def setUp(self):
