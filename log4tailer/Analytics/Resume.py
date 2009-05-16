@@ -16,32 +16,42 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-from time import time
+from time import time,localtime,strftime
 #from __future__ import division
 
 class Resume():
+    '''Will report of number of debug, info and warn 
+    events. For Error and Fatal will provide the timestamp 
+    if there was any event of that level'''
 
     def __init__(self):
         self.initTime = time()
         self.levels = {'DEBUG':0,
                        'INFO':0,
                        'WARN':0,
-                       'ERROR':0,
-                       'FATAL':0}
+                       'ERROR':[],
+                       'FATAL':[]}
+
+        self.nonTimeStamped = ['DEBUG','INFO','WARN']
+        self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG']
 
     def update(self,messageLevel):
         if self.levels.has_key(messageLevel):
-            self.levels[messageLevel] += 1
+            if messageLevel in self.nonTimeStamped:
+                self.levels[messageLevel] += 1
+            else:
+                self.levels[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime()))
 
     def getInfo(self,messageLevel):
         return self.levels[messageLevel]
 
     def __hoursMinsFormat(self,secs):
-        years, secs = divmod(secs, 31556952)
-        min, secs = divmod(secs, 60)
-        h, min = divmod(min, 60)
-        d, h = divmod(h, 24)
-        return years, d, h, min, secs
+        years, secs = divmod(secs, 31556926)
+        mins, secs = divmod(secs, 60)
+        hours, mins = divmod(mins, 60)
+        days, hours = divmod(hours, 24)
+        
+        return str(years)+" years "+str(days)+" days "+ str(hours)+" hours "+ str(mins)+" mins "+str(secs)+" secs "
 
             
     def __execTime(self):
@@ -51,9 +61,15 @@ class Resume():
 
     def report(self):
         print "Analytics: "
-        print "log4tail execution time = ",
+        print "Uptime: "
         print self.__execTime()
-        for key,val in self.levels.iteritems():
-            print "level "+key+": "+str(val)
+        print "Levels Report: "
+        for level in self.orderReport:
+            print level+":"
+            if level in self.nonTimeStamped:
+                print self.levels[level]
+            else:
+                for timestamp in self.levels[level]:
+                    print timestamp
 
                        

@@ -7,6 +7,7 @@ from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
+import mox
 
 class TestColors(unittest.TestCase):
     def setUp(self):
@@ -22,25 +23,16 @@ class TestColors(unittest.TestCase):
             fh.write(line+'\n')
         fh.close()
 
+
     def testReportResume(self):
         fh = open(self.logfile)
         lines = [ line.rstrip() for line in fh.readlines() ]
-        resume = Resume.Resume()
         logcolors = LogColors()
         message = Message(logcolors)
+        resume = Resume.Resume()
         for line in lines:
             message.parse(line)
             resume.update(message.getMessageLevel())
-        
-        info = {'FATAL':2,
-                'ERROR':1,
-                'INFO':1,
-                'WARN':1,
-                'DEBUG':1}
-        
-        for key,val in info.iteritems():
-            res = resume.getInfo(key)
-            self.assertEqual(info[key],res)
         
         print "you should see the resume output"
         resume.report()
