@@ -21,13 +21,23 @@ import re
 
 class ColorParser:
     def __init__(self):
-        self.levelPattern = re.compile(r'^(debug|info|warn|error|fatal)',re.I)
+        
+        self.debug = re.compile(r'DEBUG')
+        self.info = re.compile(r'INFO')
+        self.warn = re.compile(r'WARN')
+        self.error = re.compile(r'ERROR')
+        self.fatal = re.compile(r'FATAL')
         
     def parse(self,line):
-        levelMatcher = self.levelPattern.search(line)
-        if levelMatcher:
-            return levelMatcher.group(0).upper()
+        if (self.debug.search(line)):
+            return 'DEBUG'
+        elif (self.info.search(line)):
+            return 'INFO'
+        elif (self.warn.search(line)):
+            return 'WARN'
+        elif (self.error.search(line)):
+            return 'ERROR'
+        elif (self.fatal.search(line)):
+            return 'FATAL'
         else:
             return ''
-
-
