@@ -11,11 +11,15 @@ class TestColors(unittest.TestCase):
     def setUp(self):
         self.logfile = 'out.log'
         fh = open(self.logfile,'w')
-        self.someLogTraces = ['fatal> something went wrong',
-                              'error> not so wrong',
-                              'warn> be careful',
-                              'debug> looking behind the scenes',
-                              'info> the app is running']
+        # levels in upper case
+        # should be very weird an app
+        # logging levels in lowercase
+
+        self.someLogTraces = ['FATAL> something went wrong',
+                              'ERROR> not so wrong',
+                              'WARN> be careful',
+                              'DEBUG> looking behind the scenes',
+                              'INFO> the app is running']
         for line in self.someLogTraces:
             fh.write(line+'\n')
         fh.close()
