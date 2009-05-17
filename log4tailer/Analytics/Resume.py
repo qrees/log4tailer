@@ -17,9 +17,8 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import time,localtime,strftime
-#from __future__ import division
 
-class Resume():
+class Resume:
     '''Will report of number of debug, info and warn 
     events. For Error and Fatal will provide the timestamp 
     if there was any event of that level'''
