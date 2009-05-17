@@ -44,7 +44,7 @@ class TestColors(unittest.TestCase):
     def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
         # Test for fix 5
         # Should give priority to FATAL in next trace
-        trace = "FATAL there could be an ERROR in the application"
+        trace = "FATAL there could be an error in the application"
         logcolors = LogColors()
         message = Message(logcolors)
         action = PrintAction()
