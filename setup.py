@@ -23,6 +23,36 @@ from os.path import splitext, basename, join as pjoin, walk
 from subprocess import Popen,PIPE
 import os,shutil
 
+
+long_description = '''
+Introduction
+============
+This project aims to provide a different approach to traditional log tailers.
+Amongst other features:
+
+* Multitailing capability. It can tail multiple logs at a time
+* Colors for every level: warn, info, debug, error and fatal
+* Emphasize multiple targets (log traces) given regular expressions
+* Follow log upon truncation by default
+* User defined colors for each level
+* Silent (daemonized) mode
+* Throttling mode. Slow down the information being printed in the terminal
+* Inactivity log monitoring
+* mail notification
+* Pause Modes freezes output for a limited period of time depending on level found.
+* Analytics. Makes a report of each level found in logs when finished. 
+
+Why yet another tailer?
+=======================
+Most people use tail -F to tail the logs these days. When debugging enterprise
+class applications you cannot just follow (in many situations) what is going on
+unless you go to the log, less it and check if something was wrong, or just
+Ctrl-C tail program and scroll back. Human eye cannot distinguish or grab a
+line out of thousands when that information is showed incredibly fast in the
+screen. By providing colors, the human eye will discern and quickly identify
+specific levels or lines. 
+'''
+
 __version__='1.3'
 
 try:
@@ -152,10 +182,22 @@ PACKAGES = ("Actions Analytics").split()
 setup(name="log4tailer",
       version=__version__,
       description="Not just a simple log tailer",
+      long_description = long_description,
       author="Jordi Carrillo",
       author_email = "jordilin@gmail.com",
       url = "http://code.google.com/p/log4tailer/",
       license = "GNU GPL v3",
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
       scripts = ["log4tail"],
-      cmdclass = {"release":Release,"test":Test, "clean":Clean,"dodoc":DoDoc})
+      cmdclass = {"release":Release,"test":Test, "clean":Clean,"dodoc":DoDoc},
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Environment :: Console',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          'License :: OSI Approved :: GNU General Public License (GPL)',
+          'Operating System :: POSIX',
+          'Programming Language :: Python',
+          'Topic :: System :: Monitoring'
+          ],
+      )
