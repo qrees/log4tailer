@@ -13,6 +13,9 @@ one that takes preference.
 - Information included in setup.py to 
 include log4tailer in Pypi site.
 
+- Silent mode is for Fatal level only. 
+Documentation has been updated.
+
 ====================================
 17/05/09 release 1.3 
 ====================================
