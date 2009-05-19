@@ -20,24 +20,14 @@
 import re
 
 class ColorParser:
+    '''tries to parse 
+    defined levels in log4j'''
     def __init__(self):
-        
-        self.debug = re.compile(r'DEBUG')
-        self.info = re.compile(r'INFO')
-        self.warn = re.compile(r'WARN')
-        self.error = re.compile(r'ERROR')
-        self.fatal = re.compile(r'FATAL')
-        
+        self.all = re.compile('.*?(debug|info|warn|error|fatal)',re.I)
+               
     def parse(self,line):
-        if (self.debug.search(line)):
-            return 'DEBUG'
-        elif (self.info.search(line)):
-            return 'INFO'
-        elif (self.warn.search(line)):
-            return 'WARN'
-        elif (self.error.search(line)):
-            return 'ERROR'
-        elif (self.fatal.search(line)):
-            return 'FATAL'
-        else:
-            return ''
+        isMatch = self.all.match(line)
+        if isMatch:
+            return isMatch.group(1).upper()
+        return ''
+       

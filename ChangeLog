@@ -1,4 +1,19 @@
 ====================================
+19/05/09 release 1.4 
+====================================
+- Better regex for ColorParser, which 
+fixes definitely the fact of having for 
+instance the "error" and "warn" string 
+in same log trace. First to appear, the 
+one that takes preference.
+
+- Updated doc, at least you need Python 
+2.4
+
+- Information included in setup.py to 
+include log4tailer in Pypi site.
+
+====================================
 17/05/09 release 1.3 
 ====================================
 - Bug fixes numbers: 4,5,6

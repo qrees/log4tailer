@@ -19,7 +19,11 @@
 
 import unittest
 import os,sys,time
-import mox
+try:
+    import mox
+except:
+    print "you need to install the mox mocking library"
+    sys.exit()
 
 sys.path.append('..')
 from log4tailer.Actions.InactivityAction import InactivityAction
