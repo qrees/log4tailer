@@ -120,7 +120,7 @@ class Clean(Command):
         self.__toRemove = []
         for root,path,files in os.walk("."):
             for file in files:
-                if file.endswith(('~','pyc')):
+                if file.endswith(('~','pyc','#')):
                     self.__toRemove.append(os.path.join(root,file))
     
     def finalize_options(self):
