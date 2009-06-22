@@ -181,7 +181,7 @@ class LogTailer:
                     
                         
                     message.parse(line)
-                    resume.update(message.getMessageLevel())
+                    resume.update(message)
                     for action in self.actions:
                         action.triggerAction(message)
                     log.size = log.getcurrSize()

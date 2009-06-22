@@ -34,12 +34,13 @@ class Resume:
         self.nonTimeStamped = ['DEBUG','INFO','WARN']
         self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG']
 
-    def update(self,messageLevel):
+    def update(self,message):
+        messageLevel = message.getMessageLevel()
         if self.levels.has_key(messageLevel):
             if messageLevel in self.nonTimeStamped:
                 self.levels[messageLevel] += 1
             else:
-                self.levels[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime()))
+                self.levels[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())+': '+message.getPlainMessage())
 
     def getInfo(self,messageLevel):
         return self.levels[messageLevel]

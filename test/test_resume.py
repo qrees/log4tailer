@@ -31,7 +31,7 @@ class TestResume(unittest.TestCase):
         resume = Resume.Resume()
         for line in lines:
             message.parse(line)
-            resume.update(message.getMessageLevel())
+            resume.update(message)
         
         print "you should see the resume output"
         resume.report()

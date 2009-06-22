@@ -1,4 +1,12 @@
 ====================================
+release 1.5 
+====================================
+- For Errors and Fatals the log trace 
+is included in the final report along with 
+the datestamp.
+
+
+====================================
 19/05/09 release 1.4 
 ====================================
 - Better regex for ColorParser, which 
