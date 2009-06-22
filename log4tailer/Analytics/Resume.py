@@ -40,7 +40,8 @@ class Resume:
             if messageLevel in self.nonTimeStamped:
                 self.levels[messageLevel] += 1
             else:
-                self.levels[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())+': '+message.getPlainMessage())
+                self.levels[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())
+                        +' '+message.getPlainMessage())
 
     def getInfo(self,messageLevel):
         return self.levels[messageLevel]
