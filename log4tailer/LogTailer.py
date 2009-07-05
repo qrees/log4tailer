@@ -150,7 +150,7 @@ class LogTailer:
     def tailer(self):
         '''Stdout multicolor tailer'''
         message = Message(self.logcolors,self.target,self.properties)
-        resume = Resume()
+        resume = Resume(self.arrayLog)
         self.posEnd()
         if self.silence:
             self.daemonize()
@@ -181,7 +181,7 @@ class LogTailer:
                     
                         
                     message.parse(line)
-                    resume.update(message)
+                    resume.update(message,log)
                     for action in self.actions:
                         action.triggerAction(message)
                     log.size = log.getcurrSize()

@@ -1,9 +1,11 @@
 ====================================
-release 1.5 
+06/07/09 release 1.42 
 ====================================
 - For Errors and Fatals the log trace 
 is included in the final report along with 
 the datestamp.
+- Final report now reports separately for each log  
+- Updated Documentation
 
 
 ====================================

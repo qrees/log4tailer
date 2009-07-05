@@ -17,34 +17,48 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import time,localtime,strftime
+from log4tailer import TermColorCodes
 
 class Resume:
     '''Will report of number of debug, info and warn 
     events. For Error and Fatal will provide the timestamp 
     if there was any event of that level'''
 
-    def __init__(self):
+    def __init__(self,arrayLog):
+        self.arrayLog = arrayLog
         self.initTime = time()
-        self.levels = {'DEBUG':0,
+        levels = {'DEBUG':0,
                        'INFO':0,
                        'WARN':0,
                        'ERROR':[],
                        'FATAL':[]}
+        
+        self.logsReport = {}
+        for log in arrayLog:
+            self.logsReport[log.getLogPath()] = {'DEBUG':0,
+                       'INFO':0,
+                       'WARN':0,
+                       'ERROR':[],
+                       'FATAL':[]}
+        
+
 
         self.nonTimeStamped = ['DEBUG','INFO','WARN']
         self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG']
 
-    def update(self,message):
+    def update(self,message,log):
         messageLevel = message.getMessageLevel()
-        if self.levels.has_key(messageLevel):
+        logPath = log.getLogPath()
+        logKey = self.logsReport[logPath]
+        if logKey.has_key(messageLevel):
             if messageLevel in self.nonTimeStamped:
-                self.levels[messageLevel] += 1
+                logKey[messageLevel] += 1
             else:
-                self.levels[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())
+                logKey[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())
                         +'=>> '+message.getPlainMessage())
 
-    def getInfo(self,messageLevel):
-        return self.levels[messageLevel]
+                #def getInfo(self,messageLevel):
+       # return self.levels[messageLevel]
 
     def __hoursMinsFormat(self,secs):
         years, secs = divmod(secs, 31556926)
@@ -60,17 +74,25 @@ class Resume:
         ellapsed = finish-self.initTime
         return self.__hoursMinsFormat(ellapsed)
 
+    def colorize(self,line,colors):
+        return colors.backgroundemph+line+colors.reset
+
     def report(self):
+        colors = TermColorCodes.TermColorCodes()
         print "Analytics: "
         print "Uptime: "
         print self.__execTime()
-        print "Levels Report: "
-        for level in self.orderReport:
-            print level+":"
-            if level in self.nonTimeStamped:
-                print self.levels[level]
-            else:
-                for timestamp in self.levels[level]:
-                    print timestamp
+        for log in self.arrayLog:
+            titleLog = self.colorize("Report for Log "+log.getLogPath(),colors)
+            print titleLog
+            print "Levels Report: "
+            logKey = self.logsReport[log.getLogPath()]  
+            for level in self.orderReport:
+                print level+":"
+                if level in self.nonTimeStamped:
+                    print logKey[level]
+                else:
+                    for timestamp in logKey[level]:
+                        print timestamp
 
                        
