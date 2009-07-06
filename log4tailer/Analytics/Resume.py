@@ -27,21 +27,13 @@ class Resume:
     def __init__(self,arrayLog):
         self.arrayLog = arrayLog
         self.initTime = time()
-        levels = {'DEBUG':0,
-                       'INFO':0,
-                       'WARN':0,
-                       'ERROR':[],
-                       'FATAL':[]}
-        
         self.logsReport = {}
         for log in arrayLog:
             self.logsReport[log.getLogPath()] = {'DEBUG':0,
-                       'INFO':0,
-                       'WARN':0,
-                       'ERROR':[],
-                       'FATAL':[]}
-        
-
+                                                 'INFO':0,
+                                                 'WARN':0,
+                                                 'ERROR':[],
+                                                 'FATAL':[]}
 
         self.nonTimeStamped = ['DEBUG','INFO','WARN']
         self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG']
