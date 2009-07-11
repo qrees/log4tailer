@@ -146,7 +146,17 @@ class LogTailer:
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
-
+    
+    def pipeOut(self):
+        """Reads from standard input 
+        and prints to standard output"""
+        message = Message(self.logcolors,self.target,self.properties)
+        stdin = sys.stdin
+        for line in stdin:
+            message.parse(line)
+            for action in self.actions:
+                action.triggerAction(message)
+    
     def tailer(self):
         '''Stdout multicolor tailer'''
         message = Message(self.logcolors,self.target,self.properties)

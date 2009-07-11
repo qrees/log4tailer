@@ -121,6 +121,11 @@ def main():
     
     
     tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions,properties)
+    
+    if args[0] == '-':
+        tailer.pipeOut()
+        sys.exit()
+
     for i in args:
         log = Log.Log(i)
         tailer.addLog(log)

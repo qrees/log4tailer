@@ -90,7 +90,7 @@ class Message:
         '''Need to parse the line
         and check in what level we are in'''
         if line:
-            self.plainMessage = line
+            self.plainMessage = line.rstrip()
             self.messageLevel = self.colorparser.parse(line)
             return
         # if we don't have anything in line
