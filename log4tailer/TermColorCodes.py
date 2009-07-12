@@ -53,6 +53,4 @@ class TermColorCodes:
             return self.cyan
         elif value == 'white':
             return self.white
-        else:
-            print "wrong config"
-            sys.exit()
+        return
