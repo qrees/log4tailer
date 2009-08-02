@@ -3,6 +3,11 @@ release 1.4x
 ====================================
 
 - tails from stdin
+- Mail action for errors and fatals along 
+with targets. This is actioned in either 
+mail action with -m or silent action with -s
+
+
 
 ====================================
 06/07/09 release 1.42 

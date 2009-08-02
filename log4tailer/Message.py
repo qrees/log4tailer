@@ -27,6 +27,7 @@ class Message:
     def __init__(self,logcolor,target = None, properties = None):
         
         self.patarget = None
+        self.isTarget = None
         if target:
             # user can provide multiple
             # comma separated targets
@@ -40,6 +41,11 @@ class Message:
         self.pauseMode = PauseMode.PauseMode()
         if properties:
             self.pauseMode.parseConfig(properties)
+    
+    def isATarget(self):
+        if self.isTarget:
+            return True
+        return False
 
     def getColorizedMessage(self):
         '''it returns a tuple, first 
@@ -51,11 +57,10 @@ class Message:
 
         if not self.plainMessage:
             return (0,'')
-
-        if self.patarget:
-            res = self.patarget.search(self.plainMessage)
-            if res:
-                return (self.pauseMode.getPause('target'),self.color.backgroundemph+self.plainMessage+self.color.reset)
+        
+        # targets have priority over Levels
+        if self.isTarget:
+            return (self.pauseMode.getPause('target'),self.color.backgroundemph+self.plainMessage+self.color.reset)
         
         # tail the other lines (levels)
         levelcolor = ""
@@ -89,9 +94,13 @@ class Message:
     def parse(self,line):
         '''Need to parse the line
         and check in what level we are in'''
+        self.isTarget = None
         if line:
             self.plainMessage = line.rstrip()
             self.messageLevel = self.colorparser.parse(line)
+            # is target?
+            if self.patarget:
+                self.isTarget = self.patarget.search(self.plainMessage)
             return
         # if we don't have anything in line
         # just set current Message to unknown

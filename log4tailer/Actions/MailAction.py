@@ -24,6 +24,8 @@ import datetime
 class MailAction:
     """Common actions to be taken
     by the Tailer"""
+    
+    mailLevels = ['ERROR','FATAL']
 
     def __init__(self, fro = None, to = None, hostname = None, user = None, passwd = None):
         self.fro = fro
@@ -35,16 +37,13 @@ class MailAction:
         self.timer = Timer.Timer(60)
         self.timer.startTimer()
 
+
     def triggerAction(self,message):
         '''msg to print, send by email, whatever...'''
         
         body = message.getPlainMessage()
         
-        # for the moment only send notifications
-        # when fatal level. Actually, it should 
-        # be decided by user.
-
-        if message.getMessageLevel() != 'FATAL':
+        if message.getMessageLevel() not in MailAction.mailLevels and not message.isATarget():
             return
 
         now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
