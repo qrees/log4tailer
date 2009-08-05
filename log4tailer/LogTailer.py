@@ -62,7 +62,7 @@ class LogTailer:
             line = log.readLine()
             while line != '':
                 line = line.rstrip()
-                message.parse(line)
+                message.parse(line,log.getOwnOutputColor())
                 #for action in self.actions:
                  #   action.triggerAction(message)
                 printAction.printInit(message)
@@ -190,7 +190,7 @@ class LogTailer:
                         lastLogPathChanged = log.getLogPath()
                     
                         
-                    message.parse(line)
+                    message.parse(line,log.getOwnOutputColor())
                     resume.update(message,log)
                     for action in self.actions:
                         action.triggerAction(message)

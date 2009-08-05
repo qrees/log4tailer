@@ -39,6 +39,7 @@ class Message:
         self.colorparser = ColorParser()
         self.messageLevel = None
         self.pauseMode = PauseMode.PauseMode()
+        self.logOwnColor = False
         if properties:
             self.pauseMode.parseConfig(properties)
     
@@ -62,6 +63,11 @@ class Message:
         if self.isTarget:
             return (self.pauseMode.getPause('target'),self.color.backgroundemph+self.plainMessage+self.color.reset)
         
+        if self.logOwnColor:
+            return (0,self.color.getLogColor(self.logOwnColor)
+                    +self.plainMessage+self.color.reset)
+   
+
         # tail the other lines (levels)
         levelcolor = ""
         if self.messageLevel == "WARN":
@@ -91,9 +97,7 @@ class Message:
     def getPlainMessage(self):
         return self.plainMessage
     
-    def parse(self,line):
-        '''Need to parse the line
-        and check in what level we are in'''
+    def __parseSetOpts(self,line):
         self.isTarget = None
         if line:
             self.plainMessage = line.rstrip()
@@ -107,10 +111,11 @@ class Message:
         
         self.plainMessage = None
         self.messageLevel = 'UNKNOWN'
-        
-                
 
-   
-        
+    def parse(self,line,logOwnColor):
+        '''Need to parse the line
+        and check in what level we are in'''
+        self.logOwnColor = logOwnColor
+        self.__parseSetOpts(line)                
         
 

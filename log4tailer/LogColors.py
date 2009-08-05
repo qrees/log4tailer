@@ -51,3 +51,6 @@ class LogColors:
                 self.fatal = code
             elif key == "debug":
                 self.debug = code
+
+    def getLogColor(self,color):
+        return self.color.getCode(color)

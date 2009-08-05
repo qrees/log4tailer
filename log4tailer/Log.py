@@ -24,12 +24,19 @@ from stat import *
 class Log:
     '''Class that defines a common
     structure in a log'''
-    def __init__(self,path):
+    def __init__(self,path,properties=None):
         self.path = path
         self.fh = None
         self.inode = None
         self.size = None
         self.loglevel = None
+        self.properties = properties
+        self.ownOutputColor = None
+        if properties:
+            try:
+                self.ownOutputColor = properties.getValue(path)
+            except:
+                pass
 
     def getcurrInode(self):
         try:
@@ -119,4 +126,5 @@ class Log:
         return self.path
 
     
-    
+    def getOwnOutputColor(self):
+        return self.ownOutputColor

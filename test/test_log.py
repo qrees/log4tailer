@@ -22,6 +22,7 @@ import os,sys
 
 sys.path.append('..')
 from log4tailer.Log import Log
+from log4tailer.Properties import Property
 
 class TestLog(unittest.TestCase):
 
@@ -33,7 +34,8 @@ class TestLog(unittest.TestCase):
         self.logfile.write(self.aline)
         self.logfile.close()
         self.logname = 'out.log'
-    
+        self.config = 'config'
+
     def openLog(self):
         log = Log(self.logname)
         log.openLog()
@@ -81,6 +83,23 @@ class TestLog(unittest.TestCase):
         while log.readLine():
             count += 1
         self.assertEqual(10,count)
+
+    def testshouldHaveItsOwnColor(self):
+        fh = open('config','w')
+        fh.write(self.logname+'='+'green\n')
+        fh.close()
+        properties = Property('config')
+        properties.parseProperties()
+        log = Log(self.logname,properties)
+        log.openLog()
+        self.assertTrue(log.getOwnOutputColor())
+        log.closeLog()
+        os.remove(self.config)
+
+    def testshouldNotHaveItsOwnColorifConfigNotPassed(self):
+        log = self.openLog()
+        self.assertFalse(log.getOwnOutputColor())
+        log.closeLog()
 
     def tearDown(self):
         os.remove(self.logname)

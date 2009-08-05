@@ -127,8 +127,9 @@ def main():
         sys.exit()
 
     for i in args:
-        log = Log.Log(i)
+        log = Log.Log(i,properties)
         tailer.addLog(log)
+
     #startupNotice()
     if nlines:
         tailer.printLastNLines(nlines)
