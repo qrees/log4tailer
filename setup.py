@@ -53,7 +53,7 @@ screen. By providing colors, the human eye will discern and quickly identify
 specific levels or lines. 
 '''
 
-__version__='1.42'
+__version__='1.45'
 
 try:
     from distutils.core import setup
