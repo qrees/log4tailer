@@ -32,7 +32,7 @@ Options:
 
 Normal functionality:
 
-log4tailer.py pathToLogs 
+log4tail pathToLogs 
 
 will tail the logs with colors. 
 
