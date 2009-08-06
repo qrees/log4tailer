@@ -1,12 +1,13 @@
 ====================================
-release 1.4x 
+06/08/09 release 1.45 
 ====================================
 
 - tails from stdin
 - Mail action for errors and fatals along 
 with targets. This is actioned in either 
 mail action with -m or silent action with -s
-
+- Every log can have its own color if 
+specified in configfile
 
 
 ====================================

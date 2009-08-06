@@ -153,7 +153,7 @@ class LogTailer:
         message = Message(self.logcolors,self.target,self.properties)
         stdin = sys.stdin
         for line in stdin:
-            message.parse(line)
+            message.parse(line,False)
             for action in self.actions:
                 action.triggerAction(message)
     
