@@ -42,7 +42,7 @@ class TestResume(unittest.TestCase):
         fh = log.openLog()
         lines = [ line.rstrip() for line in fh.readlines() ]
         for line in lines:
-            message.parse(line,log.getOwnOutputColor())
+            message.parse(line,log.getOptionalParameters())
             resume.update(message,log)
 
 

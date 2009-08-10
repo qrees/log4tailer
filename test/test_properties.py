@@ -14,6 +14,7 @@ class TestProperties(unittest.TestCase):
                         'error':'red'}
         for key,value in colorconfigs.iteritems():
             self.configfh.write(key +'='+value+'\n')
+
         self.configfh.close()
         self.configKeys = colorconfigs.keys().sort()
 
@@ -24,11 +25,23 @@ class TestProperties(unittest.TestCase):
         # my colorconfigs keys are already in lowercase
         self.assertEqual(self.configKeys,configPropertyKeys)
     
-    def testKeyNotfoundException(self):
+    def testcontainsOwnTargetLog(self):
+        self.configfh = open('anotherconfig.txt','w')
+        key = "targets /var/log/messages" 
+        value = "$2009-08-09 anything, ^regex2"
+        targetline = key+"="+value+"\n"
+        self.configfh.write(targetline)
+        self.configfh.close()
+        property = Property('anotherconfig.txt')
+        property.parseProperties()
+        self.assertEqual(value,property.getValue(key))
+        os.remove('anotherconfig.txt')
+
+    def testshouldReturnNoneifKeyNotFound(self):
         property = Property(self.configfile)
         property.parseProperties()
         key = 'hi'
-        self.assertRaises(KeyNotFoundException,property.getValue,key)
+        self.assertFalse(property.getValue(key))
     
     def __createDuplicateKeysConfig(self):
         os.remove(self.configfile)

@@ -24,6 +24,9 @@ from stat import *
 class Log:
     '''Class that defines a common
     structure in a log'''
+    
+    TARGET_PROPERTY_PREFIX = "targets "
+
     def __init__(self,path,properties=None):
         self.path = path
         self.fh = None
@@ -32,11 +35,10 @@ class Log:
         self.loglevel = None
         self.properties = properties
         self.ownOutputColor = None
+        self.ownTarget = None    
         if properties:
-            try:
-                self.ownOutputColor = properties.getValue(path)
-            except:
-                pass
+            self.ownOutputColor = properties.getValue(path)
+            self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX+path)
 
     def getcurrInode(self):
         try:
@@ -128,3 +130,11 @@ class Log:
     
     def getOwnOutputColor(self):
         return self.ownOutputColor
+
+    def getOwnTarget(self):
+        if self.ownTarget:
+            return re.compile('|'.join(self.ownTarget.split(',')))
+        return None
+    
+    def getOptionalParameters(self):
+        return (self.getOwnOutputColor(),self.getOwnTarget())

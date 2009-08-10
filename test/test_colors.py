@@ -35,12 +35,12 @@ class TestColors(unittest.TestCase):
         for count in range(len(self.someLogTraces)):
             line = log.readLine()
             line = line.rstrip()
-            message.parse(line,log.getOwnOutputColor())
+            message.parse(line,log.getOptionalParameters())
             action.triggerAction(message)
         
         line = log.readLine()
         self.assertEqual('',line)
-        message.parse(line,log.getOwnOutputColor())
+        message.parse(line,log.getOptionalParameters())
         print "nothing in next line"
         action.triggerAction(message)
         print ""
@@ -53,7 +53,7 @@ class TestColors(unittest.TestCase):
         message = Message(logcolors)
         action = PrintAction()
         
-        message.parse(trace,False)
+        message.parse(trace,(None,None))
         print "Test: You should see a red log trace now: "
         action.triggerAction(message)
 

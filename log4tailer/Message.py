@@ -112,10 +112,12 @@ class Message:
         self.plainMessage = None
         self.messageLevel = 'UNKNOWN'
 
-    def parse(self,line,logOwnColor):
+    def parse(self,line,optionalParameters):
         '''Need to parse the line
         and check in what level we are in'''
-        self.logOwnColor = logOwnColor
+        self.logOwnColor, ownTarget = optionalParameters
+        if ownTarget:
+            self.patarget = ownTarget
         self.__parseSetOpts(line)                
         
 

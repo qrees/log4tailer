@@ -55,8 +55,9 @@ class Property:
     def getValue(self,key):
         if key in self.dictproperties:
             return self.dictproperties[key]
-        else:
-            raise KeyNotFoundException(key+" key not found")
+        #else:
+        #    raise KeyNotFoundException(key+" key not found")
+        return None
     
     def getKeys(self):
         return self.keys

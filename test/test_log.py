@@ -18,7 +18,7 @@
 
 
 import unittest
-import os,sys
+import os,sys,re
 
 sys.path.append('..')
 from log4tailer.Log import Log
@@ -95,6 +95,38 @@ class TestLog(unittest.TestCase):
         self.assertTrue(log.getOwnOutputColor())
         log.closeLog()
         os.remove(self.config)
+
+    def testshouldHaveitsOwnTargetSchemesIfProvidedInConfigFile(self):
+        fh = open('config.txt','w')
+        regexes = "log$, ^2009-10-12 got something here$"
+        allregex = re.compile('|'.join(regexes.split(',')))
+        targetsline = "targets /var/log/messages = "+regexes+"\n"
+        fh.write(targetsline)
+        fh.close()
+        property = Property('config.txt')
+        property.parseProperties()
+        self.assertEqual(regexes,property.getValue('targets /var/log/messages'))
+        log = Log('/var/log/messages',property)
+        self.assertEqual(allregex,log.getOwnTarget())
+        os.remove('config.txt')
+    
+    def __createAConfigWithProperties(self):
+        fh = open('config.txt','w')
+        regexes = "log$, ^2009-10-12 got something here$"
+        allregex = re.compile('|'.join(regexes.split(',')))
+        targetsline = "targets /var/log/messages = "+regexes+"\n"
+        fh.write(targetsline)
+        fh.write("/var/log/messages = green\n")
+        fh.close()
+        property = Property('config.txt')
+        property.parseProperties()
+        return property
+
+    def testshouldGetTupleOfOptionalParameters(self):
+        log = Log('/var/log/messages',self.__createAConfigWithProperties())
+        ownColors, ownTargets = log.getOptionalParameters()
+        self.assertTrue(ownColors)
+        self.assertTrue(ownTargets)
 
     def testshouldNotHaveItsOwnColorifConfigNotPassed(self):
         log = self.openLog()
