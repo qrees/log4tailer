@@ -27,7 +27,9 @@ except:
 
 sys.path.append('..')
 from log4tailer.Actions.InactivityAction import InactivityAction
+from log4tailer.Actions.MailAction import MailAction
 from log4tailer.Message import Message
+from log4tailer.Properties import Property
 
 class TestInactivityAction(unittest.TestCase):
     '''test that we print an alert to stdout
@@ -37,7 +39,6 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker = mox.Mox()
 
     def testSendingAlertBeyondInactivityTime(self):
-        #i'll need a mock for the message class i guess in here
         message = self.message_mocker.CreateMock(Message)
         
         # when there is no message, inactivity action 
@@ -73,7 +74,6 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker.VerifyAll()
 
     def testInactivityTimeCanBeFloatingPointNumberSeconds(self):
-        
         message = self.message_mocker.CreateMock(Message)
         
         # when there is no message, inactivity action 
@@ -89,9 +89,34 @@ class TestInactivityAction(unittest.TestCase):
         inactivityAction.triggerAction(message)
         self.message_mocker.VerifyAll()
 
-
-
-
+    def testShouldGetInactivityNotificationTypeifInConfigFile(self):
+        fh = open('config.txt','w')
+        fh.write('inactivitynotification = mail\n')
+        fh.close()
+        property = Property('config.txt')
+        property.parseProperties()
+        inactivityAction = InactivityAction(1,property)
+        self.assertEqual('mail',inactivityAction.getNotificationType())
+    
+    def testShouldBePrintNotificationTypeifNoConfigFile(self):
+        inactivityAction = InactivityAction(1)
+        self.assertEqual('print',inactivityAction.getNotificationType())
+    
+    def testIfMailNotificationTypeAlreadyAvailablebyMailActionItShouldSetItUp(self):
+        mailActionMocker = mox.Mox()
+        mailAction = mailActionMocker.CreateMock(MailAction)
+        fh = open('config.txt','w')
+        fh.write('inactivitynotification = mail\n')
+        fh.close()
+        property = Property('config.txt')
+        property.parseProperties()
+        inactivityAction = InactivityAction(1,property)
+        if inactivityAction.getNotificationType() == 'mail':
+            # what is called inversion of control pattern actually
+            inactivityAction.setMailNotification(mailAction)
+        else:
+            self.fail('should be inactivityAction with mail Notification') 
+        
 if __name__ == '__main__':
         unittest.main()
 

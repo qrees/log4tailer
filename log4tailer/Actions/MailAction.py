@@ -36,21 +36,25 @@ class MailAction:
         self.conn = None
         self.timer = Timer.Timer(60)
         self.timer.startTimer()
-
+        self.bodyMailAction = None
+        self.triggeredNotSent = False
 
     def triggerAction(self,message):
         '''msg to print, send by email, whatever...'''
         
-        body = message.getPlainMessage()
-        
-        if message.getMessageLevel() not in MailAction.mailLevels and not message.isATarget():
-            return
+        body = self.bodyMailAction
+        if not body:
+            body = message.getPlainMessage()
+            if message.getMessageLevel() not in MailAction.mailLevels and not message.isATarget():
+                return
 
         now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
 
         msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
+        
         try:
-            if self.timer.awaitSend():
+            if self.timer.awaitSend(self.triggeredNotSent):
+                self.triggeredNotSent = True
                 return
             self.conn.sendmail(self.fro,self.to,msg)
         except SMTPServerDisconnected:
@@ -61,8 +65,12 @@ class MailAction:
             self.connectSMTP()
             self.conn.sendmail(self.fro,self.to,msg)
 
+        self.bodyMailAction = None
+        self.triggeredNotSent = False
         return
 
+    def setBodyMailAction(self,body):
+        self.bodyMailAction = body
 
     def connectSMTP(self):
         try:

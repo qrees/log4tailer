@@ -24,29 +24,46 @@ class InactivityAction:
     This action must be triggered everytime 
     we scan in the log.'''
 
-    def __init__(self,inactivityTime):
+    InactivityActionNotification = 'inactivitynotification'
+
+    def __init__(self,inactivityTime,properties=None):
         self.inactivityTime = inactivityTime
         self.timer = Timer.Timer(inactivityTime)
         self.timer.startTimer()
         self.logColors = LogColors.LogColors()
         self.acumulativeTime = 0
+        self.mailAction = None
+        self.notification = 'print'
+        if properties:
+            self.notification = properties.getValue(InactivityAction.InactivityActionNotification)
 
     def triggerAction(self,message):
         if not message.getPlainMessage():
             ellapsedTime = self.timer.inactivityEllapsed()
             if ellapsedTime > float(self.inactivityTime):
                 self.acumulativeTime += ellapsedTime
-                # at this moment we will just print an emphasized alert in stdout
-                print self.logColors.backgroundemph+"Inactivity in the log for "+ str(self.acumulativeTime) + " seconds"+self.logColors.reset
-                self.timer.reset()
+                messageAlert = "Inactivity in the log for "+ str(self.acumulativeTime) + " seconds"
+                
+                if self.notification == 'print':
+                    print self.logColors.backgroundemph+messageAlert+self.logColors.reset
+                elif self.notification == 'mail':
+                    self.mailAction.setBodyMailAction(messageAlert)
+                    self.mailAction.triggerAction(message)
 
+                self.timer.reset()
         # else if we got sth in message then, means we got 
         # some kind of activity, so do nothing
         else:
             #start the timer again
-            self.timer.reset()
+            self.resetTimer()
             self.acumulativeTime = 0
 
+    def getNotificationType(self):
+        return self.notification
 
-
-
+    def setMailNotification(self,mailAction):
+        '''sets a mailAction for inactivityAction notification'''
+        self.mailAction = mailAction
+    
+    def resetTimer(self):
+        self.timer.reset()

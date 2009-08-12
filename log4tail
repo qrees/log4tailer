@@ -50,6 +50,12 @@ def startupNotice():
                 under certain conditions; type `show c' for details."""
     print notice           
 
+def setupMailAction():
+    (fromAddress,toAddress,hostname,username,pwd) = configMail()
+    mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
+    mailAction.connectSMTP()
+    return mailAction
+
 def main():
     if len(sys.argv[1:]) == 0:
         print "Provide at least one log"
@@ -65,7 +71,6 @@ def main():
     parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
     parser.add_option("-m","--mail",action="store_true",dest="mail",help="notification by mail when a fatal is found")
 
-    #parser.add_option("-a","--action",dest="action",help="multiple actions to be triggered, defaults to print")
     (options,args) = parser.parse_args()
     
     # defaults 
@@ -102,9 +107,7 @@ def main():
         silence = True
 
     if options.mail:
-        (fromAddress,toAddress,hostname,username,pwd) = configMail()
-        mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
-        mailAction.connectSMTP()
+        mailAction = setupMailAction()
         actions.append(mailAction)
         
     if options.tailnlines:
@@ -113,13 +116,18 @@ def main():
         target = options.target
 
     if options.inactivity:
-        inactivityAction = InactivityAction.InactivityAction(options.inactivity)
+        inactivityAction = InactivityAction.InactivityAction(options.inactivity,properties)
+        if inactivityAction.getNotificationType() == 'mail':
+            if options.mail:
+                inactivityAction.setMailNotification(actions[len(actions)-1])
+            else:
+                mailAction = setupMailAction()
+                inactivityAction.setMailNotification(mailAction)
+            #when first instantiated initializes a timer. Once we have entered the mail
+            #details, the inactivity could have gone beyond threshold already, so reset it.
+            inactivityAction.resetTimer()
         actions.append(inactivityAction)
 
-    # are there more actions provided
-
-    
-    
     tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions,properties)
     
     if args[0] == '-':

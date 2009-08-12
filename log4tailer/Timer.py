@@ -51,17 +51,26 @@ class Timer:
     def stopTimer(self):
         self.start = 0
 
-    def awaitSend(self):
+    def beyondGap(self,ellapsed):
+        return ellapsed > self.gapNotification
+
+    def awaitSend(self,triggeredNotSent):
         """return True if we have timed out
         False otherwise"""
-        
+            
+        if triggeredNotSent:
+            if self.beyondGap(self.inactivityEllapsed()):
+                self.reset()
+                return False
+            return True
+
         ellapsed = self.ellapsed()
 
         if ellapsed <= self.gapNotification and self.count == 0:
-            self.count += 1
+            self.count += 1 
             return False
 
-        elif ellapsed > self.gapNotification:
+        elif self.beyondGap(ellapsed):
             return False
         
         return True
