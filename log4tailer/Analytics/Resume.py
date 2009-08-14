@@ -23,25 +23,32 @@ class Resume:
     '''Will report of number of debug, info and warn 
     events. For Error and Fatal will provide the timestamp 
     if there was any event of that level'''
+    
 
     def __init__(self,arrayLog):
         self.arrayLog = arrayLog
         self.initTime = time()
         self.logsReport = {}
         for log in arrayLog:
-            self.logsReport[log.getLogPath()] = {'DEBUG':0,
+            self.logsReport[log.getLogPath()] = {'TARGET':0,
+                                                 'DEBUG':0,
                                                  'INFO':0,
                                                  'WARN':0,
                                                  'ERROR':[],
                                                  'FATAL':[]}
 
-        self.nonTimeStamped = ['DEBUG','INFO','WARN']
-        self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG']
+        self.nonTimeStamped = ['DEBUG','INFO','WARN','TARGET']
+        self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG','TARGET']
 
     def update(self,message,log):
         messageLevel = message.getMessageLevel()
+        isTarget = message.isATarget()
         logPath = log.getLogPath()
         logKey = self.logsReport[logPath]
+        # targets have preference over levels
+        if isTarget:
+            logKey['TARGET'] += 1
+            return
         if logKey.has_key(messageLevel):
             if messageLevel in self.nonTimeStamped:
                 logKey[messageLevel] += 1
@@ -49,8 +56,6 @@ class Resume:
                 logKey[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())
                         +'=>> '+message.getPlainMessage())
 
-                #def getInfo(self,messageLevel):
-       # return self.levels[messageLevel]
 
     def __hoursMinsFormat(self,secs):
         years, secs = divmod(secs, 31556926)

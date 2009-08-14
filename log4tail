@@ -17,11 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## TODO monitor inactivity in logs
-## post in web using Django Action
-## Grab smtp properties from file
-
-
 import os,sys,re,getpass
 from optparse import OptionParser
 from log4tailer import LogTailer,LogColors,Log,Properties
@@ -138,7 +133,6 @@ def main():
         log = Log.Log(i,properties)
         tailer.addLog(log)
 
-    #startupNotice()
     if nlines:
         tailer.printLastNLines(nlines)
         sys.exit()

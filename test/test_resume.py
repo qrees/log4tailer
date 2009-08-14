@@ -7,6 +7,7 @@ from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
+import mox
 
 class TestResume(unittest.TestCase):
 
@@ -45,8 +46,6 @@ class TestResume(unittest.TestCase):
             message.parse(line,log.getOptionalParameters())
             resume.update(message,log)
 
-
-
     def testReportResumeForTwoDifferentLogs(self):
         log = Log('out.log')
         log2 = Log('out2.log')
@@ -60,7 +59,27 @@ class TestResume(unittest.TestCase):
          
         print "you should see the resume output"
         resume.report()
-      
+
+    
+    def testShouldReportaTarget(self):
+        message_mocker = mox.Mox()
+        message = message_mocker.CreateMock(Message)
+        message.getMessageLevel().AndReturn('INFO')
+        message.isATarget().AndReturn(True)
+        message_mocker.ReplayAll()
+        logline = 'this is a target line and should be reported'
+        mylog = Log('out.log')
+        arraylogs = [mylog]
+        resume = Resume.Resume(arraylogs)
+        resume.update(message,mylog)
+        print "you should see a target found in report"
+        resume.report()
+    
+    def testTargetsAreNonTimeStampedinResume(self):
+        arrayLog = [Log('out.log')]
+        resume = Resume.Resume(arrayLog)
+        self.assertTrue('TARGET' in resume.nonTimeStamped)
+        self.assertTrue('TARGET' in resume.orderReport)
 
     def tearDown(self):
         os.remove('out.log')

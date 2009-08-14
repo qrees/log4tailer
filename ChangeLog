@@ -5,7 +5,14 @@ xx/xx/09 release 1.47
 targets if specified in config file
 - InactivityAction can notify by email 
 if specified in config file.
-- Fixed behaviour in the Timer
+- Fixed behaviour in the Timer. If there 
+were undesirable effects during gapnotification 
+time, it restarted the Timer, hence not 
+notifying after gaptime.
+- Properties class if not found key, 
+does not throw exception, returns None 
+for convenience.
+- Updated documentation
 
 ====================================
 06/08/09 release 1.45 
