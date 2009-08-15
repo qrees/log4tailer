@@ -44,7 +44,11 @@
 # pausefatal = 1
 # pausetarget = 1
 
+# ================================================================
+# Inactivity action notification, by email or stdout.
+# Possible values can be "mail" or "print". By default is "print".
+# ================================================================
 
-
+# inactivitynotification = mail
 
 
