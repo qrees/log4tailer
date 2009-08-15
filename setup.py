@@ -88,8 +88,6 @@ class DoDoc(Command):
     user_options = []
 
     def initialize_options(self):
-        # if you're not Jordi, I guess
-        # this is not gonna work for you
         if not os.path.isdir('../userguide/'):
             print "checkout userguide"
             sys.exit()
