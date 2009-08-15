@@ -63,8 +63,6 @@ class LogTailer:
             while line != '':
                 line = line.rstrip()
                 message.parse(line,log.getOptionalParameters())
-                #for action in self.actions:
-                 #   action.triggerAction(message)
                 printAction.printInit(message)
                 line = log.readLine()
             # just to emulate the same behaviour as tail
@@ -92,21 +90,15 @@ class LogTailer:
 
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
-
         message = Message(self.logcolors)
         action = PrintAction.PrintAction()
         for log in self.arrayLog:
             fd = log.openLog()
             numlines = log.numLines()
-            # I could do, but would imply 
-            # memory
-            #numlines = len(fd.readlines())
-            #fd.seek(0)
             pos = numlines-n
             count = 0
             buff = []
             ttlines = self.getTermLines()
-
             for curpos,line in enumerate(fd):
                 if curpos >= pos:
                     line = line.rstrip()
@@ -188,7 +180,6 @@ class LogTailer:
                             print
                             self.__printHeaderLog(log.getLogPath())
                         lastLogPathChanged = log.getLogPath()
-                    
                         
                     message.parse(line,log.getOptionalParameters())
                     resume.update(message,log)
@@ -201,7 +192,6 @@ class LogTailer:
                     time.sleep(self.pause)
         except KeyboardInterrupt:
             for log in self.arrayLog:
-                #print "closing "+ log.path
                 log.closeLog()
             if self.silence:
                 self.action.quitSMTP()
