@@ -14,6 +14,7 @@ does not throw exception, returns None
 for convenience.
 - Targets are now reported in the final 
 report
+- Provided config file for convenience
 - Updated documentation
 
 
