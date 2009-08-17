@@ -53,7 +53,7 @@ screen. By providing colors, the human eye will discern and quickly identify
 specific levels or lines. 
 '''
 
-__version__='1.45'
+__version__='1.50'
 
 try:
     from distutils.core import setup
@@ -143,6 +143,43 @@ class Clean(Command):
             except:
                 pass
 
+class Stats(Command):
+    '''counts the number of 
+    lines of code in the project'''
+    
+    user_options = []
+    
+    def initialize_options(self):
+        self.sourceCodeFiles = []
+        avoidPath = ['./docs','./spyke']
+        avoidreg = '|'.join(avoidPath)
+        import re
+        avoidpat = re.compile('^('+avoidreg+')')
+        for root,path,files in os.walk('.'):
+            if avoidpat.search(root):
+                continue
+            for file in files:
+                if file.endswith('.py'):
+                    self.sourceCodeFiles.append(os.path.join(root,file))
+        self.sourceCodeFiles.append('./log4tail')
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        numLines = 0
+        import re
+        commentpat = re.compile(r'^(\s+|#.*)$')
+        for file in self.sourceCodeFiles:
+            print file
+            fh = open(file,'r')
+            numLines += len([k.rstrip() for k in fh if not commentpat.search(k)])
+            fh.close()
+        
+        print "Number of lines of code: "
+        print numLines
+
+
 class Release(Command):
     user_options = [('rtag',None,"definitive version, tag and release")]
 
@@ -187,7 +224,11 @@ setup(name="log4tailer",
       license = "GNU GPL v3",
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
       scripts = ["log4tail"],
-      cmdclass = {"release":Release,"test":Test, "clean":Clean,"dodoc":DoDoc},
+      cmdclass = {"release":Release,
+                  "test":Test, 
+                  "clean":Clean,
+                  "dodoc":DoDoc,
+                  "stats":Stats},
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',

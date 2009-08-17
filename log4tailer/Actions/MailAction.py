@@ -44,9 +44,15 @@ class MailAction:
         
         body = self.bodyMailAction
         if not body:
-            body = message.getPlainMessage()
             if message.getMessageLevel() not in MailAction.mailLevels and not message.isATarget():
                 return
+            message, logpath = message.getPlainMessage()
+            title = "Alert found for log "+logpath
+            fancyheader = len(title)*'='
+            body = fancyheader+"\n"
+            body += title+"\n"
+            body += fancyheader+"\n"
+            body += message+"\n"
 
         now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
 
@@ -71,6 +77,16 @@ class MailAction:
 
     def setBodyMailAction(self,body):
         self.bodyMailAction = body
+    
+    def sendNotificationMail(self,body):
+        '''Sends a notification mail'''
+        now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
+        msg = "Subject: Log4Tailer Notification Message\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
+        try:
+            self.conn.sendmail(self.fro,self.to,msg)
+        except SMTPServerDisconnected:
+            self.connectSMTP()
+            self.conn.sendmail(self.fro,self.to,msg)
 
     def connectSMTP(self):
         try:

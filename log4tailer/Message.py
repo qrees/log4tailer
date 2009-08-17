@@ -28,6 +28,7 @@ class Message:
         
         self.patarget = None
         self.isTarget = None
+        self.currentLogPath = None
         if target:
             # user can provide multiple
             # comma separated targets
@@ -59,31 +60,35 @@ class Message:
         if not self.plainMessage:
             return (0,'')
         
+        color = self.color
+
         # targets have priority over Levels
         if self.isTarget:
-            return (self.pauseMode.getPause('target'),self.color.backgroundemph+self.plainMessage+self.color.reset)
+            return (self.pauseMode.getPause('target'),color.backgroundemph+self.plainMessage+color.reset)
         
         if self.logOwnColor:
-            return (0,self.color.getLogColor(self.logOwnColor)
-                    +self.plainMessage+self.color.reset)
+            return (0,color.getLogColor(self.logOwnColor)
+                    +self.plainMessage+color.reset)
    
 
         # tail the other lines (levels)
         levelcolor = ""
-        if self.messageLevel == "WARN":
-            levelcolor = self.color.warn
-        elif self.messageLevel == "FATAL":
-            levelcolor = self.color.fatal
-        elif self.messageLevel == "INFO":
-            levelcolor = self.color.info 
-        elif self.messageLevel == "ERROR":
-            levelcolor = self.color.error 
-        elif self.messageLevel == "DEBUG":
-            levelcolor = self.color.debug 
+        level = self.messageLevel
+
+        if level == "WARN":
+            levelcolor = color.warn
+        elif level == "FATAL":
+            levelcolor = color.fatal
+        elif level == "INFO":
+            levelcolor = color.info 
+        elif level == "ERROR":
+            levelcolor = color.error 
+        elif level == "DEBUG":
+            levelcolor = color.debug 
         else:
             return (0,self.plainMessage)
 
-        return (self.pauseMode.getPause(self.messageLevel.lower()),levelcolor+self.plainMessage+self.color.reset)
+        return (self.pauseMode.getPause(level.lower()),levelcolor+self.plainMessage+color.reset)
 
         
     def __getMultipleTargets(self,target):
@@ -95,7 +100,7 @@ class Message:
 
 
     def getPlainMessage(self):
-        return self.plainMessage
+        return (self.plainMessage,self.currentLogPath)
     
     def __parseSetOpts(self,line):
         self.isTarget = None
@@ -115,7 +120,7 @@ class Message:
     def parse(self,line,optionalParameters):
         '''Need to parse the line
         and check in what level we are in'''
-        self.logOwnColor, ownTarget = optionalParameters
+        self.logOwnColor, ownTarget, self.currentLogPath = optionalParameters
         if ownTarget:
             self.patarget = ownTarget
         self.__parseSetOpts(line)                

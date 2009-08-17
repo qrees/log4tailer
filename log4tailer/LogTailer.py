@@ -21,8 +21,9 @@ import os, re, time, sys
 import resource
 from Message import Message
 from LogColors import LogColors
-from Actions import PrintAction
+from Actions import PrintAction,MailAction
 from Analytics.Resume import Resume
+from Configuration import MailConfiguration
 
 class LogTailer:
     '''Tails the log provided by Log class'''
@@ -35,6 +36,7 @@ class LogTailer:
         self.throttleTime = throttleTime 
         self.target = target
         self.properties = properties
+        self.mailAction = None
 
     def addLog(self,log):
         self.arrayLog.append(log)
@@ -149,10 +151,39 @@ class LogTailer:
             for action in self.actions:
                 action.triggerAction(message)
     
+    def mailIsSetup(self):
+        '''check if mail properties
+        already been setup'''
+        properties = self.properties
+        if properties:
+            if properties.getValue('inactivitynotification') == 'mail':
+                return True
+        for action in self.actions:
+            if isinstance(action,MailAction.MailAction):
+                self.mailAction = action
+                return True
+        return False
+    
+    def resumeBuilder(self):
+        resume = Resume(self.arrayLog)
+        properties = self.properties
+        if properties:
+            if properties.getValue('analyticsnotification') == 'mail':
+                if not self.mailIsSetup():
+                    mailAction = MailConfiguration.setupMailAction()
+                    resume.setMailNotification(mailAction)
+                else:
+                    resume.setMailNotification(self.mailAction)
+                analyticsgap = properties.getValue('analyticsgaptime')
+                if analyticsgap:
+                    resume.setAnalyticsGapNotification(analyticsgap)
+
+        return resume
+
     def tailer(self):
         '''Stdout multicolor tailer'''
         message = Message(self.logcolors,self.target,self.properties)
-        resume = Resume(self.arrayLog)
+        resume = self.resumeBuilder()
         self.posEnd()
         if self.silence:
             self.daemonize()

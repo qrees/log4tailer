@@ -21,17 +21,9 @@ import os,sys,re,getpass
 from optparse import OptionParser
 from log4tailer import LogTailer,LogColors,Log,Properties
 from log4tailer.Actions import PrintAction,MailAction,InactivityAction
+from log4tailer.Configuration import MailConfiguration
+
 import resource	
-
-
-def configMail():
-    hostname = raw_input("Host name for your SMTP account?\n")
-    username = raw_input("Your username?\n")
-    pwd = getpass.getpass()
-    fromAddress = raw_input("Alerts send From Address:\n")
-    toAddress = raw_input("Alerts send To Address:\n")
-    return (fromAddress,toAddress,hostname,username,pwd)
-
 
 def parseConfig(configfile):
     properties = Properties.Property(configfile)
@@ -44,12 +36,6 @@ def startupNotice():
             This is free software, and you are welcome to redistribute it
                 under certain conditions; type `show c' for details."""
     print notice           
-
-def setupMailAction():
-    (fromAddress,toAddress,hostname,username,pwd) = configMail()
-    mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
-    mailAction.connectSMTP()
-    return mailAction
 
 def main():
     if len(sys.argv[1:]) == 0:
@@ -95,14 +81,14 @@ def main():
         # There could be other actions like Post to Web Page
         # by using Django.
         
-        (fromAddress,toAddress,hostname,username,pwd) = configMail()
+        (fromAddress,toAddress,hostname,username,pwd) = MailConfiguration.configMail()
         mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
         actions.append(mailAction)
         mailAction.connectSMTP()
         silence = True
 
     if options.mail:
-        mailAction = setupMailAction()
+        mailAction = MailConfiguration.setupMailAction()
         actions.append(mailAction)
         
     if options.tailnlines:
@@ -116,7 +102,7 @@ def main():
             if options.mail:
                 inactivityAction.setMailNotification(actions[len(actions)-1])
             else:
-                mailAction = setupMailAction()
+                mailAction = MailConfiguration.setupMailAction()
                 inactivityAction.setMailNotification(mailAction)
             #when first instantiated initializes a timer. Once we have entered the mail
             #details, the inactivity could have gone beyond threshold already, so reset it.

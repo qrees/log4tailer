@@ -137,4 +137,4 @@ class Log:
         return None
     
     def getOptionalParameters(self):
-        return (self.getOwnOutputColor(),self.getOwnTarget())
+        return (self.getOwnOutputColor(),self.getOwnTarget(),self.getLogPath())

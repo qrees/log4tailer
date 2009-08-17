@@ -21,6 +21,8 @@
 import os,time
 
 class PrintAction:
+    '''PrintAction: prints to stdout the 
+    colorized log traces'''
 
     def __init__(self):
         pass

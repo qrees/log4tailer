@@ -4,9 +4,12 @@ import os,sys
 sys.path.append('..')
 from log4tailer.Analytics import Resume
 from log4tailer.Log import Log
+from log4tailer.Properties import Property
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
+from log4tailer.Actions.MailAction import MailAction
+
 import mox
 
 class TestResume(unittest.TestCase):
@@ -80,6 +83,26 @@ class TestResume(unittest.TestCase):
         resume = Resume.Resume(arrayLog)
         self.assertTrue('TARGET' in resume.nonTimeStamped)
         self.assertTrue('TARGET' in resume.orderReport)
+    
+    def testShouldSetupMailNotificationIfAnalyticsNotificationIsSetup(self):
+        fh = open('aconfig','w')
+        fh.write('analyticsnotification = mail\n')
+        fh.write('analyticsgaptime = 3600\n')
+        fh.close()
+        properties = Property('aconfig')
+        properties.parseProperties()
+        self.assertTrue(properties.isKey('analyticsnotification'))
+        arrayLog = [Log('out.log')]
+        resume = Resume.Resume(arrayLog)
+        mailactionmocker = mox.Mox()
+        mailaction = mailactionmocker.CreateMock(MailAction)
+        if properties.getValue('analyticsnotification') == 'mail':
+            resume.setMailNotification(mailaction)
+            self.assertEquals('mail',resume.getNotificationType())
+            gaptime = properties.getValue('analyticsgaptime')
+            if gaptime:
+                resume.setAnalyticsGapNotification(gaptime)
+                self.assertEquals(3600,int(resume.getGapNotificationTime()))
 
     def tearDown(self):
         os.remove('out.log')

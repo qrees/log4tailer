@@ -1,5 +1,5 @@
 ====================================
-xx/xx/09 release 1.47
+xx/xx/09 release 1.50
 ====================================
 - Every log can have its own set of 
 targets if specified in config file
@@ -15,6 +15,8 @@ for convenience.
 - Targets are now reported in the final 
 report
 - Provided config file for convenience
+- Report can be sent by email at 
+any given time provided in config
 - Updated documentation
 
 
