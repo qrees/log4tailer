@@ -105,9 +105,11 @@ class TestResume(unittest.TestCase):
             if gaptime:
                 resume.setAnalyticsGapNotification(gaptime)
                 self.assertEquals(3600,int(resume.getGapNotificationTime()))
+        os.remove('aconfig')
 
     def tearDown(self):
         os.remove('out.log')
+        os.remove('out2.log')
 
 if __name__ == '__main__':
     unittest.main()

@@ -97,7 +97,8 @@ class TestInactivityAction(unittest.TestCase):
         property.parseProperties()
         inactivityAction = InactivityAction(1,property)
         self.assertEqual('mail',inactivityAction.getNotificationType())
-    
+        os.remove('config.txt')
+
     def testShouldBePrintNotificationTypeifNoConfigFile(self):
         inactivityAction = InactivityAction(1)
         self.assertEqual('print',inactivityAction.getNotificationType())
@@ -116,7 +117,8 @@ class TestInactivityAction(unittest.TestCase):
             inactivityAction.setMailNotification(mailAction)
         else:
             self.fail('should be inactivityAction with mail Notification') 
-        
+        os.remove('config.txt')
+
 if __name__ == '__main__':
         unittest.main()
 
