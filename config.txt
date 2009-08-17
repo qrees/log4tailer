@@ -51,4 +51,9 @@
 
 # inactivitynotification = mail
 
+# ======================
+# Analytics notification
+# ======================
 
+# analyticsnotification = mail
+# analyticsgaptime = 10.5
