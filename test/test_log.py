@@ -124,9 +124,10 @@ class TestLog(unittest.TestCase):
 
     def testshouldGetTupleOfOptionalParameters(self):
         log = Log('/var/log/messages',self.__createAConfigWithProperties())
-        ownColors, ownTargets = log.getOptionalParameters()
+        ownColors, ownTargets, logpath = log.getOptionalParameters()
         self.assertTrue(ownColors)
         self.assertTrue(ownTargets)
+        self.assertTrue(logpath)
 
     def testshouldNotHaveItsOwnColorifConfigNotPassed(self):
         log = self.openLog()

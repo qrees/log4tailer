@@ -151,6 +151,7 @@ class Stats(Command):
     
     def initialize_options(self):
         self.sourceCodeFiles = []
+        self.numpackages = 0
         avoidPath = ['./docs','./spyke']
         avoidreg = '|'.join(avoidPath)
         import re
@@ -160,6 +161,8 @@ class Stats(Command):
                 continue
             for file in files:
                 if file.endswith('.py'):
+                    if file == '__init__.py':
+                        self.numpackages += 1
                     self.sourceCodeFiles.append(os.path.join(root,file))
         self.sourceCodeFiles.append('./log4tail')
 
@@ -168,17 +171,27 @@ class Stats(Command):
 
     def run(self):
         numLines = 0
+        nonsourcelines = 0
         import re
         commentpat = re.compile(r'^(\s+|#.*)$')
         for file in self.sourceCodeFiles:
-            print file
             fh = open(file,'r')
-            numLines += len([k.rstrip() for k in fh if not commentpat.search(k)])
+            lines = fh.readlines()
             fh.close()
-        
+            sourcelines = len([k.rstrip() for k in lines if not commentpat.search(k)])
+            nonsourcelines += len(lines) - sourcelines
+            numLines += sourcelines
+
         print "Number of lines of code: "
         print numLines
-
+        print "Number of comments, blank lines"
+        print nonsourcelines
+        print "Effective number of source code lines"
+        print numLines - nonsourcelines
+        print "Number of files"
+        print len(self.sourceCodeFiles)
+        print "Number of packages"
+        print self.numpackages
 
 class Release(Command):
     user_options = [('rtag',None,"definitive version, tag and release")]

@@ -53,7 +53,7 @@ class TestColors(unittest.TestCase):
         message = Message(logcolors)
         action = PrintAction()
         
-        message.parse(trace,(None,None))
+        message.parse(trace,(None,None,None))
         print "Test: You should see a red log trace now: "
         action.triggerAction(message)
 

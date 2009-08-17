@@ -65,12 +65,14 @@ class TestResume(unittest.TestCase):
 
     
     def testShouldReportaTarget(self):
+        
+        logline = 'this is a target line and should be reported'
         message_mocker = mox.Mox()
         message = message_mocker.CreateMock(Message)
         message.getMessageLevel().AndReturn('INFO')
+        message.getPlainMessage().AndReturn((logline,'out.log'))
         message.isATarget().AndReturn(True)
         message_mocker.ReplayAll()
-        logline = 'this is a target line and should be reported'
         mylog = Log('out.log')
         arraylogs = [mylog]
         resume = Resume.Resume(arraylogs)
