@@ -1,1 +1,62 @@
-inactivitynotification = mail
+# Optional config for log4tailer
+# to activate it
+# log4tail -c config yourlogs
+
+# ================================
+# targets: which lines do you want 
+# to emphasize by using regexes
+# uncomment and provide your values.
+# ================================
+
+# targets path/to/log0 = regex0,regex1,regex2
+# targets path/to/log1 = regex0,regex1,regex2
+
+# ====================================================
+# Custom colours for every level. Available 
+# colours are: red, green, yellow, blue, magenta, cyan 
+# and white. Uncomment to override the default ones.
+# ====================================================
+
+# warn = yellow
+# error = magenta
+# fatal = red
+# info = green
+# debug = black
+
+# ======================================================
+# Every log with its own color scheme, overriding colors 
+# for every level.
+# ======================================================
+
+# /path/to/log0 = yellow
+# /path/to/log1 = red
+
+# ======================================================
+# Pause the output by the number of seconds specified if 
+# a level or target has been found. Uncomment the ones 
+# you want. The value can be any number in seconds. 
+# ======================================================
+
+# pausedebug = 4
+# pauseinfo = 2
+# pausewarn = 1
+# pauseerror = 1
+# pausefatal = 1
+# pausetarget = 1
+
+# ================================================================
+# Inactivity action notification, by email or stdout.
+# Possible values can be "mail" or "print". By default is "print".
+# ================================================================
+
+# inactivitynotification = mail
+
+# ==============================================================
+# Analytics notification. You can make log4tailer send you 
+# a report every analyticsgaptime seconds. By default it will be 
+# printed out once finished. Uncomment analyticsnotification to 
+# report by email. Another possible value can be "print".
+# ==============================================================
+
+# analyticsnotification = mail
+# analyticsgaptime = 10.5
