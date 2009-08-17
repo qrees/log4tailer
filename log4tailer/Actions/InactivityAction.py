@@ -33,16 +33,18 @@ class InactivityAction:
         self.logColors = LogColors.LogColors()
         self.acumulativeTime = 0
         self.mailAction = None
-        self.notification = 'print'
         if properties:
-            self.notification = properties.getValue(InactivityAction.InactivityActionNotification)
+            notification = properties.getValue(InactivityAction.InactivityActionNotification)
+        self.notification = notification or 'print'
 
+        print self.notification
     def triggerAction(self,message):
-        if not message.getPlainMessage():
+        plainmessage, logpath = message.getPlainMessage()
+        if not plainmessage:
             ellapsedTime = self.timer.inactivityEllapsed()
             if ellapsedTime > float(self.inactivityTime):
                 self.acumulativeTime += ellapsedTime
-                messageAlert = "Inactivity in the log for "+ str(self.acumulativeTime) + " seconds"
+                messageAlert = "Inactivity in the log "+logpath+" for "+ str(self.acumulativeTime) + " seconds"
                 
                 if self.notification == 'print':
                     print self.logColors.backgroundemph+messageAlert+self.logColors.reset
@@ -63,6 +65,7 @@ class InactivityAction:
 
     def setMailNotification(self,mailAction):
         '''sets a mailAction for inactivityAction notification'''
+        self.notification = 'mail'
         self.mailAction = mailAction
     
     def resetTimer(self):

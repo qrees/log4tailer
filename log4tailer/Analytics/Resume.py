@@ -102,7 +102,6 @@ class Resume:
     
     def setAnalyticsGapNotification(self,gapTime):
         self.gapTime = float(gapTime)
-        print "gaptime set to "+gapTime
         self.timer = Timer.Timer(self.gapTime)
         self.timer.startTimer()
 

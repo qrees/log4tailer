@@ -99,7 +99,7 @@ def main():
     if options.inactivity:
         inactivityAction = InactivityAction.InactivityAction(options.inactivity,properties)
         if inactivityAction.getNotificationType() == 'mail':
-            if options.mail:
+            if options.mail or options.silence:
                 inactivityAction.setMailNotification(actions[len(actions)-1])
             else:
                 mailAction = MailConfiguration.setupMailAction()
