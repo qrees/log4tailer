@@ -1,4 +1,4 @@
 include ChangeLog
 include COPYING
-include config.txt
+include log4tailerconfig.txt
 include test/__init__.py
