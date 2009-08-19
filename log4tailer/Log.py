@@ -164,5 +164,8 @@ class Log:
         return self.inactivityAccTime
 
     def setInactivityAccTime(self, acctime):
+        if acctime == 0:
+            self.inactivityAccTime = 0
+            return
         self.inactivityAccTime += acctime
 
