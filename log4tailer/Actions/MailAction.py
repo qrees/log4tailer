@@ -55,7 +55,6 @@ class MailAction:
 
         msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
         timer = log.getMailTimer()
-        print log.getLogPath()
         try:
             if timer.awaitSend(log.getTriggeredNotSent()):
                 log.setTriggeredNotSent(True)

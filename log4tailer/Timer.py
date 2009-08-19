@@ -68,7 +68,6 @@ class Timer:
         ellapsed = self.ellapsed()
         if ellapsed <= self.gapNotification and self.count == 0:
             self.count += 1 
-            print self.count
             return False
         elif self.beyondGap(ellapsed):
             return False
