@@ -61,7 +61,6 @@ class Message:
             return (0,'')
         
         color = self.color
-
         # targets have priority over Levels
         if self.isTarget:
             return (self.pauseMode.getPause('target'),color.backgroundemph+self.plainMessage+color.reset)
@@ -69,8 +68,6 @@ class Message:
         if self.logOwnColor:
             return (0,color.getLogColor(self.logOwnColor)
                     +self.plainMessage+color.reset)
-   
-
         # tail the other lines (levels)
         levelcolor = ""
         level = self.messageLevel
@@ -113,7 +110,6 @@ class Message:
             return
         # if we don't have anything in line
         # just set current Message to unknown
-        
         self.plainMessage = None
         self.messageLevel = 'UNKNOWN'
 

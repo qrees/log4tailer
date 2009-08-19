@@ -203,9 +203,6 @@ class LogTailer:
             curpath = ""
             while True:
                 found = 0
-                # throttleTime is when our app
-                # logs very fast and we want to slow
-                # down the tailing
                 time.sleep(self.throttleTime)
                 for log in self.arrayLog:
                     changed = 0

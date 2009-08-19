@@ -58,9 +58,7 @@ def main():
     pause = 1
     silence = False 
     throttle = 0
-    # default action is printing STDOUT
     printAction = PrintAction.PrintAction()
-    # predefined actions
     actions = [printAction]
     nlines = False
     target = None
@@ -77,10 +75,6 @@ def main():
     if options.throttle:
         throttle = float(options.throttle)
     if options.silence:
-        # silence mode enables sendSmtp Action.
-        # There could be other actions like Post to Web Page
-        # by using Django.
-        
         (fromAddress,toAddress,hostname,username,pwd) = MailConfiguration.configMail()
         mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
         actions.append(mailAction)

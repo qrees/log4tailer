@@ -19,7 +19,7 @@ import sys
 from distutils.core import Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
-from os.path import splitext, basename, join as pjoin, walk
+from os.path import isdir, splitext, basename, join as pjoin
 from subprocess import Popen,PIPE
 import os,shutil
 
@@ -224,8 +224,15 @@ class Release(Command):
         self.run_command("dodoc")
 
 
+def getDeployPackages():
+    import glob
+    log4tailerpackages = []
+    for file in glob.glob('./log4tailer/*'):
+        if isdir(file):
+            log4tailerpackages.append(basename(file))
+    return log4tailerpackages
 
-PACKAGES = ("Actions Analytics").split()
+PACKAGES = getDeployPackages()
 
 setup(name="log4tailer",
       version=__version__,

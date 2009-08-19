@@ -57,28 +57,21 @@ class Timer:
     def awaitSend(self,triggeredNotSent):
         """return True if we have timed out
         False otherwise"""
-            
+        # triggered not sent; when it is being 
+        # triggered but we are in an awaiting 
+        # gap period
         if triggeredNotSent:
-            print "triggerednotsent"
             if self.beyondGap(self.inactivityEllapsed()):
                 self.reset()
                 return False
             return True
-
         ellapsed = self.ellapsed()
-
         if ellapsed <= self.gapNotification and self.count == 0:
-            print "just before"
             self.count += 1 
             print self.count
             return False
-
         elif self.beyondGap(ellapsed):
-            print "beyond gap"
-            #self.reset()
-            #self.count += 1
             return False
-        print "here"
         return True
 
     def reset(self):
