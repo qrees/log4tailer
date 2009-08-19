@@ -104,9 +104,6 @@ def main():
             else:
                 mailAction = MailConfiguration.setupMailAction()
                 inactivityAction.setMailNotification(mailAction)
-            #when first instantiated initializes a timer. Once we have entered the mail
-            #details, the inactivity could have gone beyond threshold already, so reset it.
-            inactivityAction.resetTimer()
         actions.append(inactivityAction)
 
     tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions,properties)
@@ -116,7 +113,7 @@ def main():
         sys.exit()
 
     for i in args:
-        log = Log.Log(i,properties)
+        log = Log.Log(i,properties,options)
         tailer.addLog(log)
 
     if nlines:

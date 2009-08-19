@@ -21,7 +21,7 @@ import os, re, time, sys
 import resource
 from Message import Message
 from LogColors import LogColors
-from Actions import PrintAction,MailAction
+from Actions import PrintAction,MailAction,InactivityAction
 from Analytics.Resume import Resume
 from Configuration import MailConfiguration
 
@@ -151,17 +151,27 @@ class LogTailer:
             for action in self.actions:
                 action.triggerAction(message)
     
+    def __getAction(self,module):
+        for action in self.actions:
+            if isinstance(action,module):
+                return action
+        return None
+
     def mailIsSetup(self):
         '''check if mail properties
         already been setup'''
         properties = self.properties
+        action = self.__getAction(MailAction.MailAction)
+        if action:
+            self.mailAction = action
+            return True
         if properties:
             if properties.getValue('inactivitynotification') == 'mail':
-                return True
-        for action in self.actions:
-            if isinstance(action,MailAction.MailAction):
-                self.mailAction = action
-                return True
+                # check if there is any inactivity action actually setup
+                inactivityaction = self.__getAction(InactivityAction.InactivityAction)
+                if inactivityaction:
+                    self.mailAction = inactivityaction.getMailAction()
+                    return True
         return False
     
     def resumeBuilder(self):
@@ -215,7 +225,7 @@ class LogTailer:
                     message.parse(line,log.getOptionalParameters())
                     resume.update(message,log)
                     for action in self.actions:
-                        action.triggerAction(message)
+                        action.triggerAction(message,log)
                     log.size = log.getcurrSize()
 
                 if found == 0:

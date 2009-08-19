@@ -36,13 +36,13 @@ class TestColors(unittest.TestCase):
             line = log.readLine()
             line = line.rstrip()
             message.parse(line,log.getOptionalParameters())
-            action.triggerAction(message)
+            action.triggerAction(message,log)
         
         line = log.readLine()
         self.assertEqual('',line)
         message.parse(line,log.getOptionalParameters())
         print "nothing in next line"
-        action.triggerAction(message)
+        action.triggerAction(message,log)
         print ""
     
     def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
@@ -52,10 +52,10 @@ class TestColors(unittest.TestCase):
         logcolors = LogColors()
         message = Message(logcolors)
         action = PrintAction()
-        
+        anylog = Log('out.log')
         message.parse(trace,(None,None,None))
         print "Test: You should see a red log trace now: "
-        action.triggerAction(message)
+        action.triggerAction(message,anylog)
 
     def tearDown(self):
         os.remove(self.logfile)

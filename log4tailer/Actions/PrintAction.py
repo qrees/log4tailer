@@ -27,7 +27,7 @@ class PrintAction:
     def __init__(self):
         pass
     
-    def triggerAction(self,message):
+    def triggerAction(self,message,log):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
         (pause, colormsg) = message.getColorizedMessage()

@@ -17,6 +17,9 @@ report
 - Provided config file for convenience
 - Report can be sent by email at 
 any given time provided in config
+- Every log has its own timers in order 
+to monitor them separately when mail action 
+is set up.
 - Updated documentation
 
 

@@ -20,6 +20,7 @@
 
 import os,re,sys
 from stat import *
+from log4tailer.Timer import Timer
 
 class Log:
     '''Class that defines a common
@@ -27,7 +28,7 @@ class Log:
     
     TARGET_PROPERTY_PREFIX = "targets "
 
-    def __init__(self,path,properties=None):
+    def __init__(self,path,properties=None,options=None):
         self.path = path
         self.fh = None
         self.inode = None
@@ -36,10 +37,18 @@ class Log:
         self.properties = properties
         self.ownOutputColor = None
         self.ownTarget = None    
+        self.inactivityTimer = None
+        self.inactivityAccTime = 0
+        self.mailTimer = Timer(60)
+        self.mailTimer.startTimer()
         if properties:
             self.ownOutputColor = properties.getValue(path)
             self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX+path)
-
+        if options and options.inactivity:
+            self.inactivityTimer = Timer(float(options.inactivity))
+            self.inactivityTimer.startTimer()
+        self.triggeredNotSent = False
+        
     def getcurrInode(self):
         try:
             inode = os.stat(self.path)[ST_INO]
@@ -138,3 +147,22 @@ class Log:
     
     def getOptionalParameters(self):
         return (self.getOwnOutputColor(),self.getOwnTarget(),self.getLogPath())
+
+    def getInactivityTimer(self):
+        return self.inactivityTimer
+
+    def getMailTimer(self):
+        return self.mailTimer
+
+    def getTriggeredNotSent(self):
+        return self.triggeredNotSent 
+
+    def setTriggeredNotSent(self, notsent):
+        self.triggeredNotSent = notsent
+
+    def getInactivityAccTime(self):
+        return self.inactivityAccTime
+
+    def setInactivityAccTime(self, acctime):
+        self.inactivityAccTime += acctime
+

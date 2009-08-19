@@ -59,6 +59,7 @@ class Timer:
         False otherwise"""
             
         if triggeredNotSent:
+            print "triggerednotsent"
             if self.beyondGap(self.inactivityEllapsed()):
                 self.reset()
                 return False
@@ -67,12 +68,17 @@ class Timer:
         ellapsed = self.ellapsed()
 
         if ellapsed <= self.gapNotification and self.count == 0:
+            print "just before"
             self.count += 1 
+            print self.count
             return False
 
         elif self.beyondGap(ellapsed):
+            print "beyond gap"
+            #self.reset()
+            #self.count += 1
             return False
-        
+        print "here"
         return True
 
     def reset(self):

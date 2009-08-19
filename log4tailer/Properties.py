@@ -22,6 +22,9 @@ from log4Exceptions import *
 import re
 
 class Property:
+    '''class to read a user provided key=value config 
+    file. Comments supported are # or //'''
+
     def __init__(self,propertyfile):
         self.propertyfile = propertyfile
         self.lines = []
@@ -66,24 +69,3 @@ class Property:
         else:
             return False
 
-
-
-if __name__ == '__main__':
-    #TODO write this in a proper unit test
-    property = Property("./config.txt")
-    property.parseProperties()
-    #try:
-    #val = property.getValue("wan")
-    #except keyNotFoundException:
-    #    print "key hello does not exist"
-    #    sys.exit()
-    #print val
-    val2 = property.getValue("fatal")
-    print val2
-    if property.isKey("warn"):
-        print "warn is key"
-    else:
-        print "warn is not key"
-
-        
-        

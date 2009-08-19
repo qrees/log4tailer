@@ -30,6 +30,19 @@ from log4tailer.Actions.InactivityAction import InactivityAction
 from log4tailer.Actions.MailAction import MailAction
 from log4tailer.Message import Message
 from log4tailer.Properties import Property
+from log4tailer.Log import Log
+
+class Options:
+    def __init__(self):
+        self.inactivity = None
+
+    @property
+    def inactivity(self):
+        return self.inactivity
+    
+    @inactivity.setter
+    def inactivity(self,value):
+        self.inactivity = value
 
 class TestInactivityAction(unittest.TestCase):
     '''test that we print an alert to stdout
@@ -37,40 +50,43 @@ class TestInactivityAction(unittest.TestCase):
 
     def setUp(self):
         self.message_mocker = mox.Mox()
+        self.options = Options()
+        self.options.inactivity = 1
+        self.log = Log('out.log',None,self.options)
 
     def testSendingAlertBeyondInactivityTime(self):
         message = self.message_mocker.CreateMock(Message)
-        
         # when there is no message, inactivity action 
         # is triggered if ellapsed time is greater than
         # inactivity time
-        message.getPlainMessage().AndReturn(None)
+        message.getPlainMessage().AndReturn((None,'logpath'))
         self.message_mocker.ReplayAll()
         inactivityAction = InactivityAction(1)
         time.sleep(2)
         print "we should see an emphasized alert in stdout"
-        inactivityAction.triggerAction(message)
+        inactivityAction.triggerAction(message,self.log)
         self.message_mocker.VerifyAll()
 
     def testNotSendingAlertWeHaveAMessage(self):
         message = self.message_mocker.CreateMock(Message)
-        message.getPlainMessage().AndReturn('FATAL> this is a message')
+        message.getPlainMessage().AndReturn(('FATAL> this is a message','logpath'))
         self.message_mocker.ReplayAll()
         inactivityAction = InactivityAction(1)
         time.sleep(2)
         print "we should see nothing"
-        inactivityAction.triggerAction(message)
+        inactivityAction.triggerAction(message,self.log)
         self.message_mocker.VerifyAll()
 
     def testNotSendingAlertBelowInactivityTime(self):
 
         message = self.message_mocker.CreateMock(Message)
-        message.getPlainMessage().AndReturn('error> this is an error message')
+        message.getPlainMessage().AndReturn(('error> this is an error message','logpath'))
         self.message_mocker.ReplayAll()
         inactivityAction = InactivityAction(5)
+        self.options.inactivity = 5
         time.sleep(1)
         print "we should see nothing"
-        inactivityAction.triggerAction(message)
+        inactivityAction.triggerAction(message,self.log)
         self.message_mocker.VerifyAll()
 
     def testInactivityTimeCanBeFloatingPointNumberSeconds(self):
@@ -79,14 +95,15 @@ class TestInactivityAction(unittest.TestCase):
         # when there is no message, inactivity action 
         # is triggered if ellapsed time is greater than
         # inactivity time
-        message.getPlainMessage().AndReturn(None)
+        message.getPlainMessage().AndReturn((None,'logpath'))
         self.message_mocker.ReplayAll()
         print "setting inactivity monitoring time to 2.543"
         inactivityAction = InactivityAction(2.543)
+        self.options.inactivity = 2.543
         print "sleeping for 3 secs"
         time.sleep(3)
         print "we should see an emphasized alert in stdout"
-        inactivityAction.triggerAction(message)
+        inactivityAction.triggerAction(message,self.log)
         self.message_mocker.VerifyAll()
 
     def testShouldGetInactivityNotificationTypeifInConfigFile(self):

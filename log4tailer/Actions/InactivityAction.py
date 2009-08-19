@@ -28,37 +28,37 @@ class InactivityAction:
 
     def __init__(self,inactivityTime,properties=None):
         self.inactivityTime = inactivityTime
-        self.timer = Timer.Timer(inactivityTime)
-        self.timer.startTimer()
         self.logColors = LogColors.LogColors()
         self.acumulativeTime = 0
         self.mailAction = None
+        notification = None
         if properties:
             notification = properties.getValue(InactivityAction.InactivityActionNotification)
         self.notification = notification or 'print'
 
-        print self.notification
-    def triggerAction(self,message):
+    def triggerAction(self,message,log):
         plainmessage, logpath = message.getPlainMessage()
+        timer = log.getInactivityTimer()
         if not plainmessage:
-            ellapsedTime = self.timer.inactivityEllapsed()
+            ellapsedTime = timer.inactivityEllapsed()
             if ellapsedTime > float(self.inactivityTime):
-                self.acumulativeTime += ellapsedTime
-                messageAlert = "Inactivity in the log "+logpath+" for "+ str(self.acumulativeTime) + " seconds"
+                log.setInactivityAccTime(ellapsedTime)
+                messageAlert = "Inactivity in the log "+logpath+" for "+ str(log.getInactivityAccTime()) + " seconds"
                 
                 if self.notification == 'print':
                     print self.logColors.backgroundemph+messageAlert+self.logColors.reset
                 elif self.notification == 'mail':
                     self.mailAction.setBodyMailAction(messageAlert)
-                    self.mailAction.triggerAction(message)
-
-                self.timer.reset()
+                    self.mailAction.triggerAction(message,log)
+                    self.mailAction.setBodyMailAction(None)
+                timer.reset()
         # else if we got sth in message then, means we got 
         # some kind of activity, so do nothing
         else:
             #start the timer again
-            self.resetTimer()
-            self.acumulativeTime = 0
+            timer.reset()
+            log.setInactivityAccTime(0)
+            ellapsedTime = 0
 
     def getNotificationType(self):
         return self.notification
@@ -67,6 +67,7 @@ class InactivityAction:
         '''sets a mailAction for inactivityAction notification'''
         self.notification = 'mail'
         self.mailAction = mailAction
+
+    def getMailAction(self):
+        return self.mailAction
     
-    def resetTimer(self):
-        self.timer.reset()
