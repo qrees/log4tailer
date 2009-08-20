@@ -175,6 +175,7 @@ class Stats(Command):
         import re
         commentpat = re.compile(r'^(\s+|#.*)$')
         for file in self.sourceCodeFiles:
+            print file
             fh = open(file,'r')
             lines = fh.readlines()
             fh.close()
