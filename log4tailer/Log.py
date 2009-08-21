@@ -42,7 +42,7 @@ class Log:
         self.mailTimer = Timer(60)
         self.mailTimer.startTimer()
         if properties:
-            self.ownOutputColor = properties.getValue(path)
+            self.ownOutputColor = properties.getValue(path.lower())
             self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX+path)
         if options and options.inactivity:
             self.inactivityTimer = Timer(float(options.inactivity))
