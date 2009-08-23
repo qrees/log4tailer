@@ -65,27 +65,20 @@ class Message:
         if self.isTarget:
             return (self.pauseMode.getPause('target'),color.backgroundemph+self.plainMessage+color.reset)
         
-        if self.logOwnColor:
-            return (0,color.getLogColor(self.logOwnColor)
-                    +self.plainMessage+color.reset)
-        # tail the other lines (levels)
-        levelcolor = ""
         level = self.messageLevel
+        levelcolor = self.color.getLevelColor(level)
+        pause = 0
+        if level:
+            pause = self.pauseMode.getPause(level.lower())
 
-        if level == "WARN":
-            levelcolor = color.warn
-        elif level == "FATAL":
-            levelcolor = color.fatal
-        elif level == "INFO":
-            levelcolor = color.info 
-        elif level == "ERROR":
-            levelcolor = color.error 
-        elif level == "DEBUG":
-            levelcolor = color.debug 
+        if self.logOwnColor:
+            return (pause,color.getLogColor(self.logOwnColor)
+                    +self.plainMessage+color.reset)
+
+        elif levelcolor:
+            return (pause,levelcolor+self.plainMessage+color.reset)
         else:
-            return (0,self.plainMessage)
-
-        return (self.pauseMode.getPause(level.lower()),levelcolor+self.plainMessage+color.reset)
+            return (pause,self.plainMessage)
 
         
     def __getMultipleTargets(self,target):

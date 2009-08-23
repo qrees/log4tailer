@@ -19,10 +19,12 @@
 
 from Properties import Property
 from TermColorCodes import TermColorCodes
+import LogLevels
 
 class LogColors:
     '''Provides the colors that will
     be used when printing Log4J levels'''
+
     def __init__(self):
         self.color = TermColorCodes()
         # defaults
@@ -41,16 +43,13 @@ class LogColors:
                 code = self.color.getCode(properties.getValue(key))
             except:
                 continue
-            if key == "warn":
-                self.warn = code
-            elif key == "info":
-                self.info = code
-            elif key == "error":
-                self.error = code
-            elif key == "fatal":
-                self.fatal = code
-            elif key == "debug":
-                self.debug = code
-
+            self.__dict__[key] = code
+            
     def getLogColor(self,color):
         return self.color.getCode(color)
+    
+
+    def getLevelColor(self,level):
+        level = level.lower()
+        if level in LogLevels.logLevels:
+            return self.__dict__[level]

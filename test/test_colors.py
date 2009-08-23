@@ -6,6 +6,8 @@ from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
+from log4tailer.TermColorCodes import TermColorCodes
+
 
 class TestColors(unittest.TestCase):
     def setUp(self):
@@ -56,6 +58,14 @@ class TestColors(unittest.TestCase):
         message.parse(trace,(None,None,None))
         print "Test: You should see a red log trace now: "
         action.triggerAction(message,anylog)
+    
+    def testgetColorCodeGivenaLevel(self):
+        termcolors = TermColorCodes()
+        logcolors = LogColors()
+        level = 'warn'
+        self.assertTrue(logcolors.getLevelColor(level))
+        print "should see a yellow log trace"
+        print logcolors.getLevelColor(level)+"this is a yellow log trace"+termcolors.reset
 
     def tearDown(self):
         os.remove(self.logfile)
