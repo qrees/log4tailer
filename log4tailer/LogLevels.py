@@ -20,7 +20,8 @@ logLevels = ['debug',
              'info',
              'warn',
              'error',
-             'fatal']
+             'fatal',
+             'critical']
 
 
 

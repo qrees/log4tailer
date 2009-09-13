@@ -34,10 +34,11 @@ class Resume:
                                                  'INFO':0,
                                                  'WARN':0,
                                                  'ERROR':[],
-                                                 'FATAL':[]}
+                                                 'FATAL':[],
+                                                 'CRITICAL':[]}
 
         self.nonTimeStamped = ['DEBUG','INFO','WARN','TARGET']
-        self.orderReport = ['FATAL','ERROR','WARN','INFO','DEBUG','TARGET']
+        self.orderReport = ['CRITICAL','FATAL','ERROR','WARN','INFO','DEBUG','TARGET']
         self.mailAction = None
         self.notificationType = 'print'
         self.gapTime = 3600
@@ -45,7 +46,7 @@ class Resume:
     def flushReport(self):
         for log,dictlog in self.logsReport.iteritems():
             for key,val in dictlog.iteritems():
-                if key in ['ERROR','FATAL']:
+                if key in ['ERROR','FATAL','CRITICAL']:
                     dictlog[key] = []
                 else:
                     dictlog[key] = 0

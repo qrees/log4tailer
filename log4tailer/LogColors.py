@@ -33,6 +33,7 @@ class LogColors:
         self.info = self.color.green
         self.debug = self.color.black
         self.fatal = self.color.red
+        self.critical = self.color.red
         self.reset = self.color.reset
         self.backgroundemph = self.color.backgroundemph
 

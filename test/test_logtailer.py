@@ -60,7 +60,6 @@ class TestResume(unittest.TestCase):
         logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
         self.assertEqual(False,logtailer.mailIsSetup())
     
-    #def testShouldReturnTrueifAnalyticsNotification
 
 
 if __name__ == '__main__':

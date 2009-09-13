@@ -102,7 +102,12 @@ class Log:
         # is not gonna be a lot of effort
         blockReadSize = 1
         blockCount = 1
-        self.fh.seek(-blockReadSize,2)
+        try:
+            self.fh.seek(-blockReadSize,2)
+        except:
+            # file is empty, so return
+            # with position beginning of file
+            return 0
         while (numLines <= 10):
             charRead = self.fh.read(blockReadSize)
             posactual = self.fh.tell()
@@ -121,21 +126,16 @@ class Log:
         currpos = self.fh.tell()+2
         return currpos
         
-        
+
     def numLines(self):
-        clines = os.popen("wc -l "+self.path)
-        count = clines.readline().split(" ")
-        clines.close()
-        nlines = int(count[0])
-        #for i in self.fh:
-            #count += 1
-        ## go back to initial pos
-        #self.fh.seek(0)
-        return nlines
+        count = -1
+        for count,lines in enumerate(open(self.path,'rU')):
+            pass
+        count += 1
+        return count
 
     def getLogPath(self):
         return self.path
-
     
     def getOwnOutputColor(self):
         return self.ownOutputColor

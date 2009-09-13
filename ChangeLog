@@ -1,4 +1,12 @@
 ====================================
+xx/xx/09 release 1.55
+====================================
+- Added additional level: Critical
+- Fixed tail last n lines and documented
+- Fixed tail when log was empty it crashed
+- Added logging in debug
+
+====================================
 05/09/09 release 1.50
 ====================================
 - Every log can have its own set of 

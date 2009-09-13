@@ -111,8 +111,14 @@ def main():
         tailer.addLog(log)
 
     if nlines:
-        tailer.printLastNLines(nlines)
-        sys.exit()
+        try:
+            tailer.printLastNLines(nlines)
+            print "Ended log4tailer, because colors are fun"
+            sys.exit()
+        except KeyboardInterrupt:
+            print "Ended log4tailer, because colors are fun"
+            sys.exit()
+            
     tailer.tailer()
     sys.exit()
 
