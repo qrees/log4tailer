@@ -17,9 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os,sys,re,getpass
+import os,sys,re,getpass,logging
 from optparse import OptionParser
-from log4tailer import LogTailer,LogColors,Log,Properties
+from log4tailer import LogTailer,LogColors,Log,Properties,SSHLogTailer
 from log4tailer.Actions import PrintAction,MailAction,InactivityAction
 from log4tailer.Configuration import MailConfiguration
 
@@ -41,7 +41,6 @@ def main():
     if len(sys.argv[1:]) == 0:
         print "Provide at least one log"
         sys.exit()
-    logcolors = LogColors.LogColors()
     parser = OptionParser()
     parser.add_option("-c","--config",dest="configfile",help="config file with colors")
     parser.add_option("-p","--pause",dest="pause",help="pause between tails")
@@ -51,6 +50,7 @@ def main():
     parser.add_option("-n",dest="tailnlines",help="prints last N lines from log")
     parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
     parser.add_option("-m","--mail",action="store_true",dest="mail",help="notification by mail when a fatal is found")
+    parser.add_option("-r","--remote",action="store_true",dest="remote",help="remote tailing over ssh")
 
     (options,args) = parser.parse_args()
     
@@ -65,7 +65,8 @@ def main():
     fromAddress = None
     toAddress = None
     properties = None
-
+    logcolors = LogColors.LogColors()
+    
     if options.configfile:
         properties = parseConfig(options.configfile)
         logcolors.parseConfig(properties)
@@ -99,6 +100,17 @@ def main():
                 mailAction = MailConfiguration.setupMailAction()
                 inactivityAction.setMailNotification(mailAction)
         actions.append(inactivityAction)
+    
+    if options.remote:
+        logging.basicConfig(level=logging.DEBUG)
+        tailer = SSHLogTailer.SSHLogTailer(logcolors,target,pause,throttle,silence,printAction,properties)
+        if not tailer.sanityCheck():
+            print "missing config file parameters"
+            sys.exit()
+        tailer.createCommands()
+        tailer.createChannels()
+        tailer.tailer()
+        sys.exit()
 
     tailer = LogTailer.LogTailer(logcolors,target,pause,throttle,silence,actions,properties)
     
