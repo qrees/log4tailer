@@ -86,7 +86,7 @@ class SSHLogTailer:
 
     def tailer(self):
         '''Stdout multicolor tailer'''
-        message = Message(self.logcolors)
+        message = Message(self.logcolors,self.target,self.properties)
         for hostname in self.hostnames.keys():
             command = self.hostnames[hostname]['command']
             self.logger.debug("command [%s] to be executed in host [%s]" % (command,hostname))
