@@ -96,11 +96,9 @@ class SSHLogTailer:
                 sshChannel = self.hostnameChannels[hostname]['channel']
                 try:
                     rr,wr,xr = select.select([sshChannel],[],[],0.0)
-                    #print "after select"
                     if len(rr)>0:
                         lines = sshChannel.recv(1024).split('\n')
                         for line in lines:
-                            print "line :" + line
                             message.parse(line,(None,None,None))
                             self.actions.triggerAction(message,'sshLog')
                     else:
@@ -123,8 +121,9 @@ class SSHLogTailer:
                         # kill it
                             killprocid = 'kill -9 '+procid
                             stdin,stdout,stderr = sshclient.exec_command(killprocid)
-                    #sshChannel.shutdown(2)
+                        #sshChannel.shutdown(2)
                         sshclient.close()
+                    print "Ended log4tailer, because colors are fun"
                     sys.exit()
 
 
