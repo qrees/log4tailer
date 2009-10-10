@@ -102,7 +102,7 @@ def main():
         actions.append(inactivityAction)
     
     if options.remote:
-        logging.basicConfig(level=logging.DEBUG)
+        #logging.basicConfig(level=logging.DEBUG)
         tailer = SSHLogTailer.SSHLogTailer(logcolors,target,pause,throttle,silence,printAction,properties)
         if not tailer.sanityCheck():
             print "missing config file parameters"

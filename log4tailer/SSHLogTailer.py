@@ -72,11 +72,15 @@ class SSHLogTailer:
             sshclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             hostusername = self.hostnames[hostname]['username']
             if not passwordIsSame:
+                print "Password for host %s?" % hostname
                 passwordhost = getpass.getpass()
             sshclient.connect(hostname,username=hostusername,password=passwordhost)
             if count == 0:
-                answer = raw_input("Is this password the same for all hosts (y/n)?\n")
-                passwordIsSame = True
+                answer = raw_input("Is this password the same for all hosts (Y/n)?\n")
+                if answer == 'n' or answer == 'N':
+                    passwordIsSame = False
+                else:
+                    passwordIsSame = True
             transport = sshclient.get_transport()
             sshChannel = transport.open_session()
             self.hostnameChannels[hostname] = {}
