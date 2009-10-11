@@ -1,6 +1,8 @@
 import os,sys,logging,getpass,time,select
 from Actions import PrintAction
 from Message import Message
+from TermColorCodes import TermColorCodes
+from subprocess import Popen, PIPE
 
 try:
     import paramiko
@@ -27,6 +29,7 @@ class SSHLogTailer:
         self.sshusername = None
         self.hostnames = {}
         self.hostnameChannels = {}
+        self.color = TermColorCodes()
 
     def sanityCheck(self):
         hostnamescsv = self.properties.getValue('sshhostnames')
@@ -81,53 +84,69 @@ class SSHLogTailer:
                     passwordIsSame = False
                 else:
                     passwordIsSame = True
+                count += 1
             transport = sshclient.get_transport()
             sshChannel = transport.open_session()
             self.hostnameChannels[hostname] = {}
             self.hostnameChannels[hostname]['channel'] = sshChannel
             self.hostnameChannels[hostname]['client'] = sshclient
     
+    
+    def __hostnameChangedHeader(self,hostname):
+        tputcommand = ["tput","cols"]
+        numColsproc = Popen(tputcommand,stdout=PIPE)
+        numCols = numColsproc.communicate()[0].rstrip()
+        lenhost = len(hostname)
+        fancyWidth = (int(numCols)-lenhost-2)/2
+        fancyheader = '*' * fancyWidth
+        hostnameHeader = self.color.green+fancyheader+' '+hostname+' '+fancyheader+self.color.reset
+        print hostnameHeader
 
     def tailer(self):
         '''Stdout multicolor tailer'''
         message = Message(self.logcolors,self.target,self.properties)
+        self.__hostnameChangedHeader("jordietc.com")
         for hostname in self.hostnames.keys():
             command = self.hostnames[hostname]['command']
             self.logger.debug("command [%s] to be executed in host [%s]" % (command,hostname))
             self.hostnameChannels[hostname]['channel'].exec_command(command)
-        while True:
-            for hostname in self.hostnames.keys():
-                sshChannel = self.hostnameChannels[hostname]['channel']
-                try:
+        try:
+            lasthostnameChanged = ""
+            while True:
+                for hostname in self.hostnames.keys():
+                    sshChannel = self.hostnameChannels[hostname]['channel']
                     rr,wr,xr = select.select([sshChannel],[],[],0.0)
                     if len(rr)>0:
                         lines = sshChannel.recv(1024).split('\n')
+                        if hostname != lasthostnameChanged:
+                            self.__hostnameChangedHeader(hostname)
                         for line in lines:
                             message.parse(line,(None,None,None))
                             self.actions.triggerAction(message,'sshLog')
-                    else:
-                        time.sleep(1)
-
-                except:
-                    print "\nfinishing ..."
-                    for hostname in self.hostnames.keys():
-                        sshChannel = self.hostnameChannels[hostname]['channel']
-                        sshclient = self.hostnameChannels[hostname]['client']
-                        command = self.hostnames[hostname]['command']
-                        procidCommand = 'pgrep -f -x '+'\"'+command+'\"'
-                        self.logger.debug("procid command [%s]" % procidCommand)
-                        sshChannel.close()
-                        stdin,stdout,stderr = sshclient.exec_command(procidCommand)
-                        procid = stdout.readlines()[0].rstrip()
-                        self.logger.debug("procid [%s]" % procid)
-                        # is process still alive after closing channel?
-                        if procid:
+                        lasthostnameChanged = hostname
+                time.sleep(1)
+        except:
+            print "\nfinishing ..."
+            for hostname in self.hostnames.keys():
+                sshChannel = self.hostnameChannels[hostname]['channel']
+                sshclient = self.hostnameChannels[hostname]['client']
+                command = self.hostnames[hostname]['command']
+                procidCommand = 'pgrep -f -x '+'\"'+command+'\"'
+                self.logger.debug("procid command [%s]" % procidCommand)
+                sshChannel.close()
+                stdin,stdout,stderr = sshclient.exec_command(procidCommand)
+                res = stdout.readlines()
+                if res:
+                    procid = res[0].rstrip()
+                    self.logger.debug("procid [%s]" % procid)
+                    # is process still alive after closing channel?
+                    if procid:
                         # kill it
-                            killprocid = 'kill -9 '+procid
-                            stdin,stdout,stderr = sshclient.exec_command(killprocid)
-                        #sshChannel.shutdown(2)
-                        sshclient.close()
-                    print "Ended log4tailer, because colors are fun"
-                    sys.exit()
+                        killprocid = 'kill -9 '+procid
+                        stdin,stdout,stderr = sshclient.exec_command(killprocid)
+                #sshChannel.shutdown(2)
+                sshclient.close()
+            print "Ended log4tailer, because colors are fun"
+            sys.exit()
 
 
