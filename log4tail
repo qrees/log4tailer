@@ -110,8 +110,9 @@ def main():
         tailer.createCommands()
         try:
             tailer.createChannels()
-        except:
+        except Exception,e:
             print "Could not connect"
+            print "Trace [%s]" % e
             sys.exit()
         tailer.tailer()
         sys.exit()
