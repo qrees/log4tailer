@@ -108,7 +108,11 @@ def main():
             print "missing config file parameters"
             sys.exit()
         tailer.createCommands()
-        tailer.createChannels()
+        try:
+            tailer.createChannels()
+        except:
+            print "Could not connect"
+            sys.exit()
         tailer.tailer()
         sys.exit()
 
