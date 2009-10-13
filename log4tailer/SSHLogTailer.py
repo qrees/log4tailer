@@ -70,7 +70,9 @@ class SSHLogTailer:
         passwordIsSame = False
         passwordhost = None
         count = 0
-        for hostname in self.hostnames.keys():
+        hostnames = self.hostnames.keys()
+        numHosts = len(hostnames)
+        for hostname in hostnames:
             sshclient = paramiko.SSHClient()
             sshclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             hostusername = self.hostnames[hostname]['username']
@@ -78,7 +80,7 @@ class SSHLogTailer:
                 print "Password for host %s?" % hostname
                 passwordhost = getpass.getpass()
             sshclient.connect(hostname,username=hostusername,password=passwordhost)
-            if count == 0:
+            if count == 0 and numHosts > 1:
                 answer = raw_input("Is this password the same for all hosts (Y/n)?\n")
                 if answer == 'n' or answer == 'N':
                     passwordIsSame = False
