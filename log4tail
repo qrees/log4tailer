@@ -19,7 +19,7 @@
 
 import os,sys,re,getpass,logging
 from optparse import OptionParser
-from log4tailer import LogTailer,LogColors,Log,Properties,SSHLogTailer
+from log4tailer import LogTailer,LogColors,Log,Properties
 from log4tailer.Actions import PrintAction,MailAction,InactivityAction
 from log4tailer.Configuration import MailConfiguration
 
@@ -102,7 +102,7 @@ def main():
         actions.append(inactivityAction)
     
     if options.remote:
-        #logging.basicConfig(level=logging.DEBUG)
+        from log4tailer import SSHLogTailer
         tailer = SSHLogTailer.SSHLogTailer(logcolors,target,pause,throttle,silence,printAction,properties)
         if not tailer.sanityCheck():
             print "missing config file parameters"
