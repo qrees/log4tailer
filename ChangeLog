@@ -1,9 +1,10 @@
 ====================================
-xx/xx/09 release 2.0
+17/10/09 release 2.0
 ====================================
 - Added additional level: Critical
 - Fixed tail last n lines and documented
 - Fixed tail when log was empty it crashed
+- Fixed date in emailaction as specified in RFC 2822
 - Added logging in debug
 - Added remote tailing over SSH (SSH tailing)
 - updated documentation
