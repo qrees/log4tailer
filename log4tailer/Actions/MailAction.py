@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
+import sys,time
 from smtplib import *
 from log4tailer import Timer
 import datetime
@@ -26,6 +26,12 @@ class MailAction:
     by the Tailer"""
     
     mailLevels = ['ERROR','FATAL']
+    weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+    monthname = [None,
+                 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 
     def __init__(self, fro = None, to = None, hostname = None, user = None, passwd = None):
         self.fro = fro
@@ -35,7 +41,30 @@ class MailAction:
         self.passwd = passwd
         self.conn = None
         self.bodyMailAction = None
+    
 
+    def date_time(self):
+        """
+        Taken from logging.handlers SMTP python distribution
+        
+        Return the current date and time formatted for a MIME header.
+        Needed for Python 1.5.2 (no email package available)
+        """
+        year, month, day, hh, mm, ss, wd, y, z = time.gmtime(time.time())
+        s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (
+                self.weekdayname[wd],
+                day, self.monthname[month], year,
+                hh, mm, ss)
+        return s
+        
+    def getNow(self):
+        try:
+            from email.utils import formatdate
+        except ImportError:
+            formatdate = self.date_time
+        return formatdate()
+        
+        
     def triggerAction(self,message,log):
         '''msg to print, send by email, whatever...'''
         
@@ -51,8 +80,8 @@ class MailAction:
             body += fancyheader+"\n"
             body += message+"\n"
 
-        now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
-
+        now = self.getNow()
+        
         msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
         timer = log.getMailTimer()
         try:
@@ -77,7 +106,7 @@ class MailAction:
     
     def sendNotificationMail(self,body):
         '''Sends a notification mail'''
-        now = datetime.datetime.utcnow().strftime( "%d/%m/%Y %H:%M" )
+        now = self.getNow()
         msg = "Subject: Log4Tailer Notification Message\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
         try:
             self.conn.sendmail(self.fro,self.to,msg)
