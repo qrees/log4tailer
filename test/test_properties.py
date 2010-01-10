@@ -3,7 +3,8 @@ import os,sys
 
 sys.path.append('..')
 from log4tailer.Properties import Property
-from log4tailer.log4Exceptions import KeyAlreadyExistsException,KeyNotFoundException
+from log4tailer.log4Exceptions import (KeyAlreadyExistsException,
+                                       KeyNotFoundException)
 
 class TestProperties(unittest.TestCase):
     
@@ -53,7 +54,7 @@ class TestProperties(unittest.TestCase):
         configfh.write('warn'+'='+'red'+'\n')
         configfh.close()
 
-    def testKeyAlreadyExistsException(self):
+    def testKeyAlreadyExistsException(self):                                    
         self.__createDuplicateKeysConfig()
         property = Property(self.configfile)
         self.assertRaises(KeyAlreadyExistsException,property.parseProperties)

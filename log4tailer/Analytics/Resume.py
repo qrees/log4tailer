@@ -65,8 +65,8 @@ class Resume:
             if messageLevel in self.nonTimeStamped:
                 logKey[messageLevel] += 1
             else:
-                logKey[messageLevel].append(strftime("%d %b %Y %H:%M:%S", localtime())
-                        +'=>> '+plainmessage)
+                res = strftime("%d %b %Y %H:%M:%S", localtime())
+                logKey[messageLevel].append(res +'=>> '+plainmessage)
 
         self.reportMail()
 

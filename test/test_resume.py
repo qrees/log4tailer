@@ -1,6 +1,6 @@
 import unittest
 import os,sys
-
+import time
 sys.path.append('..')
 from log4tailer.Analytics import Resume
 from log4tailer.Log import Log
@@ -40,7 +40,6 @@ class TestResume(unittest.TestCase):
         
         fh.close()
         fh2.close()
-    
 
     def readAndUpdateLines(self,log,message,resume):
         fh = log.openLog()
@@ -52,17 +51,20 @@ class TestResume(unittest.TestCase):
     def testReportResumeForTwoDifferentLogs(self):
         log = Log('out.log')
         log2 = Log('out2.log')
-        arrayLogs = [log,log2]
+        arrayLogs = [log]
         fh = log.openLog()
         logcolors = LogColors()
         message = Message(logcolors)
         resume = Resume.Resume(arrayLogs)
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog,message,resume)
-         
-        print "you should see the resume output"
-        resume.report()
-
+        
+        outlogReport = resume.logsReport[log.getLogPath()]
+        expectedOutLogErrorReport = 'error> not so wrong'
+        gotLogTrace = outlogReport['ERROR'][0].split('=>> ')[1]
+        self.assertEquals(expectedOutLogErrorReport,
+                gotLogTrace)
+               
     
     def testShouldReportaTarget(self):
         
@@ -77,8 +79,11 @@ class TestResume(unittest.TestCase):
         arraylogs = [mylog]
         resume = Resume.Resume(arraylogs)
         resume.update(message,mylog)
-        print "you should see a target found in report"
-        resume.report()
+        outLogReport = resume.logsReport[mylog.getLogPath()]
+        numofTargets = 1
+        gotnumTargets = outLogReport['TARGET']
+        self.assertEquals(numofTargets, gotnumTargets)
+        message_mocker.VerifyAll()
     
     def testTargetsAreNonTimeStampedinResume(self):
         arrayLog = [Log('out.log')]
