@@ -146,7 +146,7 @@ class Log:
         return None
     
     def getOptionalParameters(self):
-        return (self.getOwnOutputColor(),self.getOwnTarget(),self.getLogPath())
+        return (self.ownOutputColor,self.getOwnTarget(),self.path)
 
     def getInactivityTimer(self):
         return self.inactivityTimer
