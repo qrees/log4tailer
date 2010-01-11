@@ -1,4 +1,13 @@
 ====================================
+xx/xx/10 release 2.x
+====================================
+- bug fix in pipeOut method in LogTailer 
+was breaking interface in Actions
+- cleaned and provided more unit tests
+- testtools being used sometimes, which provides 
+extended methods to unittest
+
+====================================
 17/10/09 release 2.0
 ====================================
 - Added additional level: Critical
