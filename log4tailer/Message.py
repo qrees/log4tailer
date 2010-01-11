@@ -106,7 +106,7 @@ class Message:
         self.plainMessage = None
         self.messageLevel = 'UNKNOWN'
 
-    def parse(self,line,optionalParameters):
+    def parse(self,line, optionalParameters):
         '''Need to parse the line
         and check in what level we are in'''
         self.logOwnColor, ownTarget, self.currentLogPath = optionalParameters

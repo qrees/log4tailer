@@ -148,9 +148,9 @@ class LogTailer:
         message = Message(self.logcolors,self.target,self.properties)
         stdin = sys.stdin
         for line in stdin:
-            message.parse(line,False)
+            message.parse(line,(None,None,None))
             for action in self.actions:
-                action.triggerAction(message)
+                action.triggerAction(message,'anylog')
     
     def __getAction(self,module):
         for action in self.actions:

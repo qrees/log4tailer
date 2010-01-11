@@ -1,4 +1,4 @@
-import unittest
+import testtools
 import os,sys
 
 sys.path.append('..')
@@ -12,7 +12,18 @@ from log4tailer.Actions.MailAction import MailAction
 from log4tailer.Properties import Property
 import mox
 
-class TestResume(unittest.TestCase):
+class Writer:
+    def __init__(self):
+        self.captured = []
+
+    def __len__(self):
+        return len(self.captured)
+
+    def write(self, txt):
+        self.captured.append(txt)
+
+
+class TestResume(testtools.TestCase):
     
     def testshouldReturnTrueifMailAlreadyinMailAction(self):
         logcolors = LogColors()
@@ -60,10 +71,20 @@ class TestResume(unittest.TestCase):
         logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
         self.assertEqual(False,logtailer.mailIsSetup())
     
+    def testPipeOutShouldSendMessageParseThreeParams(self):
+        sys.stdin = ['error > one error', 'warning > one warning']
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        printaction = PrintAction()
+        actions = [printaction]
+        throttleTime = 0
+        silence = False
+        target = None
+        pause = 0
+        properties = None
+        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        logtailer.pipeOut()
+        self.assertIn('error > one error', sys.stdout.captured[0])
 
-
-if __name__ == '__main__':
-    unittest.main()
-
-
+        
 
