@@ -19,6 +19,7 @@
 
 import unittest, testtools
 import os,sys,time
+SYSOUT = sys.stdout
 try:
     import mox
 except:
@@ -55,7 +56,6 @@ class Writer():
         self.capt.append(txt)
 
 
-
 class TestInactivityAction(testtools.TestCase):
     '''test that we print an alert to stdout
     once we expire the inactivity time'''
@@ -82,7 +82,6 @@ class TestInactivityAction(testtools.TestCase):
         inactivityAction.triggerAction(message,self.log)
         self.assertIn('Inactivity', sys.stdout.capt[0])
         self.message_mocker.VerifyAll()
-
     
     def testNotSendingAlertBelowInactivityTime(self):
 
@@ -114,7 +113,6 @@ class TestInactivityAction(testtools.TestCase):
         self.assertIn('Inactivity', sys.stdout.capt[0])
         self.message_mocker.VerifyAll()
 
-
     def testShouldGetInactivityNotificationTypeifInConfigFile(self):
         fh = open('config.txt','w')
         fh.write('inactivitynotification = mail\n')
@@ -144,6 +142,9 @@ class TestInactivityAction(testtools.TestCase):
         else:
             self.fail('should be inactivityAction with mail Notification') 
         os.remove('config.txt')
+
+    def tearDown(self):
+        sys.stdout = SYSOUT
 
 if __name__ == '__main__':
         unittest.main()

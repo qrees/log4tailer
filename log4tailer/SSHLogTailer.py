@@ -10,6 +10,9 @@ except:
     print "You need to install paramiko module"
     sys.exit()
 
+SSH_DIR = os.path.join(os.path.expanduser('~'),'.ssh')
+SSH_KEY = os.path.join(SSH_DIR, 'id_rsa')
+
 class SSHLogTailer:
     
     HOSTNAME_PROPERTY_PREFIX = "hostname "
@@ -30,6 +33,7 @@ class SSHLogTailer:
         self.hostnames = {}
         self.hostnameChannels = {}
         self.color = TermColorCodes()
+        self.rsa_key = SSH_KEY
 
     def sanityCheck(self):
         hostnamescsv = self.properties.getValue('sshhostnames')
@@ -54,9 +58,11 @@ class SSHLogTailer:
             for log in hostnameProperties[1:]:
                 self.logger.debug("log [%s] for hostname [%s] found" % (log,hostname))
                 hostnameDict['logs'].append(log.strip())
-
             self.logger.debug("logs for hostname [%s] are [%s]" % (hostname, hostnameDict['logs']))
-                
+        rsa_key = self.properties.getValue('rsa_key')
+        if rsa_key:
+            print "rsa key provided: "+rsa_key
+            self.rsa_key = rsa_key
         return True
 
     def createCommands(self):
@@ -64,18 +70,34 @@ class SSHLogTailer:
             command = SSHLogTailer.TAIL_COMMAND_PREFIX + ' '.join(self.hostnames[hostname]['logs'])
             self.hostnames[hostname]['command'] = command
             self.logger.debug("hostname information [%s]" % self.hostnames[hostname])
-
     
+
+    def getChannelTransport(self, sshclient, hostname):
+        transport = sshclient.get_transport()
+        sshChannel = transport.open_session()
+        self.hostnameChannels[hostname] = {}
+        self.hostnameChannels[hostname]['channel'] = sshChannel
+        self.hostnameChannels[hostname]['client'] = sshclient
+ 
     def createChannels(self):
         passwordIsSame = False
         passwordhost = None
         count = 0
         hostnames = self.hostnames.keys()
         numHosts = len(hostnames)
+        announceOneTime = 0
         for hostname in hostnames:
             sshclient = paramiko.SSHClient()
             sshclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             hostusername = self.hostnames[hostname]['username']
+            try:
+                sshclient.connect(hostname, key_filename = self.rsa_key)
+                self.getChannelTransport(sshclient, hostname)
+                continue
+            except:
+                if announceOneTime ==  0:
+                    announceOneTime += 1
+                    print "key id_rsa in .ssh does not exist"
             if not passwordIsSame:
                 print "Password for host %s?" % hostname
                 passwordhost = getpass.getpass()
@@ -87,12 +109,7 @@ class SSHLogTailer:
                 else:
                     passwordIsSame = True
                 count += 1
-            transport = sshclient.get_transport()
-            sshChannel = transport.open_session()
-            self.hostnameChannels[hostname] = {}
-            self.hostnameChannels[hostname]['channel'] = sshChannel
-            self.hostnameChannels[hostname]['client'] = sshclient
-    
+            self.getChannelTransport(sshclient, hostname)
     
     def __hostnameChangedHeader(self,hostname):
         tputcommand = ["tput","cols"]

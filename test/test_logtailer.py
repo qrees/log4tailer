@@ -1,6 +1,6 @@
 import testtools
 import os,sys
-
+SYSOUT = sys.stdout
 sys.path.append('..')
 from log4tailer.Analytics import Resume
 from log4tailer.Log import Log
@@ -21,7 +21,6 @@ class Writer:
 
     def write(self, txt):
         self.captured.append(txt)
-
 
 class TestResume(testtools.TestCase):
     
@@ -86,5 +85,6 @@ class TestResume(testtools.TestCase):
         logtailer.pipeOut()
         self.assertIn('error > one error', sys.stdout.captured[0])
 
-        
+    def tearDown(self):
+        sys.stdout = SYSOUT
 

@@ -1,11 +1,13 @@
 ====================================
-xx/xx/10 release 2.x
+24/01/10 release 2.2
 ====================================
 - bug fix in pipeOut method in LogTailer 
 was breaking interface in Actions
 - cleaned and provided more unit tests
 - testtools being used sometimes, which provides 
 extended methods to unittest
+- SSH tailing tries to authenticate using 
+rsa key first
 
 ====================================
 17/10/09 release 2.0
