@@ -15,7 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys 
-
+try:
+    from setuptools import setup
+except:
+    pass
 from distutils.core import Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
@@ -243,6 +246,7 @@ setup(name="log4tailer",
       author_email = "jordilin@gmail.com",
       url = "http://code.google.com/p/log4tailer/",
       license = "GNU GPL v3",
+      test_suite = 'nose.collector',
       packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
       scripts = ["log4tail"],
       cmdclass = {"release":Release,
