@@ -1,6 +1,6 @@
-import unittest
+import testtools
 import os,sys
-
+SYSOUT = sys.stdout
 sys.path.append('..')
 from log4tailer.Log import Log
 from log4tailer.Message import Message
@@ -8,8 +8,17 @@ from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
 from log4tailer.TermColorCodes import TermColorCodes
 
+class Writer:
+    def __init__(self):
+        self.captured = []
 
-class TestColors(unittest.TestCase):
+    def __len__(self):
+        return len(self.captured)
+
+    def write(self, txt):
+        self.captured.append(txt)
+
+class TestColors(testtools.TestCase):
     def setUp(self):
         self.logfile = 'out.log'
         fh = open(self.logfile,'w')
@@ -28,50 +37,50 @@ class TestColors(unittest.TestCase):
 
     def testMessage(self):
         logcolors = LogColors() #using default colors
+        termcolors = TermColorCodes()
         target = None
         action = PrintAction()
         message = Message(logcolors,target)
         log = Log(self.logfile)
         log.openLog()
-        print "testing Colors with default pauseModes"
+        sys.stdout = Writer()
+        #testing Colors with default pauseModes
         for count in range(len(self.someLogTraces)):
             line = log.readLine()
             line = line.rstrip()
+            level = line.split('>')
             message.parse(line,log.getOptionalParameters())
+            output = logcolors.getLevelColor(level[0])+line+termcolors.reset
             action.triggerAction(message,log)
+            self.assertIn(output, sys.stdout.captured)
         
         line = log.readLine()
         self.assertEqual('',line)
         message.parse(line,log.getOptionalParameters())
-        print "nothing in next line"
-        action.triggerAction(message,log)
-        print ""
+        self.assertFalse(action.triggerAction(message,log))
     
     def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
         # Test for fix 5
         # Should give priority to FATAL in next trace
+        level = 'FATAL'
         trace = "FATAL there could be an error in the application"
+        sys.stdout = Writer()
         logcolors = LogColors()
+        termcolors = TermColorCodes()
         message = Message(logcolors)
         action = PrintAction()
         anylog = Log('out.log')
         message.parse(trace,(None,None,None))
-        print "Test: You should see a red log trace now: "
+        output = logcolors.getLevelColor(level)+trace+termcolors.reset
         action.triggerAction(message,anylog)
+        self.assertEqual(output, sys.stdout.captured[0])
     
-    def testgetColorCodeGivenaLevel(self):
-        termcolors = TermColorCodes()
-        logcolors = LogColors()
-        level = 'warn'
-        self.assertTrue(logcolors.getLevelColor(level))
-        print "should see a yellow log trace"
-        print logcolors.getLevelColor(level)+"this is a yellow log trace"+termcolors.reset
-
     def tearDown(self):
+        sys.stdout = SYSOUT
         os.remove(self.logfile)
 
-if __name__ == '__main__':
-        unittest.main()
+#if __name__ == '__main__':
+        #unittest.main()
 
 
 
