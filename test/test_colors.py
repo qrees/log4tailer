@@ -74,7 +74,22 @@ class TestColors(testtools.TestCase):
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
         action.triggerAction(message,anylog)
         self.assertEqual(output, sys.stdout.captured[0])
-    
+
+    def testshouldNotColorizeifLevelKeyInaWord(self):
+        # Testing boundary regex as for suggestion of 
+        # Carlo Bertoldi
+        trace = "this is a logtrace where someinfoword could be found"
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        message = Message(logcolors)
+        action = PrintAction()
+        anylog = Log('out.log')
+        message.parse(trace,(None,None,None))
+        action.triggerAction(message,anylog)
+        self.assertEqual(trace, sys.stdout.captured[0])
+        self.assertEqual('', message.getMessageLevel())        
+
     def tearDown(self):
         sys.stdout = SYSOUT
         os.remove(self.logfile)
