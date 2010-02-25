@@ -81,7 +81,6 @@ class TestColors(testtools.TestCase):
         trace = "this is a logtrace where someinfoword could be found"
         sys.stdout = Writer()
         logcolors = LogColors()
-        termcolors = TermColorCodes()
         message = Message(logcolors)
         action = PrintAction()
         anylog = Log('out.log')
