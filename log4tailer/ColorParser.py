@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
+# Thanks to Carlo Bertoldi for suggesting a better regex.
 
 import re
 
