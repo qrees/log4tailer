@@ -1,9 +1,11 @@
 import testtools
 import os,sys
+import fudge
 SYSOUT = sys.stdout
 sys.path.append('..')
 from log4tailer.Log import Log
 from log4tailer.Message import Message
+from log4tailer.Properties import Property
 from log4tailer.LogColors import LogColors
 from log4tailer.Actions.PrintAction import PrintAction
 from log4tailer.TermColorCodes import TermColorCodes
@@ -88,6 +90,18 @@ class TestColors(testtools.TestCase):
         action.triggerAction(message,anylog)
         self.assertEqual(trace, sys.stdout.captured[0])
         self.assertEqual('', message.getMessageLevel())        
+    
+    @fudge.with_fakes    
+    def testLogColorsParseConfig(self):
+        logcolors = LogColors()
+        properties = fudge.Fake()
+        properties = properties.provides('getKeys').returns(['one', 'two'])
+        properties = properties.provides('getValue')
+        properties = properties.returns('john')
+        properties = properties.next_call().returns('joe')
+        logcolors.parseConfig(properties)
+        self.assertFalse(hasattr(logcolors,'one'))
+        self.assertFalse(hasattr(logcolors,'two'))
 
     def tearDown(self):
         sys.stdout = SYSOUT

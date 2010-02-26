@@ -38,11 +38,9 @@ class LogColors:
         self.backgroundemph = self.color.backgroundemph
 
     def parseConfig(self,properties):
-        
         for key in properties.getKeys():
-            try:
-                code = self.color.getCode(properties.getValue(key))
-            except:
+            code = self.color.getCode(properties.getValue(key))
+            if not code:
                 continue
             self.__dict__[key] = code
             
