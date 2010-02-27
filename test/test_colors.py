@@ -103,6 +103,30 @@ class TestColors(testtools.TestCase):
         self.assertFalse(hasattr(logcolors,'one'))
         self.assertFalse(hasattr(logcolors,'two'))
 
+    def testshouldColorizeMultilineLogTraces(self):
+        trace = 'FATAL> something went wrong\nin here as well'
+        trace0, trace1 = trace.split('\n')
+        level = 'FATAL'
+        termcolors = TermColorCodes()
+        # now assert trace0 and trace1 are in FATAL level
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        message = Message(logcolors)
+        action = PrintAction()
+        anylog = Log('out.log')
+        expectedLogTrace0 = logcolors.getLevelColor(level) + \
+                trace0 + termcolors.reset
+        expectedLogTrace1 = logcolors.getLevelColor(level) + \
+                trace1 + termcolors.reset
+        message.parse(trace0,(None,None,None))
+        action.triggerAction(message, anylog)
+        self.assertEqual(expectedLogTrace0, sys.stdout.captured[0])
+        self.assertEqual('FATAL', message.getMessageLevel())        
+        message.parse(trace1,(None,None,None))
+        action.triggerAction(message, anylog)
+        self.assertEqual(expectedLogTrace1, sys.stdout.captured[2])
+        self.assertEqual('FATAL', message.getMessageLevel())        
+
     def tearDown(self):
         sys.stdout = SYSOUT
         os.remove(self.logfile)

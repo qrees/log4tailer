@@ -38,7 +38,9 @@ class Message:
         self.plainMessage = None
         self.colorizedMessage = None
         self.colorparser = ColorParser()
-        self.messageLevel = None
+        self.messageLevel = ''
+        self.oldMessageLevel = ''
+        self.oldLevelColor = None
         self.pauseMode = PauseMode.PauseMode()
         self.logOwnColor = False
         if properties:
@@ -65,11 +67,16 @@ class Message:
         if self.isTarget:
             return (self.pauseMode.getPause('target'),color.backgroundemph+self.plainMessage+color.reset)
         
+        pause = 0 
         level = self.messageLevel
-        levelcolor = self.color.getLevelColor(level)
-        pause = 0
-        if level:
+        if self.messageLevel:
+            levelcolor = self.color.getLevelColor(level)
+            self.oldMessageLevel = self.messageLevel
+            self.oldLevelColor = levelcolor
             pause = self.pauseMode.getPause(level.lower())
+        else:
+            self.messageLevel = self.oldMessageLevel
+            levelcolor = self.oldLevelColor
 
         if self.logOwnColor:
             return (pause,color.getLogColor(self.logOwnColor)
@@ -78,7 +85,7 @@ class Message:
         elif levelcolor:
             return (pause,levelcolor+self.plainMessage+color.reset)
         else:
-            return (pause,self.plainMessage)
+            return (pause, self.plainMessage)
 
         
     def __getMultipleTargets(self,target):
