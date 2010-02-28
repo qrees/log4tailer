@@ -1,4 +1,17 @@
 ====================================
+xx/xx/xx release x.x
+====================================
+- Nosetests integrated in setup
+- Improved unit tests
+- Config file if not provided will try
+to find it in $HOME/.log4tailer, as suggested
+by Carlo Bertoldi 
+- Better regex avoiding false positives when 
+log level in a word as suggested by 
+Carlo Bertoldi
+- Updated documentation
+
+====================================
 24/01/10 release 2.2
 ====================================
 - bug fix in pipeOut method in LogTailer 
