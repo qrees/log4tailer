@@ -18,6 +18,7 @@
 
 
 import os,sys,re,getpass,logging
+import logging.config
 from optparse import OptionParser
 from log4tailer import LogTailer,LogColors,Log,Properties
 from log4tailer.Actions import PrintAction,MailAction,InactivityAction
@@ -25,6 +26,8 @@ from log4tailer.Configuration import MailConfiguration
 
 import resource	
 
+
+logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
 def parseConfig(configfile):

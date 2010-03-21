@@ -18,7 +18,8 @@ class SSHLogTailer:
     HOSTNAME_PROPERTY_PREFIX = "hostname "
     TAIL_COMMAND_PREFIX = "tail -F "
 
-    def __init__(self,logcolors, target, pause, throttleTime, silence, actions, properties):
+    def __init__(self,logcolors, target, pause, throttleTime, silence, 
+                 actions, properties):
         self.arrayLog = []
         self.logcolors = logcolors
         self.pause = pause
@@ -38,27 +39,34 @@ class SSHLogTailer:
     def sanityCheck(self):
         hostnamescsv = self.properties.getValue('sshhostnames')
         if not hostnamescsv:
-            self.logger.error("sshhostnames should be provided in configfile for ssh tailing")
+            self.logger.error("sshhostnames should be provided "
+                              "in configfile for ssh tailing")
             return False
         hostnames = [hostname.strip() for hostname in hostnamescsv.split(',')]
         for hostname in hostnames:
             self.logger.debug("hostname [%s] found in config file" % hostname)
             hostnameValues = self.properties.getValue(hostname)
             if not hostnameValues:
-                self.logger.debug("values for hostname [%s] are [%s]" % (hostname,self.properties.getValue(hostname)))
-                self.logger.error("missing username and logs for [%s]" % hostname)
+                self.logger.debug("values for hostname [%s] are [%s]" % (
+                    hostname,self.properties.getValue(hostname)))
+                self.logger.error("missing username and logs for [%s]" % (
+                                  hostname))
                 return False
-            hostnameProperties = [props.strip() for props in hostnameValues.split(',')]
+            hostnameProperties = [props.strip() for props in 
+                                  hostnameValues.split(',')]
             username = hostnameProperties[0]
             self.hostnames[hostname] = {} 
             hostnameDict = self.hostnames[hostname]
             hostnameDict['username'] = username
-            self.logger.debug("hostname [%s] has username [%s]" % (hostname, username))
+            self.logger.debug("hostname [%s] has username [%s]" % (
+                              hostname, username))
             hostnameDict['logs'] = []
             for log in hostnameProperties[1:]:
-                self.logger.debug("log [%s] for hostname [%s] found" % (log,hostname))
+                self.logger.debug("log [%s] for hostname [%s] found" % (log,
+                                  hostname))
                 hostnameDict['logs'].append(log.strip())
-            self.logger.debug("logs for hostname [%s] are [%s]" % (hostname, hostnameDict['logs']))
+            self.logger.debug("logs for hostname [%s] are [%s]" % (hostname, 
+                              hostnameDict['logs']))
         rsa_key = self.properties.getValue('rsa_key')
         if rsa_key:
             print "rsa key provided: "+rsa_key
@@ -67,9 +75,11 @@ class SSHLogTailer:
 
     def createCommands(self):
         for hostname in self.hostnames.keys():
-            command = SSHLogTailer.TAIL_COMMAND_PREFIX + ' '.join(self.hostnames[hostname]['logs'])
+            command = SSHLogTailer.TAIL_COMMAND_PREFIX + \
+                    ' '.join(self.hostnames[hostname]['logs'])
             self.hostnames[hostname]['command'] = command
-            self.logger.debug("hostname information [%s]" % self.hostnames[hostname])
+            self.logger.debug("hostname information [%s]" % (
+                              self.hostnames[hostname]))
     
 
     def getChannelTransport(self, sshclient, hostname):
@@ -94,16 +104,18 @@ class SSHLogTailer:
                 sshclient.connect(hostname, key_filename = self.rsa_key)
                 self.getChannelTransport(sshclient, hostname)
                 continue
-            except:
+            except Exception, err:
                 if announceOneTime ==  0:
                     announceOneTime += 1
-                    print "key id_rsa in .ssh does not exist"
+                    self.logger.warning(err)
             if not passwordIsSame:
                 print "Password for host %s?" % hostname
                 passwordhost = getpass.getpass()
-            sshclient.connect(hostname,username=hostusername,password=passwordhost)
+            sshclient.connect(hostname,username=hostusername,
+                              password=passwordhost)
             if count == 0 and numHosts > 1:
-                answer = raw_input("Is this password the same for all hosts (Y/n)?\n")
+                answer = raw_input("Is this password the same for all " 
+                                   "hosts (Y/n)?\n")
                 if answer == 'n' or answer == 'N':
                     passwordIsSame = False
                 else:
@@ -118,7 +130,8 @@ class SSHLogTailer:
         lenhost = len(hostname)
         fancyWidth = (int(numCols)-lenhost-2)/2
         fancyheader = '*' * fancyWidth
-        hostnameHeader = self.color.green+fancyheader+' '+hostname+' '+fancyheader+self.color.reset
+        hostnameHeader = self.color.green+fancyheader+' '+hostname+' '+ \
+                         fancyheader+self.color.reset
         print hostnameHeader
 
     def tailer(self):
@@ -126,7 +139,8 @@ class SSHLogTailer:
         message = Message(self.logcolors,self.target,self.properties)
         for hostname in self.hostnames.keys():
             command = self.hostnames[hostname]['command']
-            self.logger.debug("command [%s] to be executed in host [%s]" % (command,hostname))
+            self.logger.debug("command [%s] to be executed in host [%s]" % (
+                              command,hostname))
             self.hostnameChannels[hostname]['channel'].exec_command(command)
         try:
             lasthostnameChanged = ""
@@ -135,7 +149,7 @@ class SSHLogTailer:
                     sshChannel = self.hostnameChannels[hostname]['channel']
                     rr,wr,xr = select.select([sshChannel],[],[],0.0)
                     if len(rr)>0:
-                        lines = sshChannel.recv(1024).split('\n')
+                        lines = sshChannel.recv(4096).split('\n')
                         if hostname != lasthostnameChanged:
                             self.__hostnameChangedHeader(hostname)
                         for line in lines:
