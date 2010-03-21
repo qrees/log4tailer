@@ -44,15 +44,23 @@ def main():
         print "Provide at least one log"
         sys.exit()
     parser = OptionParser()
-    parser.add_option("-c","--config",dest="configfile",help="config file with colors")
+    parser.add_option("-c","--config",dest="configfile",
+                    help="config file with colors")
     parser.add_option("-p","--pause",dest="pause",help="pause between tails")
-    parser.add_option("--throttle",dest="throttle",help="throttle output, slowsdown")
-    parser.add_option("-i","--inact",dest="inactivity",help="monitors inactivity in log given inactivity seconds")
-    parser.add_option("-s","--silence",action="store_true",dest="silence",help="tails in silence, no printing")
-    parser.add_option("-n",dest="tailnlines",help="prints last N lines from log")
-    parser.add_option("-t","--target",dest="target",help="emphasizes a line in the log")
-    parser.add_option("-m","--mail",action="store_true",dest="mail",help="notification by mail when a fatal is found")
-    parser.add_option("-r","--remote",action="store_true",dest="remote",help="remote tailing over ssh")
+    parser.add_option("--throttle",dest="throttle",
+                    help="throttle output, slowsdown")
+    parser.add_option("-i","--inact",dest="inactivity",
+                    help="monitors inactivity in log given inactivity seconds")
+    parser.add_option("-s","--silence",action="store_true",dest="silence",
+                    help="tails in silence, no printing")
+    parser.add_option("-n",dest="tailnlines",
+                    help="prints last N lines from log")
+    parser.add_option("-t","--target",dest="target",
+                    help="emphasizes a line in the log")
+    parser.add_option("-m","--mail",action="store_true",dest="mail",
+                    help="notification by mail when a fatal is found")
+    parser.add_option("-r","--remote",action="store_true",dest="remote",
+                    help="remote tailing over ssh")
     (options,args) = parser.parse_args()
     # defaults 
     pause = 1
@@ -68,8 +76,8 @@ def main():
     logcolors = LogColors.LogColors()
     alt_config = os.path.expanduser('~/.log4tailer')
     config = options.configfile or alt_config
-    logger.info("Configuration file [%s] found" % config)
     if os.path.exists(config):
+        logger.info("Configuration file [%s] found" % config)
         properties = parseConfig(config)
         logcolors.parseConfig(properties)
     if options.pause:
@@ -77,8 +85,7 @@ def main():
     if options.throttle:
         throttle = float(options.throttle)
     if options.silence:
-        (fromAddress,toAddress,hostname,username,pwd) = MailConfiguration.configMail()
-        mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
+        mailAction = MailAction.MailAction(MailConfiguration.configMail())
         actions.append(mailAction)
         mailAction.connectSMTP()
         silence = True
@@ -90,7 +97,7 @@ def main():
     if options.target:
         target = options.target
     if options.inactivity:
-        inactivityAction = InactivityAction.InactivityAction(options.inactivity,properties)
+        inactivityAction = InactivityAction.InactivityAction(options.inactivity, properties)
         if inactivityAction.getNotificationType() == 'mail':
             if options.mail or options.silence:
                 inactivityAction.setMailNotification(actions[len(actions)-1])

@@ -207,6 +207,8 @@ class Release(Command):
         pass
 
     def run(self):
+        # mv log4tail module to log4tail
+        shutil.copy('log4tail.py', 'log4tail')
         # check everything is ok
         if self.rtag:
             # push release to svn 
