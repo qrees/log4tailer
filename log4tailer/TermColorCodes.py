@@ -17,40 +17,57 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
+# some code taken from termcolor GPL module in pypi by 
+# Konstantin Lepa <konstantin.lepa@gmail.com>
+
+COLORS = dict(
+        zip([
+            'black',
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'magenta',
+            'cyan',
+            'white',
+            ],
+            range(30, 38)
+            )
+        )
+
+HIGHLIGHTS = dict(
+        zip([
+            'on_grey',
+            'on_red',
+            'on_green',
+            'on_yellow',
+            'on_blue',
+            'on_magenta',
+            'on_cyan',
+            'on_white'
+            ],
+            range(40, 48)
+            )
+        )
+
+SUFFIX_CODE ='\033[%dm'
+RESET = '\033[0m'
+
 class TermColorCodes:
     '''Defines the ANSI Terminal
     color codes'''
     def __init__(self):
-        self.esc = "\033["
-        self.black = self.esc+"30m"
-        self.red = self.esc+"31m"
-        self.green = self.esc+"32m"
-        self.yellow = self.esc+"33m"
-        self.blue = self.esc+"34m"
-        self.magenta = self.esc+"35m"
-        self.cyan = self.esc+"36m"
-        self.white = self.esc+"37m"
-        self.reset = self.esc+"0m"
-        self.backgroundemph = self.esc+"41m"
+        for k in COLORS:
+            setattr(self, k, SUFFIX_CODE % COLORS[k])
+        self.backgroundemph = SUFFIX_CODE % HIGHLIGHTS['on_red']
+        self.reset = RESET
 
-    def getCode(self,value):
+    def getCode(self, value):
         '''Returns the color code
         provided the ascii color word'''
-        if value == 'black':
-            return self.black
-        elif value == 'red':
-            return self.red
-        elif value == 'green':
-            return self.green
-        elif value == 'yellow':
-            return self.yellow
-        elif value == 'blue':
-            return self.blue
-        elif value == 'magenta':
-            return self.magenta
-        elif value == 'cyan':
-            return self.cyan
-        elif value == 'white':
-            return self.white
-        return
+        code = None
+        if value in COLORS:
+            code = SUFFIX_CODE % COLORS[value]
+        elif value in HIGHLIGHTS:
+            code = SUFFIX_CODE % HIGHLIGHTS[value]
+        return code

@@ -60,10 +60,10 @@ class Message:
 
         if not self.plainMessage:
             return (0,'')
-        color = self.color
         # targets have priority over Levels
         if self.isTarget:
-            return (self.pauseMode.getPause('target'),color.backgroundemph+self.plainMessage+color.reset)
+            return (self.pauseMode.getPause('target'), 
+                    self.color.backgroundemph + self.plainMessage + self.color.reset)
         pause = 0 
         level = self.messageLevel
         if self.messageLevel:
@@ -75,10 +75,10 @@ class Message:
             self.messageLevel = self.oldMessageLevel
             levelcolor = self.oldLevelColor
         if self.logOwnColor:
-            return (pause,color.getLogColor(self.logOwnColor)
-                    +self.plainMessage+color.reset)
+            return (pause, self.color.getLogColor(self.logOwnColor)
+                    + self.plainMessage + self.color.reset)
         elif levelcolor:
-            return (pause,levelcolor+self.plainMessage+color.reset)
+            return (pause, levelcolor + self.plainMessage + self.color.reset)
         else:
             return (pause, self.plainMessage)
         

@@ -39,16 +39,16 @@ class LogColors:
 
     def parseConfig(self,properties):
         for key in properties.getKeys():
+            #TODO could provide fg and bg 
             code = self.color.getCode(properties.getValue(key))
             if not code:
                 continue
-            self.__dict__[key] = code
+            setattr(self, key, code)
             
     def getLogColor(self,color):
         return self.color.getCode(color)
     
-
     def getLevelColor(self,level):
         level = level.lower()
         if level in LogLevels.logLevels:
-            return self.__dict__[level]
+            return getattr(self, level)
