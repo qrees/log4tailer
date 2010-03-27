@@ -70,9 +70,9 @@ class TermColorCodes:
             code += SUFFIX_CODE % HIGHLIGHTS[color]
         return code
 
-    def getCode(self, value):
+    def getCode(self, color):
         '''Returns the color code
         provided the ascii color word'''
-        value = [ k.strip() for k in value.split(',') ]
-        return ''.join(map(self.buildCode, value))
+        color = [ k.strip() for k in color.split(',') ]
+        return ''.join(map(self.buildCode, color))
 
