@@ -62,12 +62,17 @@ class TermColorCodes:
         self.backgroundemph = SUFFIX_CODE % HIGHLIGHTS['on_red']
         self.reset = RESET
 
+    def buildCode(self, color):
+        code = ''
+        if color in COLORS:
+            code = SUFFIX_CODE % COLORS[color]
+        if color in HIGHLIGHTS:
+            code += SUFFIX_CODE % HIGHLIGHTS[color]
+        return code
+
     def getCode(self, value):
         '''Returns the color code
         provided the ascii color word'''
-        code = None
-        if value in COLORS:
-            code = SUFFIX_CODE % COLORS[value]
-        elif value in HIGHLIGHTS:
-            code = SUFFIX_CODE % HIGHLIGHTS[value]
-        return code
+        value = [ k.strip() for k in value.split(',') ]
+        return ''.join(map(self.buildCode, value))
+

@@ -39,7 +39,6 @@ class LogColors:
 
     def parseConfig(self,properties):
         for key in properties.getKeys():
-            #TODO could provide fg and bg 
             code = self.color.getCode(properties.getValue(key))
             if not code:
                 continue

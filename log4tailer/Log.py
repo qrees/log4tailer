@@ -37,6 +37,7 @@ class Log:
         self.properties = properties
         self.ownOutputColor = None
         self.ownTarget = None    
+        self.patTarget = None
         self.inactivityTimer = None
         self.inactivityAccTime = 0
         self.mailTimer = Timer(60)
@@ -44,6 +45,8 @@ class Log:
         if properties:
             self.ownOutputColor = properties.getValue(path.lower())
             self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX+path.lower())
+            if self.ownTarget:
+                self.patTarget = re.compile('|'.join(self.ownTarget.split(',')))
         if options and options.inactivity:
             self.inactivityTimer = Timer(float(options.inactivity))
             self.inactivityTimer.startTimer()
@@ -141,12 +144,10 @@ class Log:
         return self.ownOutputColor
 
     def getOwnTarget(self):
-        if self.ownTarget:
-            return re.compile('|'.join(self.ownTarget.split(',')))
-        return None
+        return self.patTarget
     
     def getOptionalParameters(self):
-        return (self.ownOutputColor,self.getOwnTarget(),self.path)
+        return (self.ownOutputColor, self.patTarget, self.path)
 
     def getInactivityTimer(self):
         return self.inactivityTimer
