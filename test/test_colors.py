@@ -1,6 +1,5 @@
 import testtools
 import os,sys
-import fudge
 SYSOUT = sys.stdout
 sys.path.append('..')
 from log4tailer.Log import Log
@@ -19,6 +18,29 @@ class Writer:
 
     def write(self, txt):
         self.captured.append(txt)
+
+class PropertiesMock(object):
+    """docstring for Properties"""
+    def __init__(self):
+        pass
+
+    def getKeys(self):
+        return ['one', 'two']
+
+    def getValue(self, key):
+        if key == 'one':
+            return 'john'
+        else:
+            return 'joe'
+
+class PropertiesBackGround(PropertiesMock):
+    """docstring for PropertiesBackGround"""
+    def getKeys(self):
+        return ['fatal']
+
+    def getValue(self, key):
+        return "yellow, on_cyan"
+        
 
 class TestColors(testtools.TestCase):
     def setUp(self):
@@ -91,15 +113,9 @@ class TestColors(testtools.TestCase):
         self.assertEqual(trace, sys.stdout.captured[0])
         self.assertEqual('', message.getMessageLevel())        
     
-    @fudge.with_fakes    
     def testLogColorsParseConfig(self):
         logcolors = LogColors()
-        properties = fudge.Fake()
-        properties = properties.provides('getKeys').returns(['one', 'two'])
-        properties = properties.provides('getValue')
-        properties = properties.returns('john')
-        properties = properties.next_call().returns('joe')
-        logcolors.parseConfig(properties)
+        logcolors.parseConfig(PropertiesMock())
         self.assertFalse(hasattr(logcolors,'one'))
         self.assertFalse(hasattr(logcolors,'two'))
 
@@ -127,12 +143,42 @@ class TestColors(testtools.TestCase):
         self.assertEqual(expectedLogTrace1, sys.stdout.captured[2])
         self.assertEqual('FATAL', message.getMessageLevel())        
 
+    def testshouldColorizeWithBackground(self):
+        trace = "FATAL there could be an error in the application"
+        level = 'FATAL'
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        logcolors.parseConfig(PropertiesBackGround())
+        termcolors = TermColorCodes()
+        message = Message(logcolors)
+        action = PrintAction()
+        anylog = Log('out.log')
+        message.parse(trace,(None,None,None))
+        output = logcolors.getLevelColor(level)+trace+termcolors.reset
+        action.triggerAction(message,anylog)
+        self.assertEqual(output, sys.stdout.captured[0])
+    
+    def testshouldFailColorizeWithBackground(self):
+        trace = "FATAL there could be an error in the application"
+        level = 'WARN'
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        logcolors.parseConfig(PropertiesBackGround())
+        message = Message(logcolors)
+        action = PrintAction()
+        anylog = Log('out.log')
+        message.parse(trace,(None,None,None))
+        output = logcolors.getLevelColor(level)+trace+termcolors.reset
+        action.triggerAction(message,anylog)
+        self.assertNotEqual(output, sys.stdout.captured[0])
+
     def tearDown(self):
         sys.stdout = SYSOUT
         os.remove(self.logfile)
 
-#if __name__ == '__main__':
-        #unittest.main()
+if __name__ == '__main__':
+    unittest.main()
 
 
 

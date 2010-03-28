@@ -62,8 +62,11 @@ class Message:
             return (0,'')
         # targets have priority over Levels
         if self.isTarget:
+            #TODO instead of emph target with 
+            #backgroundemph, do it customer pref
             return (self.pauseMode.getPause('target'), 
-                    self.color.backgroundemph + self.plainMessage + self.color.reset)
+                    self.color.backgroundemph + self.plainMessage + \
+                            self.color.reset)
         pause = 0 
         level = self.messageLevel
         if self.messageLevel:
