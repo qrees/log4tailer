@@ -9,6 +9,8 @@ by Carlo Bertoldi
 - Better regex avoiding false positives when 
 log level in a word as suggested by 
 Carlo Bertoldi
+- Configurable background color
+- Some bug fixes
 - Updated documentation
 
 ====================================
