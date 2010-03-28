@@ -42,6 +42,8 @@ class Message:
         self.oldLevelColor = None
         self.pauseMode = PauseMode.PauseMode()
         self.logOwnColor = False
+        self.log = None
+        self.patOwnTarget = None
         if properties:
             self.pauseMode.parseConfig(properties)
     
@@ -86,7 +88,7 @@ class Message:
             return (pause, self.plainMessage)
         
     def __getMultipleTargets(self,target):
-        target = target.replace(',','|')
+        target = target.replace(' ','').replace(',','|')
         return target
     
     def getMessageLevel(self):
@@ -97,24 +99,31 @@ class Message:
     
     def __parseSetOpts(self,line):
         self.isTarget = None
+        isOwnTarget = None
+        isTarget = None
         if line:
             self.plainMessage = line.rstrip()
             self.messageLevel = self.colorparser.parse(line)
             # is target?
             if self.patarget:
-                self.isTarget = self.patarget.search(self.plainMessage)
+                isTarget = self.patarget.search(self.plainMessage)
+            if self.patOwnTarget:
+                isOwnTarget = self.patOwnTarget.search(self.plainMessage)
+            self.isTarget = isTarget or isOwnTarget
             return
         # if we don't have anything in line
         # just set current Message to unknown
         self.plainMessage = None
         self.messageLevel = 'UNKNOWN'
 
-    def parse(self,line, optionalParameters):
+    def parse(self,line, log):
         '''Need to parse the line
         and check in what level we are in'''
-        self.logOwnColor, ownTarget, self.currentLogPath = optionalParameters
+        self.logOwnColor, ownTarget, self.currentLogPath = log.getOptionalParameters()
+        self.patOwnTarget = None
+        self.log = log
         if ownTarget:
-            self.patarget = ownTarget
+            self.patOwnTarget = ownTarget
         self.__parseSetOpts(line)                
         
 

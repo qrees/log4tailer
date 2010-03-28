@@ -45,8 +45,8 @@ class TestResume(unittest.TestCase):
         fh = log.openLog()
         lines = [ line.rstrip() for line in fh.readlines() ]
         for line in lines:
-            message.parse(line,log.getOptionalParameters())
-            resume.update(message,log)
+            message.parse(line, log)
+            resume.update(message, log)
 
     def testReportResumeForTwoDifferentLogs(self):
         log = Log('out.log')

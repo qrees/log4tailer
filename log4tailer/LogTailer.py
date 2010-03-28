@@ -21,6 +21,7 @@ import os, re, time, sys
 import resource
 from Message import Message
 from LogColors import LogColors
+from Log import Log
 from Actions import PrintAction,MailAction,InactivityAction
 from Analytics.Resume import Resume
 from Configuration import MailConfiguration
@@ -64,7 +65,7 @@ class LogTailer:
             line = log.readLine()
             while line != '':
                 line = line.rstrip()
-                message.parse(line,log.getOptionalParameters())
+                message.parse(line, log)
                 printAction.printInit(message)
                 line = log.readLine()
             # just to emulate the same behaviour as tail
@@ -147,10 +148,11 @@ class LogTailer:
         and prints to standard output"""
         message = Message(self.logcolors,self.target,self.properties)
         stdin = sys.stdin
+        anylog = Log('anylog')
         for line in stdin:
-            message.parse(line,(None,None,None))
+            message.parse(line, anylog)
             for action in self.actions:
-                action.triggerAction(message,'anylog')
+                action.triggerAction(message, anylog)
     
     def __getAction(self,module):
         for action in self.actions:
@@ -220,10 +222,10 @@ class LogTailer:
                             self.__printHeaderLog(log.getLogPath())
                         lastLogPathChanged = log.getLogPath()
                         
-                    message.parse(line,log.getOptionalParameters())
-                    resume.update(message,log)
+                    message.parse(line, log)
+                    resume.update(message, log)
                     for action in self.actions:
-                        action.triggerAction(message,log)
+                        action.triggerAction(message, log)
                     log.size = log.getcurrSize()
 
                 if found == 0:

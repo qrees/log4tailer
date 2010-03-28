@@ -73,14 +73,14 @@ class TestColors(testtools.TestCase):
             line = log.readLine()
             line = line.rstrip()
             level = line.split('>')
-            message.parse(line,log.getOptionalParameters())
+            message.parse(line, log)
             output = logcolors.getLevelColor(level[0])+line+termcolors.reset
             action.triggerAction(message,log)
             self.assertIn(output, sys.stdout.captured)
         
         line = log.readLine()
         self.assertEqual('',line)
-        message.parse(line,log.getOptionalParameters())
+        message.parse(line, log)
         self.assertFalse(action.triggerAction(message,log))
     
     def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
@@ -94,7 +94,7 @@ class TestColors(testtools.TestCase):
         message = Message(logcolors)
         action = PrintAction()
         anylog = Log('out.log')
-        message.parse(trace,(None,None,None))
+        message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
         action.triggerAction(message,anylog)
         self.assertEqual(output, sys.stdout.captured[0])
@@ -108,7 +108,7 @@ class TestColors(testtools.TestCase):
         message = Message(logcolors)
         action = PrintAction()
         anylog = Log('out.log')
-        message.parse(trace,(None,None,None))
+        message.parse(trace, anylog)
         action.triggerAction(message,anylog)
         self.assertEqual(trace, sys.stdout.captured[0])
         self.assertEqual('', message.getMessageLevel())        
@@ -134,11 +134,11 @@ class TestColors(testtools.TestCase):
                 trace0 + termcolors.reset
         expectedLogTrace1 = logcolors.getLevelColor(level) + \
                 trace1 + termcolors.reset
-        message.parse(trace0,(None,None,None))
+        message.parse(trace0, anylog)
         action.triggerAction(message, anylog)
         self.assertEqual(expectedLogTrace0, sys.stdout.captured[0])
         self.assertEqual('FATAL', message.getMessageLevel())        
-        message.parse(trace1,(None,None,None))
+        message.parse(trace1, anylog)
         action.triggerAction(message, anylog)
         self.assertEqual(expectedLogTrace1, sys.stdout.captured[2])
         self.assertEqual('FATAL', message.getMessageLevel())        
@@ -153,7 +153,7 @@ class TestColors(testtools.TestCase):
         message = Message(logcolors)
         action = PrintAction()
         anylog = Log('out.log')
-        message.parse(trace,(None,None,None))
+        message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
         action.triggerAction(message,anylog)
         self.assertEqual(output, sys.stdout.captured[0])
@@ -168,7 +168,7 @@ class TestColors(testtools.TestCase):
         message = Message(logcolors)
         action = PrintAction()
         anylog = Log('out.log')
-        message.parse(trace,(None,None,None))
+        message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
         action.triggerAction(message,anylog)
         self.assertNotEqual(output, sys.stdout.captured[0])
