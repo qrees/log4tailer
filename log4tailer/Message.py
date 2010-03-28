@@ -42,6 +42,7 @@ class Message:
         self.oldLevelColor = None
         self.pauseMode = PauseMode.PauseMode()
         self.logOwnColor = False
+        self.oldLogPath = None
         self.log = None
         self.patOwnTarget = None
         if properties:
@@ -71,12 +72,14 @@ class Message:
                             self.color.reset)
         pause = 0 
         level = self.messageLevel
+        levelcolor = None
         if self.messageLevel:
             levelcolor = self.color.getLevelColor(level)
             self.oldMessageLevel = self.messageLevel
             self.oldLevelColor = levelcolor
+            self.oldLogPath = self.log.getLogPath()
             pause = self.pauseMode.getPause(level.lower())
-        else:
+        elif self.log.getLogPath() == self.oldLogPath:
             self.messageLevel = self.oldMessageLevel
             levelcolor = self.oldLevelColor
         if self.logOwnColor:
