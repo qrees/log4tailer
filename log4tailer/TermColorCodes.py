@@ -37,7 +37,7 @@ COLORS = dict(
 
 HIGHLIGHTS = dict(
         zip([
-            'on_grey',
+            'on_black',
             'on_red',
             'on_green',
             'on_yellow',
