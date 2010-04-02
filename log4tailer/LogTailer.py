@@ -105,9 +105,8 @@ class LogTailer:
             for curpos,line in enumerate(fd):
                 if curpos >= pos:
                     line = line.rstrip()
-                    optpars = (None,None,None)
-                    message.parse(line,optpars)
-                    action.triggerAction(message,log)
+                    message.parse(line, log)
+                    action.triggerAction(message, log)
                     count += 1
                     buff.append(line)
                     if count%ttlines == 0:
