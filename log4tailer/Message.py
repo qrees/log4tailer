@@ -47,7 +47,6 @@ class Message:
         self.patOwnTarget = None
         self.isOwnTarget = None
         self.isTarget = None
-        self.wasTarget = False
         if properties:
             self.pauseMode.parseConfig(properties)
     
@@ -67,36 +66,31 @@ class Message:
         pause = 0 
         level = self.messageLevel
         levelcolor = None
-
         if not self.plainMessage:
             return (0,'')
         # targets have priority over Levels
-        if self.isTarget:
-            #TODO instead of emph target with 
-            #backgroundemph, do it customer pref
-            self.emphcolor = self.color.backgroundemph
-            self.wasTarget = True
+        if self.isTarget or self.isOwnTarget:
+            self.log.emphcolor = self.targetColor or self.color.backgroundemph
+            self.log.wasTarget = True
             return (self.pauseMode.getPause('target'), 
-                    self.emphcolor + self.plainMessage + self.color.reset)
-        elif self.isOwnTarget:
-            self.wasTarget = True
-            self.emphcolor = self.targetColor or self.color.backgroundemph
-            return (self.pauseMode.getPause('target'),
-                    self.emphcolor + self.plainMessage + self.color.reset)
+                    self.log.emphcolor + self.plainMessage + self.color.reset)
         
-        if self.wasTarget and not self.messageLevel:
-            return (self.pauseMode.getPause('target'),
-                    self.emphcolor + self.plainMessage + self.color.reset)
+        if self.log.wasTarget and not self.messageLevel:
+            return (self.pauseMode.getPause('target'), 
+                    self.log.emphcolor + self.plainMessage + self.color.reset)
         
+        self.log.wasTarget = False
         if self.messageLevel:
             levelcolor = self.color.getLevelColor(level)
             self.oldMessageLevel = self.messageLevel
             self.oldLevelColor = levelcolor
-            self.oldLogPath = self.log.getLogPath()
+            self.oldLogPath = self.currentLogPath
             pause = self.pauseMode.getPause(level.lower())
-        elif self.log.getLogPath() == self.oldLogPath:
+        
+        elif self.currentLogPath == self.oldLogPath:
             self.messageLevel = self.oldMessageLevel
             levelcolor = self.oldLevelColor
+
         if self.logOwnColor:
             return (pause, self.color.getLogColor(self.logOwnColor)
                     + self.plainMessage + self.color.reset)
@@ -118,6 +112,7 @@ class Message:
     def __parseSetOpts(self, line):
         self.isTarget = None
         self.isOwnTarget = None
+        self.messageLevel = ''
         if line:
             self.plainMessage = line.rstrip()
             self.messageLevel = self.colorparser.parse(line)

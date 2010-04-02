@@ -43,6 +43,8 @@ class Log:
         self.mailTimer = Timer(60)
         self.mailTimer.startTimer()
         self.logTargetColor = None
+        self.wasTarget = False
+        self.emphcolor = None
         if properties:
             self.ownOutputColor = properties.getValue(path.lower())
             self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX + \
