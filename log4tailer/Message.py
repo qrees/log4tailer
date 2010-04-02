@@ -45,6 +45,9 @@ class Message:
         self.oldLogPath = None
         self.log = None
         self.patOwnTarget = None
+        self.isOwnTarget = None
+        self.isTarget = None
+        self.wasTarget = False
         if properties:
             self.pauseMode.parseConfig(properties)
     
@@ -60,6 +63,10 @@ class Message:
         element the colorized message
         This method is mainly used 
         by the PrintAction action'''
+        
+        pause = 0 
+        level = self.messageLevel
+        levelcolor = None
 
         if not self.plainMessage:
             return (0,'')
@@ -67,12 +74,20 @@ class Message:
         if self.isTarget:
             #TODO instead of emph target with 
             #backgroundemph, do it customer pref
+            self.emphcolor = self.color.backgroundemph
+            self.wasTarget = True
             return (self.pauseMode.getPause('target'), 
-                    self.color.backgroundemph + self.plainMessage + \
-                            self.color.reset)
-        pause = 0 
-        level = self.messageLevel
-        levelcolor = None
+                    self.emphcolor + self.plainMessage + self.color.reset)
+        elif self.isOwnTarget:
+            self.wasTarget = True
+            self.emphcolor = self.targetColor or self.color.backgroundemph
+            return (self.pauseMode.getPause('target'),
+                    self.emphcolor + self.plainMessage + self.color.reset)
+        
+        if self.wasTarget and not self.messageLevel:
+            return (self.pauseMode.getPause('target'),
+                    self.emphcolor + self.plainMessage + self.color.reset)
+        
         if self.messageLevel:
             levelcolor = self.color.getLevelColor(level)
             self.oldMessageLevel = self.messageLevel
@@ -90,7 +105,7 @@ class Message:
         else:
             return (pause, self.plainMessage)
         
-    def __getMultipleTargets(self,target):
+    def __getMultipleTargets(self, target):
         target = target.replace(' ','').replace(',','|')
         return target
     
@@ -100,26 +115,29 @@ class Message:
     def getPlainMessage(self):
         return (self.plainMessage,self.currentLogPath)
     
-    def __parseSetOpts(self,line):
+    def __parseSetOpts(self, line):
         self.isTarget = None
-        isOwnTarget = None
-        isTarget = None
+        self.isOwnTarget = None
         if line:
             self.plainMessage = line.rstrip()
             self.messageLevel = self.colorparser.parse(line)
             # is target?
             if self.patarget:
-                isTarget = self.patarget.search(self.plainMessage)
+                self.isTarget = self.patarget.search(self.plainMessage)
             if self.patOwnTarget:
-                isOwnTarget = self.patOwnTarget.search(self.plainMessage)
-            self.isTarget = isTarget or isOwnTarget
+                self.isOwnTarget = self.patOwnTarget.search(self.plainMessage)
+                # get the color associated with this target
+                if self.isOwnTarget:
+                    self.targetColor = self.log.targetColor(self.isOwnTarget
+                                                                .group(0))
+                    self.targetColor = self.color.getLogColor(self.targetColor)
             return
         # if we don't have anything in line
         # just set current Message to unknown
         self.plainMessage = None
         self.messageLevel = 'UNKNOWN'
 
-    def parse(self,line, log):
+    def parse(self, line, log):
         '''Need to parse the line
         and check in what level we are in'''
         self.logOwnColor, ownTarget, self.currentLogPath = log.getOptionalParameters()

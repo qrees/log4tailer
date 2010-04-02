@@ -98,7 +98,7 @@ class TestLog(unittest.TestCase):
 
     def testshouldHaveitsOwnTargetSchemesIfProvidedInConfigFile(self):
         fh = open('config.txt','w')
-        regexes = "log$, ^2009-10-12 got something here$"
+        regexes = "log$, ^2009-10-12 got something here$ | yellow, on_cyan"
         allregex = re.compile('|'.join(regexes.split(',')))
         targetsline = "targets /var/log/messages = "+regexes+"\n"
         fh.write(targetsline)
@@ -112,7 +112,7 @@ class TestLog(unittest.TestCase):
     
     def __createAConfigWithProperties(self):
         fh = open('config.txt','w')
-        regexes = "log$, ^2009-10-12 got something here$"
+        regexes = "log$, ^2009-10-12 got something here$ | red, yellow"
         allregex = re.compile('|'.join(regexes.split(',')))
         targetsline = "targets /var/log/messages = "+regexes+"\n"
         fh.write(targetsline)

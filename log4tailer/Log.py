@@ -42,11 +42,16 @@ class Log:
         self.inactivityAccTime = 0
         self.mailTimer = Timer(60)
         self.mailTimer.startTimer()
+        self.logTargetColor = None
         if properties:
             self.ownOutputColor = properties.getValue(path.lower())
-            self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX+path.lower())
+            self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX + \
+                                                path.lower())
             if self.ownTarget:
-                self.patTarget = re.compile('|'.join(self.ownTarget.split(',')))
+                self.logTargetColor = dict(zip(*map(self.splitfields, 
+                                                    self.ownTarget.split('|'))))
+                self.patTarget = re.compile('|'.
+                                   join(self.splitfields(self.ownTarget)))
         if options and options.inactivity:
             self.inactivityTimer = Timer(float(options.inactivity))
             self.inactivityTimer.startTimer()
@@ -169,4 +174,12 @@ class Log:
             self.inactivityAccTime = 0
             return
         self.inactivityAccTime += acctime
+
+    def splitfields(self, field):
+        return field.split(',')
+
+    def targetColor(self, target):
+        return self.logTargetColor.get(target, None)
+
+        
 
