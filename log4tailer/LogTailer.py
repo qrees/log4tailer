@@ -189,8 +189,11 @@ class LogTailer:
                 analyticsgap = properties.getValue('analyticsgaptime')
                 if analyticsgap:
                     resume.setAnalyticsGapNotification(analyticsgap)
-
         return resume
+    
+    def notifyActions(self, message, log):
+        for action in self.actions:
+            action.triggerAction(message, log)
 
     def tailer(self):
         '''Stdout multicolor tailer'''
@@ -211,8 +214,14 @@ class LogTailer:
                     curpath = log.getLogPath()
                     if self.hasRotated(log):
                         found = 0
-                    line = log.readLine()
-                    if line:
+                    lines = log.readLines()
+                    if not lines:
+                        # notify actions
+                        message.parse('', log)
+                        resume.update(message, log)
+                        self.notifyActions(message, log)
+                        continue
+                    for line in lines:
                         found = 1
                         line = line.rstrip()
                         # to emulate the tail command
@@ -220,13 +229,10 @@ class LogTailer:
                             print
                             self.__printHeaderLog(log.getLogPath())
                         lastLogPathChanged = log.getLogPath()
-                        
-                    message.parse(line, log)
-                    resume.update(message, log)
-                    for action in self.actions:
-                        action.triggerAction(message, log)
+                        message.parse(line, log)
+                        resume.update(message, log)
+                        self.notifyActions(message, log)
                     log.size = log.getcurrSize()
-
                 if found == 0:
                     #sleep for 1 sec
                     time.sleep(self.pause)

@@ -95,6 +95,9 @@ class Log:
     def readLine(self):
         return self.fh.readline()
 
+    def readLines(self):
+        return self.fh.readlines()
+
     def closeLog(self):
         self.fh.close()
 
