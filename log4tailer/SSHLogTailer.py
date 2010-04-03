@@ -1,5 +1,6 @@
 import os,sys,logging,getpass,time,select
 from Actions import PrintAction
+from Log import Log
 from Message import Message
 from TermColorCodes import TermColorCodes
 from subprocess import Popen, PIPE
@@ -137,6 +138,7 @@ class SSHLogTailer:
     def tailer(self):
         '''Stdout multicolor tailer'''
         message = Message(self.logcolors,self.target,self.properties)
+        anylog = Log('anylog')
         for hostname in self.hostnames.keys():
             command = self.hostnames[hostname]['command']
             self.logger.debug("command [%s] to be executed in host [%s]" % (
@@ -153,8 +155,8 @@ class SSHLogTailer:
                         if hostname != lasthostnameChanged:
                             self.__hostnameChangedHeader(hostname)
                         for line in lines:
-                            message.parse(line,(None,None,None))
-                            self.actions.triggerAction(message,'sshLog')
+                            message.parse(line, anylog)
+                            self.actions.triggerAction(message, anylog)
                         lasthostnameChanged = hostname
                 time.sleep(1)
         except:
