@@ -125,7 +125,10 @@ class Message:
                 if self.isOwnTarget:
                     self.targetColor = self.log.targetColor(self.isOwnTarget
                                                                 .group(0))
-                    self.targetColor = self.color.getLogColor(self.targetColor)
+                    if self.targetColor:
+                        self.targetColor = self.color.getLogColor(self.targetColor)
+                    else:
+                        self.targetColor = self.color.backgroundemph
             return
         # if we don't have anything in line
         # just set current Message to unknown

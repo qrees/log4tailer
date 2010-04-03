@@ -98,16 +98,20 @@ class TestLog(unittest.TestCase):
 
     def testshouldHaveitsOwnTargetSchemesIfProvidedInConfigFile(self):
         fh = open('config.txt','w')
-        regexes = "log$, ^2009-10-12 got something here$ | yellow, on_cyan"
-        allregex = re.compile('|'.join(regexes.split(',')))
-        targetsline = "targets /var/log/messages = "+regexes+"\n"
+        regexesColors = "log$, ^2009-10-12 got something here$ | yellow, on_cyan"
+        regexes = [ k.strip() for k in regexesColors.split('|') ] 
+        allregex = re.compile('|'.join(regexes[0].split(',')))
+        targetsline = "targets /var/log/messages = "+regexesColors+"\n"
         fh.write(targetsline)
         fh.close()
         property = Property('config.txt')
         property.parseProperties()
-        self.assertEqual(regexes,property.getValue('targets /var/log/messages'))
-        log = Log('/var/log/messages',property)
-        self.assertEqual(allregex,log.getOwnTarget())
+        self.assertEqual(regexesColors, 
+                         property.getValue('targets /var/log/messages'))
+        log = Log('/var/log/messages', property)
+        logTargetsColors = {'log$' : 'yellow',
+                '^2009-10-12 got something here$' : 'on_cyan'}
+        self.assertEqual(logTargetsColors, log.logTargetColor)
         os.remove('config.txt')
     
     def __createAConfigWithProperties(self):
@@ -133,6 +137,23 @@ class TestLog(unittest.TestCase):
         log = self.openLog()
         self.assertFalse(log.getOwnOutputColor())
         log.closeLog()
+
+    def testTargetsNoColors(self):
+        fh = open('config.txt','w')
+        regexes = "log$, ^2009-10-12 got something here$"
+        allregex = re.compile('|'.join(regexes.split(',')))
+        targetsline = "targets /var/log/messages = "+regexes+"\n"
+        fh.write(targetsline)
+        fh.close()
+        property = Property('config.txt')
+        property.parseProperties()
+        self.assertEqual(regexes, 
+                         property.getValue('targets /var/log/messages'))
+        log = Log('/var/log/messages', property)
+        logTargetsColors = {}
+        self.assertEqual(logTargetsColors, log.logTargetColor)
+        self.assertTrue(log.getOwnTarget())
+        os.remove('config.txt')
 
     def tearDown(self):
         os.remove(self.logname)
