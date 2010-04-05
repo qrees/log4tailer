@@ -2,19 +2,17 @@
 # to activate it
 # log4tail -c config yourlogs
 
-# ==============================
-# SSH Tailing parameters
-# ==============================
+# ====================================================
+# Custom colours for every level. Available 
+# colours are: red, green, yellow, blue, magenta, cyan 
+# and white. Uncomment to override the default ones.
+# ====================================================
 
-# sshhostnames = hostname0, hostname1, hostnameN-1
-# hostname0 = username0, /var/log/log0, /var/log/log1, /var/log/logN-1
-# hostname1 = username1, /var/log/log0, /var/log/log1, /var/log/logN-1
-# hostnameN-1 = usernameN-1, /var/log/log0, /var/log/log1, /var/log/logN-1
-
-# rsa_key defaults to ~/.ssh/id_rsa, if that's not your case then 
-# provide yours
-
-# rsa_key = fullpathToRsaKeyName 
+# warn = yellow, on_cyan
+# error = magenta 
+# fatal = red, on_green
+# info = green
+# debug = black
 
 # ================================
 # targets: which lines do you want 
@@ -22,20 +20,8 @@
 # uncomment and provide your values.
 # ================================
 
-# targets path/to/log0 = regex0,regex1,regex2
-# targets path/to/log1 = regex0,regex1,regex2
-
-# ====================================================
-# Custom colours for every level. Available 
-# colours are: red, green, yellow, blue, magenta, cyan 
-# and white. Uncomment to override the default ones.
-# ====================================================
-
-# warn = yellow
-# error = magenta
-# fatal = red
-# info = green
-# debug = black
+# targets path/to/log0 = regex0,regex1,regex2 | coloregex0, coloregex1, ...
+# targets path/to/log1 = regex0,regex1,regex2 | coloregex0, coloregex1, ...
 
 # ======================================================
 # Every log with its own color scheme, overriding colors 
@@ -75,5 +61,19 @@
 # analyticsnotification = mail
 # analyticsgaptime = 10.5
 
+
+# ==============================
+# SSH Tailing parameters
+# ==============================
+
+# sshhostnames = hostname0, hostname1, hostnameN-1
+# hostname0 = username0, /var/log/log0, /var/log/log1, /var/log/logN-1
+# hostname1 = username1, /var/log/log0, /var/log/log1, /var/log/logN-1
+# hostnameN-1 = usernameN-1, /var/log/log0, /var/log/log1, /var/log/logN-1
+
+# rsa_key defaults to ~/.ssh/id_rsa, if that's not your case then 
+# provide yours
+
+# rsa_key = fullpathToRsaKeyName 
 
 
