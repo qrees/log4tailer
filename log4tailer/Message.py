@@ -112,6 +112,7 @@ class Message:
     def __parseSetOpts(self, line):
         self.isTarget = None
         self.isOwnTarget = None
+        self.targetColor = None
         self.messageLevel = ''
         if line:
             self.plainMessage = line.rstrip()
