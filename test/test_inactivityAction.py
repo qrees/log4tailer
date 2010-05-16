@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest, testtools
+import unittest
 import os,sys,time
 SYSOUT = sys.stdout
 try:
@@ -45,7 +45,7 @@ class Options:
     def inactivity(self,value):
         self.inactivity = value
 
-class Writer():
+class Writer(object):
     def __init__(self):
         self.capt = []
 
@@ -56,7 +56,7 @@ class Writer():
         self.capt.append(txt)
 
 
-class TestInactivityAction(testtools.TestCase):
+class TestInactivityAction(unittest.TestCase):
     '''test that we print an alert to stdout
     once we expire the inactivity time'''
 
@@ -80,7 +80,7 @@ class TestInactivityAction(testtools.TestCase):
         timer = self.log.getInactivityTimer()
         self.assertTrue(timer.inactivityEllapsed() > inactivityTime)
         inactivityAction.triggerAction(message,self.log)
-        self.assertIn('Inactivity', sys.stdout.capt[0])
+        self.assertTrue('Inactivity' in sys.stdout.capt[0])
         self.message_mocker.VerifyAll()
     
     def testNotSendingAlertBelowInactivityTime(self):
@@ -110,7 +110,7 @@ class TestInactivityAction(testtools.TestCase):
         self.options.inactivity = 0.0000002543
         time.sleep(0.0000003)
         inactivityAction.triggerAction(message,self.log)
-        self.assertIn('Inactivity', sys.stdout.capt[0])
+        self.assertTrue('Inactivity' in sys.stdout.capt[0])
         self.message_mocker.VerifyAll()
 
     def testShouldGetInactivityNotificationTypeifInConfigFile(self):

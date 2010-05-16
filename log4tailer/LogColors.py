@@ -28,6 +28,7 @@ class LogColors:
     def __init__(self):
         self.color = TermColorCodes()
         # defaults
+        self.warning = self.color.yellow
         self.warn = self.color.yellow
         self.error = self.color.magenta
         self.info = self.color.green

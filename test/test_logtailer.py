@@ -1,4 +1,4 @@
-import testtools
+import unittest
 import os,sys
 SYSOUT = sys.stdout
 sys.path.append('..')
@@ -22,7 +22,7 @@ class Writer:
     def write(self, txt):
         self.captured.append(txt)
 
-class TestResume(testtools.TestCase):
+class TestResume(unittest.TestCase):
     
     def testshouldReturnTrueifMailAlreadyinMailAction(self):
         logcolors = LogColors()
@@ -83,7 +83,7 @@ class TestResume(testtools.TestCase):
         properties = None
         logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
         logtailer.pipeOut()
-        self.assertIn('error > one error', sys.stdout.captured[0])
+        self.assertTrue('error > one error' in sys.stdout.captured[0])
 
     def tearDown(self):
         sys.stdout = SYSOUT

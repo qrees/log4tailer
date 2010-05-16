@@ -1,4 +1,4 @@
-import testtools
+import unittest
 import os,sys
 SYSOUT = sys.stdout
 sys.path.append('..')
@@ -42,7 +42,7 @@ class PropertiesBackGround(PropertiesMock):
         return "yellow, on_cyan"
         
 
-class TestColors(testtools.TestCase):
+class TestColors(unittest.TestCase):
     def setUp(self):
         self.logfile = 'out.log'
         fh = open(self.logfile,'w')
@@ -76,7 +76,7 @@ class TestColors(testtools.TestCase):
             message.parse(line, log)
             output = logcolors.getLevelColor(level[0])+line+termcolors.reset
             action.triggerAction(message,log)
-            self.assertIn(output, sys.stdout.captured)
+            self.assertTrue(output in sys.stdout.captured)
         
         line = log.readLine()
         self.assertEqual('',line)
@@ -172,6 +172,21 @@ class TestColors(testtools.TestCase):
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
         action.triggerAction(message,anylog)
         self.assertNotEqual(output, sys.stdout.captured[0])
+
+    def testShouldColorizeWarningLevelAsWell(self):
+        '''test that *warning* keyword gets colorized as well'''
+        level = 'WARNING'
+        trace = "WARNING there could be an error in the application"
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        message = Message(logcolors)
+        action = PrintAction()
+        anylog = Log('out.log')
+        message.parse(trace, anylog)
+        output = logcolors.getLevelColor(level)+trace+termcolors.reset
+        action.triggerAction(message,anylog)
+        self.assertEqual(output, sys.stdout.captured[0])
 
     def tearDown(self):
         sys.stdout = SYSOUT

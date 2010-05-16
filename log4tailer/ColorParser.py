@@ -24,7 +24,7 @@ class ColorParser:
     '''tries to parse 
     defined levels in log4j'''
     def __init__(self):
-        self.all = re.compile(r'.*?\b(debug|info|warn|error|fatal|critical)\b',re.I)
+        self.all = re.compile(r'.*?\b(debug|info|warn|warning|error|fatal|critical)\b',re.I)
 
     def parse(self,line):
         isMatch = self.all.match(line)
