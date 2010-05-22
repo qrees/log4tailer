@@ -16,13 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 import os, sys, time
 import LogColors
 from smtplib import *
 import datetime
-
 
 class Print(object):
     '''PrintAction: prints to stdout the 
@@ -45,7 +42,6 @@ class Print(object):
         if colormsg:
             print colormsg
 
-
 class Inactivity(object):
     '''sends an email or print
     alert in case too much inactivity
@@ -63,6 +59,7 @@ class Inactivity(object):
         notification = None
         if properties:
             notification = properties.getValue(Inactivity.InactivityActionNotification)
+            self.logColors.parseConfig(properties)
         self.notification = notification or 'print'
 
     def notify(self,message,log):
@@ -99,7 +96,6 @@ class Inactivity(object):
 
     def getMailAction(self):
         return self.mailAction
-    
 
 class Mail(object):
     """Common actions to be taken
@@ -107,11 +103,9 @@ class Mail(object):
     
     mailLevels = ['ERROR','FATAL']
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
     monthname = [None,
                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
 
     def __init__(self, fro = None, to = None, hostname = None, user = None, passwd = None):
         self.fro = fro
@@ -121,7 +115,6 @@ class Mail(object):
         self.passwd = passwd
         self.conn = None
         self.bodyMailAction = None
-    
 
     def date_time(self):
         """
@@ -143,7 +136,6 @@ class Mail(object):
         except ImportError:
             formatdate = self.date_time
         return formatdate()
-        
         
     def triggerAction(self,message,log):
         '''msg to print, send by email, whatever...'''
@@ -210,19 +202,8 @@ class Mail(object):
         except:
             print "failed to quit SMTP connection"
             sys.exit()
-        
     
     def emailSendMail(self,to,fro,contents):
         #send email using SendMail
         return
-
-
-
-
-
-
-
-
-
-
 
