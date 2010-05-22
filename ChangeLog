@@ -2,7 +2,8 @@
 xx/xx/xx release 2.6
 ====================================
 - Warning keyword level included
-- filter action implemented
+- filter notifications implemented
+- actions refactored into notifications 
 
 ====================================
 01/05/10 release 2.4

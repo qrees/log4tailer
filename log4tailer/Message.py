@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from ColorParser import ColorParser
-from Actions import PauseMode
+import modes
 import re
 
 class Message:
@@ -40,7 +40,7 @@ class Message:
         self.messageLevel = ''
         self.oldMessageLevel = ''
         self.oldLevelColor = None
-        self.pauseMode = PauseMode.PauseMode()
+        self.pauseMode = modes.PauseMode()
         self.logOwnColor = False
         self.oldLogPath = None
         self.log = None
@@ -107,7 +107,7 @@ class Message:
         return self.messageLevel
 
     def getPlainMessage(self):
-        return (self.plainMessage,self.currentLogPath)
+        return (self.plainMessage, self.currentLogPath)
     
     def __parseSetOpts(self, line):
         self.isTarget = None

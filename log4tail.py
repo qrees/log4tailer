@@ -64,6 +64,8 @@ def main():
                     help="notification by mail when a fatal is found")
     parser.add_option("-r","--remote",action="store_true",dest="remote",
                     help="remote tailing over ssh")
+    parser.add_option("-f","--filter",dest="filter",
+                    help="filters log traces, tail and grep")
     (options,args) = parser.parse_args()
     # defaults 
     pause = 1
@@ -95,6 +97,9 @@ def main():
     if options.mail:
         mailAction = MailConfiguration.setupMailAction()
         actions.append(mailAction)
+    if options.filter:
+        # overrides Print notifier
+        actions[0] = notifications.Filter(re.compile(options.filter))
     if options.tailnlines:
         nlines = int(options.tailnlines)
     if options.target:

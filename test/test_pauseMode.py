@@ -3,7 +3,7 @@ import os,sys
 
 sys.path.append('..')
 
-from log4tailer.Actions.PauseMode import PauseMode
+from log4tailer import modes
 from log4tailer.Properties import Property
 from log4tailer.log4Exceptions import KeyAlreadyExistsException,KeyNotFoundException
 
@@ -22,7 +22,7 @@ class TestPauseMode(unittest.TestCase):
         self.configfh.close()
     
     def testgetDefaultPauseModeLevels(self):
-        pauseMode = PauseMode()
+        pauseMode = modes.PauseMode()
         self.assertEqual(0,pauseMode.getPause('debug'))
         self.assertEqual(0,pauseMode.getPause('info'))
         self.assertEqual(0,pauseMode.getPause('warn'))
@@ -31,7 +31,7 @@ class TestPauseMode(unittest.TestCase):
         self.assertEqual(0,pauseMode.getPause('target'))
 
     def testgetOverridePauseModeLevels(self):
-        pauseMode = PauseMode()
+        pauseMode = modes.PauseMode()
         properties = Property(self.configfile)
         properties.parseProperties()
         pauseMode.parseConfig(properties)

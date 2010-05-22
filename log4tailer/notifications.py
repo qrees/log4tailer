@@ -28,7 +28,7 @@ class Print(object):
     def __init__(self):
         pass
     
-    def notify(self,message,log):
+    def notify(self, message, log):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
         (pause, colormsg) = message.getColorizedMessage()
@@ -36,7 +36,7 @@ class Print(object):
             print colormsg
             time.sleep(pause)
 
-    def printInit(self,message):
+    def printInit(self, message):
         (pause,colormsg) = message.getColorizedMessage()
         pause = 0
         if colormsg:
@@ -207,3 +207,19 @@ class Mail(object):
         #send email using SendMail
         return
 
+
+class Filter(Print):
+    """ When a pattern is found, it will notify 
+    the user, otherwise nothing will be notified. It 
+    would be a mix of tail and grep
+    """
+
+    def __init__(self, pattern):
+        self.pattern = pattern
+    
+    def notify(self, message, log):
+        plainMessage = message.plainMessage
+        if not plainMessage:
+            return
+        if self.pattern.search(plainMessage):
+            Print.notify(self, message, log)
