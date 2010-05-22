@@ -22,7 +22,8 @@ import resource
 from Message import Message
 from LogColors import LogColors
 from Log import Log
-from Actions import PrintAction,MailAction,InactivityAction
+import notifications
+#from notifications import PrintAction,MailAction,InactivityAction
 from Analytics.Resume import Resume
 from Configuration import MailConfiguration
 
@@ -56,7 +57,7 @@ class LogTailer:
         '''prints the last 10 
         lines for each log, one log 
         at a time'''
-        printAction = PrintAction.PrintAction()
+        printAction = notifications.Print()
         lenarray = len(self.arrayLog)
         cont = 0
         for log in self.arrayLog:
@@ -94,7 +95,7 @@ class LogTailer:
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
         message = Message(self.logcolors)
-        action = PrintAction.PrintAction()
+        action = notification.Print()
         for log in self.arrayLog:
             fd = log.openLog()
             numlines = log.numLines()
@@ -106,7 +107,7 @@ class LogTailer:
                 if curpos >= pos:
                     line = line.rstrip()
                     message.parse(line, log)
-                    action.triggerAction(message, log)
+                    action.notify(message, log)
                     count += 1
                     buff.append(line)
                     if count%ttlines == 0:
@@ -151,7 +152,7 @@ class LogTailer:
         for line in stdin:
             message.parse(line, anylog)
             for action in self.actions:
-                action.triggerAction(message, anylog)
+                action.notify(message, anylog)
     
     def __getAction(self,module):
         for action in self.actions:
@@ -163,14 +164,14 @@ class LogTailer:
         '''check if mail properties
         already been setup'''
         properties = self.properties
-        action = self.__getAction(MailAction.MailAction)
+        action = self.__getAction(notifications.Mail)
         if action:
             self.mailAction = action
             return True
         if properties:
             if properties.getValue('inactivitynotification') == 'mail':
                 # check if there is any inactivity action actually setup
-                inactivityaction = self.__getAction(InactivityAction.InactivityAction)
+                inactivityaction = self.__getAction(notifications.Inactivity)
                 if inactivityaction:
                     self.mailAction = inactivityaction.getMailAction()
                     return True
@@ -193,7 +194,7 @@ class LogTailer:
     
     def notifyActions(self, message, log):
         for action in self.actions:
-            action.triggerAction(message, log)
+            action.notify(message, log)
 
     def tailer(self):
         '''Stdout multicolor tailer'''

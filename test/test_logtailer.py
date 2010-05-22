@@ -7,8 +7,7 @@ from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogTailer import LogTailer
 from log4tailer.LogColors import LogColors
-from log4tailer.Actions.PrintAction import PrintAction
-from log4tailer.Actions.MailAction import MailAction
+from log4tailer import notifications
 from log4tailer.Properties import Property
 import mox
 
@@ -27,7 +26,7 @@ class TestResume(unittest.TestCase):
     def testshouldReturnTrueifMailAlreadyinMailAction(self):
         logcolors = LogColors()
         mailActionMocker = mox.Mox()
-        mailAction = mailActionMocker.CreateMock(MailAction)
+        mailAction = mailActionMocker.CreateMock(notifications.Mail)
         actions = [mailAction]
         throttleTime = 0
         silence = False
@@ -48,7 +47,7 @@ class TestResume(unittest.TestCase):
         properties = Property('aconfig')
         properties.parseProperties()
         logcolors = LogColors()
-        printaction = PrintAction()
+        printaction = notifications.Print()
         actions = [printaction]
         throttleTime = 0
         silence = False
@@ -60,7 +59,7 @@ class TestResume(unittest.TestCase):
     
     def testshouldReturnFalseifBothMailActionOrInactivityActionNotificationNotEnabled(self):
         logcolors = LogColors()
-        printaction = PrintAction()
+        printaction = notifications.Print()
         actions = [printaction]
         throttleTime = 0
         silence = False
@@ -74,7 +73,7 @@ class TestResume(unittest.TestCase):
         sys.stdin = ['error > one error', 'warning > one warning']
         sys.stdout = Writer()
         logcolors = LogColors()
-        printaction = PrintAction()
+        printaction = notifications.Print()
         actions = [printaction]
         throttleTime = 0
         silence = False

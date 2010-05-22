@@ -27,8 +27,9 @@ except:
     sys.exit()
 
 sys.path.append('..')
-from log4tailer.Actions.InactivityAction import InactivityAction
-from log4tailer.Actions.MailAction import MailAction
+from log4tailer import notifications
+#from log4tailer.Actions.InactivityAction import InactivityAction
+#from log4tailer.Actions.MailAction import MailAction
 from log4tailer.Message import Message
 from log4tailer.Properties import Property
 from log4tailer.Log import Log
@@ -75,11 +76,11 @@ class TestInactivityAction(unittest.TestCase):
         message.getPlainMessage().AndReturn((None,'logpath'))
         self.message_mocker.ReplayAll()
         inactivityTime = 0.0000001
-        inactivityAction = InactivityAction(inactivityTime)
+        notifier = notifications.Inactivity(inactivityTime)
         time.sleep(0.0000002)
         timer = self.log.getInactivityTimer()
         self.assertTrue(timer.inactivityEllapsed() > inactivityTime)
-        inactivityAction.triggerAction(message,self.log)
+        notifier.notify(message,self.log)
         self.assertTrue('Inactivity' in sys.stdout.capt[0])
         self.message_mocker.VerifyAll()
     
@@ -89,12 +90,12 @@ class TestInactivityAction(unittest.TestCase):
         message.getPlainMessage().AndReturn(('error> this is an error message','logpath'))
         self.message_mocker.ReplayAll()
         inactivityTime = 0.0005
-        inactivityAction = InactivityAction(inactivityTime)
+        notifier = notifications.Inactivity(inactivityTime)
         self.options.inactivity = inactivityTime
         timer = self.log.getInactivityTimer()
         time.sleep(0.000000001)
         self.assertTrue(timer.inactivityEllapsed() < inactivityTime)
-        inactivityAction.triggerAction(message,self.log)
+        notifier.notify(message,self.log)
         self.assertTrue(len(sys.stdout) == 0)
         self.message_mocker.VerifyAll()
 
@@ -106,10 +107,10 @@ class TestInactivityAction(unittest.TestCase):
         # inactivity time
         message.getPlainMessage().AndReturn((None,'logpath'))
         self.message_mocker.ReplayAll()
-        inactivityAction = InactivityAction(0.0000002543)
+        notifier = notifications.Inactivity(0.0000002543)
         self.options.inactivity = 0.0000002543
         time.sleep(0.0000003)
-        inactivityAction.triggerAction(message,self.log)
+        notifier.notify(message,self.log)
         self.assertTrue('Inactivity' in sys.stdout.capt[0])
         self.message_mocker.VerifyAll()
 
@@ -119,28 +120,28 @@ class TestInactivityAction(unittest.TestCase):
         fh.close()
         property = Property('config.txt')
         property.parseProperties()
-        inactivityAction = InactivityAction(1,property)
-        self.assertEqual('mail',inactivityAction.getNotificationType())
+        notifier = notifications.Inactivity(1,property)
+        self.assertEqual('mail',notifier.getNotificationType())
         os.remove('config.txt')
 
     def testShouldBePrintNotificationTypeifNoConfigFile(self):
-        inactivityAction = InactivityAction(1)
-        self.assertEqual('print',inactivityAction.getNotificationType())
+        notifier = notifications.Inactivity(1)
+        self.assertEqual('print',notifier.getNotificationType())
     
-    def testIfMailNotificationTypeAlreadyAvailablebyMailActionItShouldSetItUp(self):
-        mailActionMocker = mox.Mox()
-        mailAction = mailActionMocker.CreateMock(MailAction)
+    def testIfMailNotificationTypeAlreadyAvailablebyMailShouldSetItUp(self):
+        mailMocker = mox.Mox()
+        mail = mailMocker.CreateMock(notifications.Mail)
         fh = open('config.txt','w')
         fh.write('inactivitynotification = mail\n')
         fh.close()
         property = Property('config.txt')
         property.parseProperties()
-        inactivityAction = InactivityAction(1,property)
-        if inactivityAction.getNotificationType() == 'mail':
+        notifier = notifications.Inactivity(1,property)
+        if notifier.getNotificationType() == 'mail':
             # what is called inversion of control pattern actually
-            inactivityAction.setMailNotification(mailAction)
+            notifier.setMailNotification(mail)
         else:
-            self.fail('should be inactivityAction with mail Notification') 
+            self.fail('should be notifier with mail Notification') 
         os.remove('config.txt')
 
     def tearDown(self):

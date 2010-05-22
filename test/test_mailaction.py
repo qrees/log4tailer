@@ -20,7 +20,7 @@ import sys,unittest,mox,email
 from exceptions import ImportError
 
 sys.path.append('..')
-from log4tailer.Actions.MailAction import MailAction
+from log4tailer import notifications
 
 class TestMailAction(unittest.TestCase):
 
@@ -28,12 +28,12 @@ class TestMailAction(unittest.TestCase):
         pass
     
     def testshouldBeFineImportingformatdate(self):
-        mailaction = MailAction()
+        mailaction = notifications.Mail()
         self.assertTrue(mailaction.getNow())
     
     def testshoulGetNowDateFromTime(self):
         m = mox.Mox()
-        mailaction = MailAction()
+        mailaction = notifications.Mail()
         m.StubOutWithMock(email.utils,'formatdate')
         email.utils.__delattr__('formatdate')
         m.ReplayAll()

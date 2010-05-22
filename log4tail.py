@@ -21,7 +21,7 @@ import os,sys,re,getpass,logging
 import logging.config
 from optparse import OptionParser
 from log4tailer import LogTailer,LogColors,Log,Properties
-from log4tailer.Actions import PrintAction,MailAction,InactivityAction
+from log4tailer import notifications
 from log4tailer.Configuration import MailConfiguration
 
 import resource	
@@ -69,7 +69,7 @@ def main():
     pause = 1
     silence = False 
     throttle = 0
-    printAction = PrintAction.PrintAction()
+    printAction = notifications.Print()
     actions = [printAction]
     nlines = False
     target = None
@@ -88,7 +88,7 @@ def main():
     if options.throttle:
         throttle = float(options.throttle)
     if options.silence:
-        mailAction = MailAction.MailAction(MailConfiguration.configMail())
+        mailAction = notifications.Mail(MailConfiguration.configMail())
         actions.append(mailAction)
         mailAction.connectSMTP()
         silence = True
@@ -100,7 +100,7 @@ def main():
     if options.target:
         target = options.target
     if options.inactivity:
-        inactivityAction = InactivityAction.InactivityAction(options.inactivity, properties)
+        inactivityAction = notifications.Inactivity(options.inactivity, properties)
         if inactivityAction.getNotificationType() == 'mail':
             if options.mail or options.silence:
                 inactivityAction.setMailNotification(actions[len(actions)-1])

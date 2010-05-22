@@ -24,7 +24,7 @@ sys.path.append('..')
 from log4tailer.Log import Log
 from log4tailer.LogColors import LogColors
 from log4tailer.Properties import Property
-from log4tailer.Actions.PrintAction import PrintAction
+from log4tailer import notifications
 from log4tailer.SSHLogTailer import SSHLogTailer
 
 class TestSSHTailer(unittest.TestCase):
@@ -48,7 +48,7 @@ class TestSSHTailer(unittest.TestCase):
         properties.parseProperties()
         logging.debug(properties.getKeys())
         logcolors = LogColors()
-        printaction = PrintAction()
+        printaction = notifications.Print()
         actions = [printaction]
         throttleTime = 0
         silence = False
@@ -63,7 +63,7 @@ class TestSSHTailer(unittest.TestCase):
         fh.close()
         properties = Property('wrongconfigfile')
         properties.parseProperties()
-        logtailer = SSHLogTailer(LogColors(),None,0,0,False,PrintAction(),properties)
+        logtailer = SSHLogTailer(LogColors(),None,0,0,False,notifications.Print(),properties)
         self.assertFalse(logtailer.sanityCheck())
         os.remove('wrongconfigfile')
     
@@ -73,7 +73,7 @@ class TestSSHTailer(unittest.TestCase):
         properties.parseProperties()
         logging.debug(properties.getKeys())
         logcolors = LogColors()
-        printaction = PrintAction()
+        printaction = notifications.Print()
         actions = [printaction]
         throttleTime = 0
         silence = False
@@ -90,7 +90,7 @@ class TestSSHTailer(unittest.TestCase):
         properties.parseProperties()
         logging.debug(properties.getKeys())
         logcolors = LogColors()
-        printaction = PrintAction()
+        printaction = notifications.Print()
         actions = [printaction]
         throttleTime = 0
         silence = False

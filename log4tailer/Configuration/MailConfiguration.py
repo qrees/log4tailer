@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 import getpass
-from log4tailer.Actions import MailAction
+from log4tailer import notifications
 
 def configMail():
     hostname = raw_input("Host name for your SMTP account?\n")
@@ -29,6 +29,6 @@ def configMail():
 
 def setupMailAction():
     (fromAddress,toAddress,hostname,username,pwd) = configMail()
-    mailAction = MailAction.MailAction(fromAddress,toAddress,hostname,username,pwd)
+    mailAction = notifications.Mail(fromAddress,toAddress,hostname,username,pwd)
     mailAction.connectSMTP()
     return mailAction

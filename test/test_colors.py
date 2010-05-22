@@ -1,18 +1,20 @@
 import unittest
 import os,sys
-SYSOUT = sys.stdout
 sys.path.append('..')
 from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.Properties import Property
 from log4tailer.LogColors import LogColors
-from log4tailer.Actions.PrintAction import PrintAction
+#from log4tailer.Actions.PrintAction import PrintAction
+from log4tailer import notifications
 from log4tailer.TermColorCodes import TermColorCodes
+
+SYSOUT = sys.stdout
 
 class Writer:
     def __init__(self):
         self.captured = []
-
+    
     def __len__(self):
         return len(self.captured)
 
@@ -63,7 +65,7 @@ class TestColors(unittest.TestCase):
         logcolors = LogColors() #using default colors
         termcolors = TermColorCodes()
         target = None
-        action = PrintAction()
+        notifier = notifications.Print()
         message = Message(logcolors,target)
         log = Log(self.logfile)
         log.openLog()
@@ -75,13 +77,13 @@ class TestColors(unittest.TestCase):
             level = line.split('>')
             message.parse(line, log)
             output = logcolors.getLevelColor(level[0])+line+termcolors.reset
-            action.triggerAction(message,log)
+            notifier.notify(message,log)
             self.assertTrue(output in sys.stdout.captured)
         
         line = log.readLine()
         self.assertEqual('',line)
         message.parse(line, log)
-        self.assertFalse(action.triggerAction(message,log))
+        self.assertFalse(notifier.notify(message,log))
     
     def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
         # Test for fix 5
@@ -92,11 +94,11 @@ class TestColors(unittest.TestCase):
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
-        action = PrintAction()
+        notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        action.triggerAction(message,anylog)
+        notifier.notify(message,anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
     def testshouldNotColorizeifLevelKeyInaWord(self):
@@ -106,10 +108,10 @@ class TestColors(unittest.TestCase):
         sys.stdout = Writer()
         logcolors = LogColors()
         message = Message(logcolors)
-        action = PrintAction()
+        notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        action.triggerAction(message,anylog)
+        notifier.notify(message,anylog)
         self.assertEqual(trace, sys.stdout.captured[0])
         self.assertEqual('', message.getMessageLevel())        
     
@@ -128,18 +130,18 @@ class TestColors(unittest.TestCase):
         sys.stdout = Writer()
         logcolors = LogColors()
         message = Message(logcolors)
-        action = PrintAction()
+        notifier = notifications.Print()
         anylog = Log('out.log')
         expectedLogTrace0 = logcolors.getLevelColor(level) + \
                 trace0 + termcolors.reset
         expectedLogTrace1 = logcolors.getLevelColor(level) + \
                 trace1 + termcolors.reset
         message.parse(trace0, anylog)
-        action.triggerAction(message, anylog)
+        notifier.notify(message, anylog)
         self.assertEqual(expectedLogTrace0, sys.stdout.captured[0])
         self.assertEqual('FATAL', message.getMessageLevel())        
         message.parse(trace1, anylog)
-        action.triggerAction(message, anylog)
+        notifier.notify(message, anylog)
         self.assertEqual(expectedLogTrace1, sys.stdout.captured[2])
         self.assertEqual('FATAL', message.getMessageLevel())        
 
@@ -151,11 +153,11 @@ class TestColors(unittest.TestCase):
         logcolors.parseConfig(PropertiesBackGround())
         termcolors = TermColorCodes()
         message = Message(logcolors)
-        action = PrintAction()
+        notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        action.triggerAction(message,anylog)
+        notifier.notify(message,anylog)
         self.assertEqual(output, sys.stdout.captured[0])
     
     def testshouldFailColorizeWithBackground(self):
@@ -166,11 +168,11 @@ class TestColors(unittest.TestCase):
         termcolors = TermColorCodes()
         logcolors.parseConfig(PropertiesBackGround())
         message = Message(logcolors)
-        action = PrintAction()
+        notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        action.triggerAction(message,anylog)
+        notifier.notify(message,anylog)
         self.assertNotEqual(output, sys.stdout.captured[0])
 
     def testShouldColorizeWarningLevelAsWell(self):
@@ -181,11 +183,11 @@ class TestColors(unittest.TestCase):
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
-        action = PrintAction()
+        notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
         output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        action.triggerAction(message,anylog)
+        notifier.notify(message,anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
     def tearDown(self):

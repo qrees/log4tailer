@@ -1,5 +1,4 @@
 import os,sys,logging,getpass,time,select
-from Actions import PrintAction
 from Log import Log
 from Message import Message
 from TermColorCodes import TermColorCodes
@@ -156,7 +155,7 @@ class SSHLogTailer:
                             self.__hostnameChangedHeader(hostname)
                         for line in lines:
                             message.parse(line, anylog)
-                            self.actions.triggerAction(message, anylog)
+                            self.actions.notify(message, anylog)
                         lasthostnameChanged = hostname
                 time.sleep(1)
         except:

@@ -7,8 +7,7 @@ from log4tailer.Log import Log
 from log4tailer.Properties import Property
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
-from log4tailer.Actions.PrintAction import PrintAction
-from log4tailer.Actions.MailAction import MailAction
+from log4tailer import notifications
 
 import mox
 
@@ -102,7 +101,7 @@ class TestResume(unittest.TestCase):
         arrayLog = [Log('out.log')]
         resume = Resume.Resume(arrayLog)
         mailactionmocker = mox.Mox()
-        mailaction = mailactionmocker.CreateMock(MailAction)
+        mailaction = mailactionmocker.CreateMock(notifications.Mail)
         if properties.getValue('analyticsnotification') == 'mail':
             resume.setMailNotification(mailaction)
             self.assertEquals('mail',resume.getNotificationType())
