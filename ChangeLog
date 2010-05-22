@@ -4,6 +4,8 @@ xx/xx/xx release 2.6
 - Warning keyword level included
 - filter notifications implemented
 - actions refactored into notifications 
+- pausemode refactored into modes
+- updated documentation
 
 ====================================
 01/05/10 release 2.4
