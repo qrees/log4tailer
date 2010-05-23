@@ -2,7 +2,7 @@ import unittest
 import os,sys
 import time
 sys.path.append('..')
-from log4tailer.Analytics import Resume
+from log4tailer import reporting
 from log4tailer.Log import Log
 from log4tailer.Properties import Property
 from log4tailer.Message import Message
@@ -54,7 +54,7 @@ class TestResume(unittest.TestCase):
         fh = log.openLog()
         logcolors = LogColors()
         message = Message(logcolors)
-        resume = Resume.Resume(arrayLogs)
+        resume = reporting.Resume(arrayLogs)
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog,message,resume)
         
@@ -76,7 +76,7 @@ class TestResume(unittest.TestCase):
         message_mocker.ReplayAll()
         mylog = Log('out.log')
         arraylogs = [mylog]
-        resume = Resume.Resume(arraylogs)
+        resume = reporting.Resume(arraylogs)
         resume.update(message,mylog)
         outLogReport = resume.logsReport[mylog.getLogPath()]
         numofTargets = 1
@@ -86,7 +86,7 @@ class TestResume(unittest.TestCase):
     
     def testTargetsAreNonTimeStampedinResume(self):
         arrayLog = [Log('out.log')]
-        resume = Resume.Resume(arrayLog)
+        resume = reporting.Resume(arrayLog)
         self.assertTrue('TARGET' in resume.nonTimeStamped)
         self.assertTrue('TARGET' in resume.orderReport)
     
@@ -99,7 +99,7 @@ class TestResume(unittest.TestCase):
         properties.parseProperties()
         self.assertTrue(properties.isKey('analyticsnotification'))
         arrayLog = [Log('out.log')]
-        resume = Resume.Resume(arrayLog)
+        resume = reporting.Resume(arrayLog)
         mailactionmocker = mox.Mox()
         mailaction = mailactionmocker.CreateMock(notifications.Mail)
         if properties.getValue('analyticsnotification') == 'mail':

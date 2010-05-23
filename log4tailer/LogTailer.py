@@ -23,8 +23,7 @@ from Message import Message
 from LogColors import LogColors
 from Log import Log
 import notifications
-#from notifications import PrintAction,MailAction,InactivityAction
-from Analytics.Resume import Resume
+import reporting
 from Configuration import MailConfiguration
 
 class LogTailer:
@@ -178,7 +177,7 @@ class LogTailer:
         return False
     
     def resumeBuilder(self):
-        resume = Resume(self.arrayLog)
+        resume = reporting.Resume(self.arrayLog)
         properties = self.properties
         if properties:
             if properties.getValue('analyticsnotification') == 'mail':

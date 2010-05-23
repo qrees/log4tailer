@@ -2,7 +2,7 @@ import unittest
 import os,sys
 SYSOUT = sys.stdout
 sys.path.append('..')
-from log4tailer.Analytics import Resume
+from log4tailer.reporting import Resume
 from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogTailer import LogTailer

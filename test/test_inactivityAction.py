@@ -89,7 +89,7 @@ class TestInactivityAction(unittest.TestCase):
         message = self.message_mocker.CreateMock(Message)
         message.getPlainMessage().AndReturn(('error> this is an error message','logpath'))
         self.message_mocker.ReplayAll()
-        inactivityTime = 0.0005
+        inactivityTime = 0.005
         notifier = notifications.Inactivity(inactivityTime)
         self.options.inactivity = inactivityTime
         timer = self.log.getInactivityTimer()
