@@ -137,7 +137,7 @@ class Mail(object):
             formatdate = self.date_time
         return formatdate()
         
-    def triggerAction(self,message,log):
+    def notify(self,message,log):
         '''msg to print, send by email, whatever...'''
         
         body = self.bodyMailAction

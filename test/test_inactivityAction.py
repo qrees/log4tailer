@@ -28,8 +28,6 @@ except:
 
 sys.path.append('..')
 from log4tailer import notifications
-#from log4tailer.Actions.InactivityAction import InactivityAction
-#from log4tailer.Actions.MailAction import MailAction
 from log4tailer.Message import Message
 from log4tailer.Properties import Property
 from log4tailer.Log import Log
@@ -55,7 +53,6 @@ class Writer(object):
 
     def write(self, txt):
         self.capt.append(txt)
-
 
 class TestInactivityAction(unittest.TestCase):
     '''test that we print an alert to stdout
@@ -138,7 +135,6 @@ class TestInactivityAction(unittest.TestCase):
         property.parseProperties()
         notifier = notifications.Inactivity(1,property)
         if notifier.getNotificationType() == 'mail':
-            # what is called inversion of control pattern actually
             notifier.setMailNotification(mail)
         else:
             self.fail('should be notifier with mail Notification') 
