@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys, time
+import sys
+import time
 import LogColors
 from smtplib import *
-import datetime
 
 class Print(object):
     '''PrintAction: prints to stdout the 
@@ -101,7 +101,7 @@ class Mail(object):
     """Common actions to be taken
     by the Tailer"""
     
-    mailLevels = ['ERROR','FATAL']
+    mailLevels = ['ERROR', 'FATAL']
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     monthname = [None,
                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -142,7 +142,7 @@ class Mail(object):
         
         body = self.bodyMailAction
         if not body:
-            if message.getMessageLevel() not in MailAction.mailLevels and not message.isATarget():
+            if message.getMessageLevel() not in Mail.mailLevels and not message.isATarget():
                 return
             message, logpath = message.getPlainMessage()
             title = "Alert found for log "+logpath
@@ -206,7 +206,6 @@ class Mail(object):
     def emailSendMail(self,to,fro,contents):
         #send email using SendMail
         return
-
 
 class Filter(Print):
     """ When a pattern is found, it will notify 

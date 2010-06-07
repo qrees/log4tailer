@@ -17,10 +17,10 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, re, time, sys
-import resource
+import os
+import time
+import sys
 from Message import Message
-from LogColors import LogColors
 from Log import Log
 import notifications
 import reporting
@@ -94,7 +94,7 @@ class LogTailer:
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
         message = Message(self.logcolors)
-        action = notification.Print()
+        action = notifications.Print()
         for log in self.arrayLog:
             fd = log.openLog()
             numlines = log.numLines()
