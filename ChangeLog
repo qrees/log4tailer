@@ -5,6 +5,7 @@ xx/xx/xx release 2.6
 - filter notifications implemented
 - actions refactored into notifications 
 - pausemode refactored into modes
+- analytics notification to a file
 - updated documentation
 
 ====================================
