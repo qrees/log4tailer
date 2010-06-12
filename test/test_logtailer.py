@@ -1,10 +1,8 @@
 import unittest
-import os,sys
+import sys
 SYSOUT = sys.stdout
 sys.path.append('..')
-from log4tailer.reporting import Resume
-from log4tailer.Log import Log
-from log4tailer.Message import Message
+from log4tailer import reporting
 from log4tailer.LogTailer import LogTailer
 from log4tailer.LogColors import LogColors
 from log4tailer import notifications
@@ -37,9 +35,9 @@ class TestResume(unittest.TestCase):
         self.assertEqual(True,logtailer.mailIsSetup())
 
 
-    def __setupAConfig(self):
+    def __setupAConfig(self, method = 'mail'):
         fh = open('aconfig','w')
-        fh.write('inactivitynotification = mail\n')
+        fh.write('inactivitynotification = ' + method + '\n')
         fh.close()
 
     def testshouldReturnFalseifPropertiesHasInactivityActionNotificationSetToMailbutNoInactivityActionPassed(self):
@@ -83,6 +81,28 @@ class TestResume(unittest.TestCase):
         logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
         logtailer.pipeOut()
         self.assertTrue('error > one error' in sys.stdout.captured[0])
+
+    def testResumeBuilderWithAnalyticsFile(self):
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        printaction = notifications.Print()
+        actions = [printaction]
+        throttleTime = 0
+        silence = False
+        target = None
+        pause = 0
+        reportfile = 'reportfile.txt'
+        configfile = 'aconfig'
+        fh = open(configfile, 'w')
+        fh.write('analyticsnotification = ' + reportfile + '\n')
+        fh.close()
+        properties = Property(configfile)
+        properties.parseProperties()
+        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        resumeObj = logtailer.resumeBuilder()
+        self.assertTrue(isinstance(resumeObj, reporting.Resume))
+        self.assertEquals('file', resumeObj.getNotificationType())
+        self.assertEquals(reportfile, resumeObj.report_file)
 
     def tearDown(self):
         sys.stdout = SYSOUT

@@ -18,13 +18,19 @@
 
 from time import time, localtime, strftime
 import TermColorCodes, Timer
+import datetime
+
+MAIL = 'mail'
+PRINT = 'print'
+FILE = 'file'
 
 class Resume(object):
     '''Will report of number of debug, info and warn 
     events. For Error and Fatal will provide the timestamp 
     if there was any event of that level'''
+    DEFAULT_METHODS = [MAIL, PRINT]
 
-    def __init__(self,arrayLog):
+    def __init__(self, arrayLog):
         self.arrayLog = arrayLog
         self.initTime = time()
         self.logsReport = {}
@@ -67,16 +73,25 @@ class Resume(object):
             else:
                 res = strftime("%d %b %Y %H:%M:%S", localtime())
                 logKey[messageLevel].append(res +'=>> '+plainmessage)
+        self.report_now()
 
-        self.reportMail()
+    def report_now_mail(self, body):
+        self.mailAction.sendNotificationMail(body)
 
+    def report_now_file(self, body):
+        fh = open(self.report_file, 'a')
+        fh.write("#" * 80 + '\n')
+        fh.write("Report at " + datetime.datetime.now().isoformat(' ') + '\n')
+        fh.write(body)
+        fh.close()
     
-    def reportMail(self):
-        if self.notificationType == 'print':
+    def report_now(self):
+        if self.notificationType == PRINT:
             return
         if self.timer.inactivityEllapsed() > self.gapTime:
             body = self.reportBody()
-            self.mailAction.sendNotificationMail(body)
+            report_method = 'report_now_' + self.notificationType
+            getattr(self, report_method)(body)
             self.flushReport()
             self.timer.reset()
 
@@ -94,8 +109,22 @@ class Resume(object):
 
     def colorize(self,line,colors):
         return colors.backgroundemph+line+colors.reset
+
+    def notification_type(self, notification_method):
+        """If notification_method is not mail or print, it will be the full
+        path to the file where we will report.
+        
+        :param notification_method: notification type being mail, file or print
+        """ 
+        if notification_method not in self.DEFAULT_METHODS:
+            self.notificationType = FILE
+            self.report_file = notification_method
+        else:
+            self.notificationType = notification_method
+        self.timer = Timer.Timer(self.gapTime)
+        self.timer.startTimer()
     
-    def setMailNotification(self,mailAction):
+    def setMailNotification(self, mailAction):
         self.mailAction = mailAction
         self.notificationType = 'mail'
         self.timer = Timer.Timer(self.gapTime)

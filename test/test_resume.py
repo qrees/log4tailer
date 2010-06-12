@@ -111,6 +111,35 @@ class TestResume(unittest.TestCase):
                 self.assertEquals(3600,int(resume.getGapNotificationTime()))
         os.remove('aconfig')
 
+    def testReportToAFile(self):
+        reportfileFullPath = "reportfile.txt"
+        fh = open('aconfig','w')
+        fh.write('analyticsnotification = '+ reportfileFullPath +'\n')
+        fh.write('analyticsgaptime = 0.1\n')
+        fh.close()
+        properties = Property('aconfig')
+        properties.parseProperties()
+        self.assertTrue(properties.isKey('analyticsnotification'))
+        log = Log('out.log')
+        arrayLog = [log]
+        resume = reporting.Resume(arrayLog)
+        resume.setAnalyticsGapNotification(0.1)
+        resume.notification_type(reportfileFullPath)
+        fh = open('out.log')
+        lines = fh.readlines()
+        fh.close()
+        logcolors = LogColors()
+        msg = Message(logcolors)
+        time.sleep(0.1)
+        for line in lines:
+            msg.parse(line, log)
+            resume.update(msg, log)
+        fh = open(reportfileFullPath)
+        reportlength = len(fh.readlines())
+        fh.close()
+        os.remove(reportfileFullPath)
+        self.assertEquals(21, reportlength)
+
     def tearDown(self):
         os.remove('out.log')
         os.remove('out2.log')

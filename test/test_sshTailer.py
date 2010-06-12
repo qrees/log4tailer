@@ -18,10 +18,9 @@
 
 
 import unittest,logging
-import os,sys,re
-
+import os
+import sys
 sys.path.append('..')
-from log4tailer.Log import Log
 from log4tailer.LogColors import LogColors
 from log4tailer.Properties import Property
 from log4tailer import notifications
@@ -31,7 +30,6 @@ class TestSSHTailer(unittest.TestCase):
 
     def setUp(self):
         self.configfile = 'sshconfigfile.txt'
-        
 
     def __setUpConfigFile(self):
         fh = open(self.configfile,'w')
@@ -40,7 +38,6 @@ class TestSSHTailer(unittest.TestCase):
         fh.write('hostname1 = username, /var/log/anylog0, /var/log/anylog1\n')
         fh.write('hostname2 = username, /var/log/anylog0, /var/log/anylog1\n')
         fh.close()
-
 
     def testShouldHaveUsernameandAtLeastOneHostnameSetUp(self):
         self.__setUpConfigFile()
@@ -101,12 +98,10 @@ class TestSSHTailer(unittest.TestCase):
         command = "tail -F /var/log/anylog555 /var/log/anylog1"
         logtailer.createCommands()
         self.assertEquals(command,logtailer.hostnames['hostname0']['command'])
-    
 
     def tearDown(self):
         if os.path.exists(self.configfile):
             os.remove(self.configfile)
-
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

@@ -20,11 +20,11 @@
 import os
 import time
 import sys
-from Message import Message
-from Log import Log
-import notifications
-import reporting
-from Configuration import MailConfiguration
+from log4tailer.Message import Message
+from log4tailer.Log import Log
+from log4tailer.reporting import Resume
+from log4tailer.Configuration import MailConfiguration
+from log4tailer import notifications
 
 class LogTailer:
     '''Tails the log provided by Log class'''
@@ -177,18 +177,22 @@ class LogTailer:
         return False
     
     def resumeBuilder(self):
-        resume = reporting.Resume(self.arrayLog)
+        resume = Resume(self.arrayLog)
+        notify_defaults = ('mail', 'print')
         properties = self.properties
         if properties:
-            if properties.getValue('analyticsnotification') == 'mail':
+            notification_type = properties.getValue('analyticsnotification')
+            analyticsgap = properties.getValue('analyticsgaptime')
+            if notification_type and notification_type not in notify_defaults:
+                resume.notification_type(notification_type)
+            elif notification_type == 'mail':
                 if not self.mailIsSetup():
                     mailAction = MailConfiguration.setupMailAction()
                     resume.setMailNotification(mailAction)
                 else:
                     resume.setMailNotification(self.mailAction)
-                analyticsgap = properties.getValue('analyticsgaptime')
-                if analyticsgap:
-                    resume.setAnalyticsGapNotification(analyticsgap)
+            if analyticsgap:
+                resume.setAnalyticsGapNotification(analyticsgap)
         return resume
     
     def notifyActions(self, message, log):
