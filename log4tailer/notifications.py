@@ -17,9 +17,13 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import os
 import time
-import LogColors
+from log4tailer import LogColors
+from log4tailer.Timer import Timer
 from smtplib import *
+from log4tailer.TermColorCodes import TermColorCodes
+
 
 class Print(object):
     '''PrintAction: prints to stdout the 
@@ -222,3 +226,44 @@ class Filter(Print):
             return
         if self.pattern.search(plainMessage):
             Print.notify(self, message, log)
+
+class CornerMark(object):
+    MARK = 5 * " "
+    markable = ['FATAL', 'ERROR']
+
+    def __init__(self, gaptime):
+        self.corner_time = float(gaptime)
+        self.termcolors = TermColorCodes()
+        self.len_mark = len(self.MARK)
+        self.timer = Timer(self.corner_time)
+        self.count = 0
+        self.flagged = False
+
+    def corner_mark_time(self):
+        return self.corner_time
+
+    def __term_num_cols(self):
+        termcols = os.popen("tput cols")
+        ttcols = termcols.readline()
+        termcols.close()
+        ttcols = int(ttcols)
+        return ttcols
+
+    def notify(self, message, log):
+        level = message.getMessageLevel()
+        if level.upper() in self.markable:
+            self.flagged = True
+        if self.flagged:
+            if self.count == 0:
+                self.timer.startTimer()
+            self.count += 1
+            if self.timer.corner_mark_ellapsed() < self.corner_time:
+                padding = self.__term_num_cols() - self.len_mark
+                trace = (padding * " " + self.termcolors.backgroundemph + self.MARK 
+                        + self.termcolors.reset)
+                print trace
+            else:
+                self.timer.stopTimer()
+                self.count = 0
+                self.flagged = False
+            

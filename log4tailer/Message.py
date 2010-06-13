@@ -49,7 +49,7 @@ class Message:
         self.isTarget = None
         if properties:
             self.pauseMode.parseConfig(properties)
-    
+   
     def isATarget(self):
         if self.isTarget:
             return True
@@ -145,5 +145,6 @@ class Message:
         if ownTarget:
             self.patOwnTarget = ownTarget
         self.__parseSetOpts(line)                
+
         
 

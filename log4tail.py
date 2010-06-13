@@ -64,6 +64,9 @@ def main():
             help="remote tailing over ssh")
     parser.add_option("-f", "--filter", dest="filter",
             help="filters log traces, tail and grep")
+    parser.add_option("--cornermark", dest="cornermark",
+            help="displays a mark in bottom right corner of terminal")
+ 
     (options,args) = parser.parse_args()
     # defaults 
     pause = 1
@@ -109,6 +112,10 @@ def main():
                 mailAction = MailConfiguration.setupMailAction()
                 inactivityAction.setMailNotification(mailAction)
         actions.append(inactivityAction)
+
+    if options.cornermark:
+        cornermark = notifications.CornerMark(options.cornermark)
+        actions.append(cornermark)
     
     if options.remote:
         from log4tailer import SSHLogTailer

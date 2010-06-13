@@ -42,11 +42,16 @@ class Timer:
         self.start = now
         return ellapsed
 
-
-    def inactivityEllapsed(self):
+    def __time_diff(self):
         now = time.time()
         ellapsed = now-self.start
         return ellapsed
+
+    def corner_mark_ellapsed(self):
+        return self.__time_diff()
+
+    def inactivityEllapsed(self):
+        return self.__time_diff()
 
     def stopTimer(self):
         self.start = 0
