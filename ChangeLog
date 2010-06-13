@@ -6,6 +6,7 @@ xx/xx/xx release 2.6
 - actions refactored into notifications 
 - pausemode refactored into modes
 - analytics notification to a file
+- cornermark notification 
 - updated documentation
 
 ====================================
