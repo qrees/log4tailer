@@ -229,7 +229,10 @@ class Filter(Print):
 
 class CornerMark(object):
     MARK = 5 * " "
-    markable = ['FATAL', 'ERROR']
+    markable = {'FATAL' : 'backgroundemph', 
+            'ERROR' : 'backgroundemph', 
+            'WARN' : 'onyellowemph', 
+            'WARNING' : 'onyellowemph'}
 
     def __init__(self, gaptime):
         self.corner_time = float(gaptime)
@@ -238,6 +241,7 @@ class CornerMark(object):
         self.timer = Timer(self.corner_time)
         self.count = 0
         self.flagged = False
+        self.emphcolor = 'backgroundemph'
 
     def corner_mark_time(self):
         return self.corner_time
@@ -250,17 +254,19 @@ class CornerMark(object):
         return ttcols
 
     def notify(self, message, log):
-        level = message.getMessageLevel()
-        if level.upper() in self.markable:
+        level = message.getMessageLevel().upper()
+        if level in self.markable:
             self.flagged = True
+            self.emphcolor = self.markable.get(level)
+
         if self.flagged:
             if self.count == 0:
                 self.timer.startTimer()
             self.count += 1
             if self.timer.corner_mark_ellapsed() < self.corner_time:
                 padding = self.__term_num_cols() - self.len_mark
-                trace = (padding * " " + self.termcolors.backgroundemph + self.MARK 
-                        + self.termcolors.reset)
+                trace = (padding * " " + getattr(self.termcolors,
+                    self.emphcolor)+ self.MARK + self.termcolors.reset)
                 print trace
             else:
                 self.timer.stopTimer()

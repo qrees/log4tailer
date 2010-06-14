@@ -60,6 +60,7 @@ class TermColorCodes:
         for k in COLORS:
             setattr(self, k, SUFFIX_CODE % COLORS[k])
         self.backgroundemph = SUFFIX_CODE % HIGHLIGHTS['on_red']
+        self.onyellowemph = SUFFIX_CODE % HIGHLIGHTS['on_yellow']
         self.reset = RESET
 
     def buildCode(self, color):
