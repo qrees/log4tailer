@@ -228,6 +228,10 @@ class Filter(Print):
             Print.notify(self, message, log)
 
 class CornerMark(object):
+    """Displays a 5 char colored empty string 
+    at the bottom right corner of terminal in case an error, fatal or warning
+    is found."""
+    
     MARK = 5 * " "
     markable = {'FATAL' : 'backgroundemph', 
             'ERROR' : 'backgroundemph', 
@@ -247,6 +251,11 @@ class CornerMark(object):
         return self.corner_time
 
     def __term_num_cols(self):
+        """Returns the number columns in the current terminal using the Linux tputs
+        command line tool.
+
+        :return: The number of columns currently in the terminal.
+        """ 
         termcols = os.popen("tput cols")
         ttcols = termcols.readline()
         termcols.close()
@@ -254,6 +263,16 @@ class CornerMark(object):
         return ttcols
 
     def notify(self, message, log):
+        """Displays a 5 char colored empty string in case a message comes in
+        with the level specified in the class attribute markable. First time we
+        get a markable level, a timer is started with the number of seconds
+        specified in self.corner_time and a colored string will be displayed
+        for that number of seconds. The timer will not be restarted during that
+        time.
+        
+        :param message: the message object wrapping the current log trace
+        :param log: the log associated with the current message
+        """ 
         level = message.getMessageLevel().upper()
         if level in self.markable:
             self.flagged = True
