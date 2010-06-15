@@ -236,7 +236,8 @@ class CornerMark(object):
     markable = {'FATAL' : 'backgroundemph', 
             'ERROR' : 'backgroundemph', 
             'WARN' : 'onyellowemph', 
-            'WARNING' : 'onyellowemph'}
+            'WARNING' : 'onyellowemph',
+            'TARGET' : 'oncyanemph'}
 
     def __init__(self, gaptime):
         self.corner_time = float(gaptime)
@@ -274,10 +275,14 @@ class CornerMark(object):
         :param log: the log associated with the current message
         """ 
         level = message.getMessageLevel().upper()
-        if level in self.markable:
+        isTarget = message.isATarget()
+        # target has priority over markable levels
+        if isTarget:
+            self.flagged = True
+            self.emphcolor = self.markable.get("TARGET")
+        elif level in self.markable:
             self.flagged = True
             self.emphcolor = self.markable.get(level)
-
         if self.flagged:
             if self.count == 0:
                 self.timer.startTimer()

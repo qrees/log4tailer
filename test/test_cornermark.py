@@ -10,6 +10,7 @@ from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer import notifications
 from log4tailer.TermColorCodes import TermColorCodes
+from log4tailer.Properties import Property
 
 
 CONFIG = 'aconfig.txt'
@@ -146,30 +147,57 @@ class TestCornerMark(unittest.TestCase):
         self.assertEquals(output, sys.stdout.captured[2])
 
     def testMarkedTARGET(self):
-        #TODO
-        pass
-        #trace = "FATAL this is a fatal trace"
-        #sys.stdout = Writer()
-        #logcolors = LogColors()
-        #termcolors = TermColorCodes()
-        #message = Message(logcolors)
-        #notifier = notifications.CornerMark(0.02)
-        #anylog = Log('out.log')
-        #message.parse(trace, anylog)
-        #notifier.notify(message, anylog)
-        #self.assertTrue(sys.stdout.captured)
-        #termcols = os.popen("tput cols")
-        #ttcols = termcols.readline()
-        #termcols.close()
-        #ttcols = int(ttcols)
-        #padding = ttcols - len(notifier.MARK)
-        #output = padding * " " + termcolors.onyellowemph + notifier.MARK +\
-                #termcolors.reset
-        #trace = "WARN this is just a warn"
-        #message.parse(trace, anylog)
-        #notifier.notify(message, anylog)
-        #self.assertEquals(output, sys.stdout.captured[2])
+        configfile = "aconfig.txt"
+        logfile = "/any/path/out.log"
+        trace = "this is a targeted log trace"
+        fh = open(configfile, 'w')
+        fh.write("targets "+logfile+"=targeted\n")
+        fh.close()
+        properties = Property(configfile)
+        properties.parseProperties()
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        notifier = notifications.CornerMark(0.02)
+        anylog = Log(logfile, properties)
+        message = Message(logcolors, properties = properties)
+        termcols = os.popen("tput cols")
+        ttcols = termcols.readline()
+        termcols.close()
+        ttcols = int(ttcols)
+        padding = ttcols - len(notifier.MARK)
+        output = padding * " " + termcolors.oncyanemph + notifier.MARK +\
+                termcolors.reset
+        message.parse(trace, anylog)
+        notifier.notify(message, anylog)
+        self.assertEqual(output, sys.stdout.captured[0])
 
+    def testMarkedTARGETOverMarkableLevel(self):
+        configfile = "aconfig.txt"
+        logfile = "/any/path/out.log"
+        trace = "this is a FATAL targeted log trace"
+        fh = open(configfile, 'w')
+        fh.write("targets "+logfile+"=targeted\n")
+        fh.close()
+        properties = Property(configfile)
+        properties.parseProperties()
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        notifier = notifications.CornerMark(0.02)
+        anylog = Log(logfile, properties)
+        message = Message(logcolors, properties = properties)
+        termcols = os.popen("tput cols")
+        ttcols = termcols.readline()
+        termcols.close()
+        ttcols = int(ttcols)
+        padding = ttcols - len(notifier.MARK)
+        output = padding * " " + termcolors.oncyanemph + notifier.MARK +\
+                termcolors.reset
+        message.parse(trace, anylog)
+        notifier.notify(message, anylog)
+        self.assertEqual(output, sys.stdout.captured[0])
+    
     def tearDown(self):
         sys.stdout = self.sysback
 
