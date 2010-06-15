@@ -122,6 +122,54 @@ class TestCornerMark(unittest.TestCase):
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
 
+    def testMarkedFATALMarkedWARNING(self):
+        trace = "FATAL this is a fatal trace"
+        sys.stdout = Writer()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        message = Message(logcolors)
+        notifier = notifications.CornerMark(0.02)
+        anylog = Log('out.log')
+        message.parse(trace, anylog)
+        notifier.notify(message, anylog)
+        self.assertTrue(sys.stdout.captured)
+        termcols = os.popen("tput cols")
+        ttcols = termcols.readline()
+        termcols.close()
+        ttcols = int(ttcols)
+        padding = ttcols - len(notifier.MARK)
+        output = padding * " " + termcolors.onyellowemph + notifier.MARK +\
+                termcolors.reset
+        trace = "WARN this is just a warn"
+        message.parse(trace, anylog)
+        notifier.notify(message, anylog)
+        self.assertEquals(output, sys.stdout.captured[2])
+
+    def testMarkedTARGET(self):
+        #TODO
+        pass
+        #trace = "FATAL this is a fatal trace"
+        #sys.stdout = Writer()
+        #logcolors = LogColors()
+        #termcolors = TermColorCodes()
+        #message = Message(logcolors)
+        #notifier = notifications.CornerMark(0.02)
+        #anylog = Log('out.log')
+        #message.parse(trace, anylog)
+        #notifier.notify(message, anylog)
+        #self.assertTrue(sys.stdout.captured)
+        #termcols = os.popen("tput cols")
+        #ttcols = termcols.readline()
+        #termcols.close()
+        #ttcols = int(ttcols)
+        #padding = ttcols - len(notifier.MARK)
+        #output = padding * " " + termcolors.onyellowemph + notifier.MARK +\
+                #termcolors.reset
+        #trace = "WARN this is just a warn"
+        #message.parse(trace, anylog)
+        #notifier.notify(message, anylog)
+        #self.assertEquals(output, sys.stdout.captured[2])
+
     def tearDown(self):
         sys.stdout = self.sysback
 
