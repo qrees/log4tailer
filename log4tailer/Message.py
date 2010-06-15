@@ -51,7 +51,7 @@ class Message:
             self.pauseMode.parseConfig(properties)
    
     def isATarget(self):
-        if self.isTarget:
+        if self.isTarget or self.isOwnTarget:
             return True
         return False
 

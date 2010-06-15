@@ -1,5 +1,6 @@
 import unittest
 import os,sys
+import re
 import time
 sys.path.append('..')
 from log4tailer import reporting
@@ -50,7 +51,7 @@ class TestResume(unittest.TestCase):
     def testReportResumeForTwoDifferentLogs(self):
         log = Log('out.log')
         log2 = Log('out2.log')
-        arrayLogs = [log]
+        arrayLogs = [log, log2]
         fh = log.openLog()
         logcolors = LogColors()
         message = Message(logcolors)
@@ -83,6 +84,30 @@ class TestResume(unittest.TestCase):
         gotnumTargets = outLogReport['TARGET']
         self.assertEquals(numofTargets, gotnumTargets)
         message_mocker.VerifyAll()
+
+    def testShouldReportaLogOwnTarget(self):
+        logfile = "/any/path/outtarget.log"
+        configfile = "aconfig.txt"
+        logcolors = LogColors()
+        fh = open(configfile, 'w')
+        fh.write("targets "+logfile+" = should\n")
+        fh.close()
+        properties = Property(configfile)
+        properties.parseProperties()
+        mylog = Log(logfile, properties)
+        optional_params = (None, re.compile("should"), logfile)
+        self.assertEqual(optional_params, mylog.getOptionalParameters())
+        arraylogs = [mylog]
+        resume = reporting.Resume(arraylogs)
+        message = Message(logcolors, properties = properties)
+        logtrace = "log trace info target should be reported"
+        message.parse(logtrace, mylog)
+        resume.update(message, mylog)
+        outLogReport = resume.logsReport[mylog.getLogPath()]
+        numofTargets = 1
+        gotnumTargets = outLogReport['TARGET']
+        self.assertEquals(numofTargets, gotnumTargets)
+ 
     
     def testTargetsAreNonTimeStampedinResume(self):
         arrayLog = [Log('out.log')]
