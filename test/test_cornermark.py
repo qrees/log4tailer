@@ -124,6 +124,9 @@ class TestCornerMark(unittest.TestCase):
         self.assertFalse(sys.stdout.captured)
 
     def testMarkedFATALMarkedWARNING(self):
+        termcols = os.popen("tput cols")
+        ttcols = termcols.readline()
+        termcols.close()
         trace = "FATAL this is a fatal trace"
         sys.stdout = Writer()
         logcolors = LogColors()
@@ -133,10 +136,6 @@ class TestCornerMark(unittest.TestCase):
         anylog = Log('out.log')
         message.parse(trace, anylog)
         notifier.notify(message, anylog)
-        self.assertTrue(sys.stdout.captured)
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
         ttcols = int(ttcols)
         padding = ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.onyellowemph + notifier.MARK +\
