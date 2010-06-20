@@ -16,15 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import os
 import time
 import sys
 from log4tailer.Message import Message
 from log4tailer.Log import Log
 from log4tailer.reporting import Resume
-from log4tailer.Configuration import MailConfiguration
 from log4tailer import notifications
+from log4tailer.utils import setup_mail
 
 class LogTailer:
     '''Tails the log provided by Log class'''
@@ -187,7 +186,7 @@ class LogTailer:
                 resume.notification_type(notification_type)
             elif notification_type == 'mail':
                 if not self.mailIsSetup():
-                    mailAction = MailConfiguration.setupMailAction()
+                    mailAction = setup_mail()
                     resume.setMailNotification(mailAction)
                 else:
                     resume.setMailNotification(self.mailAction)

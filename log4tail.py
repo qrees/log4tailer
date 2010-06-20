@@ -17,11 +17,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, sys, re, logging
+import os
+import sys
+import re
+import logging
 from optparse import OptionParser
-from log4tailer import LogTailer,LogColors,Log,Properties
+from log4tailer import LogTailer, LogColors, Log, Properties
 from log4tailer import notifications
-from log4tailer.Configuration import MailConfiguration
+from log4tailer.utils import setup_mail
 
 
 logging.basicConfig(level = logging.WARNING)
@@ -66,6 +69,8 @@ def main():
             help="filters log traces, tail and grep")
     parser.add_option("--cornermark", dest="cornermark",
             help="displays a mark in bottom right corner of terminal")
+    parser.add_option("--no-mail-silence", action="store_true", 
+            dest="nomailsilence", help="silent mode but no specific notification")
  
     (options,args) = parser.parse_args()
     # defaults 
@@ -88,13 +93,18 @@ def main():
         pause = int(options.pause)
     if options.throttle:
         throttle = float(options.throttle)
-    if options.silence:
-        mailAction = notifications.Mail(MailConfiguration.configMail())
+    if options.silence and properties:
+        mailAction = setup_mail(properties)
         actions.append(mailAction)
         mailAction.connectSMTP()
         silence = True
-    if options.mail:
-        mailAction = MailConfiguration.setupMailAction()
+    if options.nomailsilence:
+        # silence option with no mail
+        # up to user to provide notification by mail 
+        # or do some kind of reporting 
+        silence = True
+    if options.mail and properties:
+        mailAction = setup_mail(properties)
         actions.append(mailAction)
     if options.filter:
         # overrides Print notifier
@@ -109,7 +119,7 @@ def main():
             if options.mail or options.silence:
                 inactivityAction.setMailNotification(actions[len(actions)-1])
             else:
-                mailAction = MailConfiguration.setupMailAction()
+                mailAction = setup_mail(properties)
                 inactivityAction.setMailNotification(mailAction)
         actions.append(inactivityAction)
 

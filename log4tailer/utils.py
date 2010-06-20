@@ -16,19 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import getpass
 from log4tailer import notifications
 
-def configMail():
-    hostname = raw_input("Host name for your SMTP account?\n")
-    username = raw_input("Your username?\n")
-    pwd = getpass.getpass()
-    fromAddress = raw_input("Alerts send From Address:\n")
-    toAddress = raw_input("Alerts send To Address:\n")
-    return (fromAddress,toAddress,hostname,username,pwd)
-
-def setupMailAction():
-    (fromAddress,toAddress,hostname,username,pwd) = configMail()
-    mailAction = notifications.Mail(fromAddress,toAddress,hostname,username,pwd)
-    mailAction.connectSMTP()
+def setup_mail(properties):
+    username = properties.getValue("mail_username")
+    hostname = properties.getValue("mail_hostname")
+    port = properties.getValue("mail_port") or 25
+    ssl = properties.getValue("mail_ssl")
+    mail_from = properties.getValue("mail_from")
+    mail_to = properties.getValue("mail_to")
+    password = getpass.getpass()
+    mailAction = notifications.Mail(mail_from, mail_to, hostname, username,
+            password, port, ssl) 
     return mailAction
+
+

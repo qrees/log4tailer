@@ -111,7 +111,8 @@ class Mail(object):
                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-    def __init__(self, fro = None, to = None, hostname = None, user = None, passwd = None):
+    def __init__(self, fro = None, to = None, hostname = None, user = None,
+            passwd = None, port = 25, ssl = "False"):
         self.fro = fro
         self.to = to
         self.hostname = hostname
@@ -119,6 +120,11 @@ class Mail(object):
         self.passwd = passwd
         self.conn = None
         self.bodyMailAction = None
+        self.port = port
+        self.ssl = ssl
+        self.connection_method = "smtp"
+        if self.ssl == "True":
+            self.connection_method = "smtp_ssl"
 
     def date_time(self):
         """
@@ -190,13 +196,25 @@ class Mail(object):
             self.connectSMTP()
             self.conn.sendmail(self.fro,self.to,msg)
 
+    def _connect_smtp(self):
+        conn = SMTP(self.hostname, self.port)
+        return conn
+    
+    def _connect_smtp_ssl(self):
+        print "using ssl connection"
+        conn = SMTP_SSL(self.hostname, self.port)
+        return conn
+
     def connectSMTP(self):
+        connection_method = "_connect_" + self.connection_method
+        conn = getattr(self, connection_method)()
         try:
-            conn = SMTP(self.hostname)
-            conn.login(self.user,self.passwd)
+            conn.connect(self.hostname, self.port)
+            conn.login(self.user, self.passwd)
             print "connected"
-        except:
-            print "Failed to connect "+self.hostname
+        except Exception, ex:
+            print ex
+            print "Failed to connect to " + self.hostname
             sys.exit()
         self.conn = conn
 
