@@ -44,12 +44,27 @@
 # pausefatal = 1
 # pausetarget = 1
 
-# ================================================================
-# Inactivity action notification, by email or stdout.
-# Possible values can be "mail" or "print". By default is "print".
-# ================================================================
+
+# ======================================================
+# Mail details 
+# ======================================================
+
+# mail_username = yourhostusername
+# mail_hostname = mailhostname
+# mail_port = 25
+# mail_ssl = True or False
+# mail_from = any from address
+# mail_to = alerts will be sent in the address you specify in here
+
+
+# ===================================================================
+# Inactivity notification, by email, file or stdout.
+# Possible values can be "mail", "print" or a full path to 
+# a file where log4tailer have write access to. By default is "print".
+# ===================================================================
 
 # inactivitynotification = mail
+# inactivitynotification = fullPathToaFile
 
 # ==============================================================
 # Analytics notification. You can make log4tailer send you 
