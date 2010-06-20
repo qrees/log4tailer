@@ -58,22 +58,21 @@
 
 
 # ===================================================================
-# Inactivity notification, by email, file or stdout.
-# Possible values can be "mail", "print" or a full path to 
-# a file where log4tailer have write access to. By default is "print".
+# Inactivity notification, by email or stdout.
+# Possible values can be "mail" or "print". By default is "print".
 # ===================================================================
 
 # inactivitynotification = mail
-# inactivitynotification = fullPathToaFile
 
-# ==============================================================
+# ====================================================================
 # Analytics notification. You can make log4tailer send you 
 # a report every analyticsgaptime seconds. By default it will be 
 # printed out once finished. Uncomment analyticsnotification to 
-# report by email. Another possible value can be "print".
-# ==============================================================
+# report by email or to a file. Another possible value can be "print".
+# ====================================================================
 
 # analyticsnotification = mail
+# analyticsnotification = fullPathToaFile
 # analyticsgaptime = 10.5
 
 
