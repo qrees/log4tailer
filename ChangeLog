@@ -7,6 +7,12 @@ xx/xx/xx release 2.6
 - pausemode refactored into modes
 - analytics notification to a file
 - cornermark notification 
+- nomailsilence option provided, enabling 
+silence mode with no notification predefined.
+- Mail notification provides SSL and 
+from now on the details will be specified in 
+a configuration file. Password will be introduced 
+during runtime to avoid leaving it in plain format.
 - updated documentation
 
 ====================================
