@@ -30,6 +30,7 @@ def setup_mail(properties):
     password = getpass.getpass()
     mailAction = notifications.Mail(mail_from, mail_to, hostname, username,
             password, port, ssl) 
+    mailAction.connectSMTP()
     return mailAction
 
 

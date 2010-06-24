@@ -96,7 +96,6 @@ def main():
     if options.silence and properties:
         mailAction = setup_mail(properties)
         actions.append(mailAction)
-        mailAction.connectSMTP()
         silence = True
     if options.nomailsilence:
         # silence option with no mail
