@@ -186,7 +186,7 @@ class LogTailer:
                 resume.notification_type(notification_type)
             elif notification_type == 'mail':
                 if not self.mailIsSetup():
-                    mailAction = setup_mail()
+                    mailAction = setup_mail(properties)
                     resume.setMailNotification(mailAction)
                 else:
                     resume.setMailNotification(self.mailAction)

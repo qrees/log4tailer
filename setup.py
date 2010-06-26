@@ -15,11 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys 
-try:
-    from setuptools import setup
-except:
-    pass
-from distutils.core import Command
+from distutils.core import setup, Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import isdir, splitext, basename, join as pjoin
@@ -56,13 +52,7 @@ screen. By providing colors, the human eye will discern and quickly identify
 specific levels or lines. 
 '''
 
-__version__='2.4'
-
-try:
-    from distutils.core import setup
-except:
-    print "You need to install distutils python module"
-    sys.exit()
+__version__='2.6'
     
 class Test(Command):
     user_options = []
@@ -207,6 +197,7 @@ class Release(Command):
         pass
 
     def run(self):
+        self.run_command("clean")
         # mv log4tail module to log4tail
         shutil.copy('log4tail.py', 'log4tail')
         # check everything is ok
@@ -228,8 +219,7 @@ class Release(Command):
             print "I just run sdist and no dist??"
             sys.exit()
         self.run_command("dodoc")
-
-
+        
 def getDeployPackages():
     import glob
     log4tailerpackages = []

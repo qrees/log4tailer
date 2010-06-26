@@ -1,7 +1,8 @@
 ====================================
-xx/xx/xx release 2.6
+26/06/10 release 2.6
 ====================================
-- Warning keyword level included
+- "warning" keyword level included. Some 
+apps log "warning" instead of "warn".
 - filter notifications implemented
 - actions refactored into notifications 
 - pausemode refactored into modes
@@ -12,7 +13,8 @@ silence mode with no notification predefined.
 - Mail notification provides SSL and 
 from now on the details will be specified in 
 a configuration file. Password will be introduced 
-during runtime to avoid leaving it in plain format.
+during runtime to avoid leaving it in plain ascii 
+format.
 - updated documentation
 
 ====================================
@@ -157,7 +159,7 @@ keys in config case insensitive
 ====================================
 release 1.1 
 ====================================
-- Provides installation (discutils)
+- Provides installation (distutils)
 - Emulates the same behaviour as tail 
 command when printing the log headers while
 tailing

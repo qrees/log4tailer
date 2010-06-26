@@ -20,6 +20,8 @@
 
 import re
 
+EQUIVALENT_LEVELS = {'WARNING' : 'WARN'}
+
 class ColorParser:
     '''tries to parse 
     defined levels in log4j'''
@@ -29,6 +31,7 @@ class ColorParser:
     def parse(self,line):
         isMatch = self.all.match(line)
         if isMatch:
-            return isMatch.group(1).upper()
+            level = isMatch.group(1).upper()
+            return EQUIVALENT_LEVELS.get(level, level)
         return ''
        
