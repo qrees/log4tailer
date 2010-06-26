@@ -146,7 +146,7 @@ class TestCornerMark(unittest.TestCase):
         self.assertEquals(output, sys.stdout.captured[2])
 
     def testMarkedTARGET(self):
-        configfile = "aconfig.txt"
+        configfile = CONFIG
         logfile = "/any/path/out.log"
         trace = "this is a targeted log trace"
         fh = open(configfile, 'w')
@@ -172,7 +172,7 @@ class TestCornerMark(unittest.TestCase):
         self.assertEqual(output, sys.stdout.captured[0])
 
     def testMarkedTARGETOverMarkableLevel(self):
-        configfile = "aconfig.txt"
+        configfile = CONFIG
         logfile = "/any/path/out.log"
         trace = "this is a FATAL targeted log trace"
         fh = open(configfile, 'w')
@@ -198,6 +198,8 @@ class TestCornerMark(unittest.TestCase):
         self.assertEqual(output, sys.stdout.captured[0])
     
     def tearDown(self):
+        if os.path.exists(CONFIG):
+            os.remove(CONFIG)
         sys.stdout = self.sysback
 
 if __name__ == '__main__':

@@ -166,6 +166,8 @@ class TestResume(unittest.TestCase):
         self.assertEquals(21, reportlength)
 
     def tearDown(self):
+        if os.path.exists('aconfig.txt'):
+            os.remove('aconfig.txt')
         os.remove('out.log')
         os.remove('out2.log')
 
