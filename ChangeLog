@@ -15,6 +15,9 @@ from now on the details will be specified in
 a configuration file. Password will be introduced 
 during runtime to avoid leaving it in plain ascii 
 format.
+- test_suite param removed from setup. Nosetests 
+can be run on their own, with nosetests command line 
+tool.
 - updated documentation
 
 ====================================
