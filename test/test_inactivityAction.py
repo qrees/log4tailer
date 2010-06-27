@@ -1,5 +1,5 @@
 # Log4Tailer: A multicolored python tailer for log4J logs
-# Copyright (C) 2008 Jordi Carrillo Bosch
+# Copyright (C) 2010 Jordi Carrillo Bosch
 
 # This file is part of Log4Tailer Project.
 #

@@ -315,3 +315,28 @@ class CornerMark(object):
                 self.count = 0
                 self.flagged = False
             
+class Executor(object):
+    """Will execute a program if a certain condition is given"""
+    PlaceHolders = '%s'
+
+    def __init__(self, properties):
+        executable = properties.getValue('executor')
+        if not executable:
+            raise Exception("need to provide executor option")
+        self.executable = executable.split(' ')
+        self.full_trigger_active = False
+        if self.PlaceHolders in self.executable:
+            self.full_trigger_active = True
+
+    def __build_trigger(self, logtrace, logpath):
+        trigger = ' '.join(self.executable)
+        if self.full_trigger_active:
+            trigger = ' '.join(self.executable) % (logtrace, logpath)
+        return trigger
+
+    def notify(self, message, log):
+        logtrace, logpath = message.getPlainMessage()
+        trigger = self.__build_trigger(logtrace, logpath)
+        print trigger
+        os.system(trigger)
+        

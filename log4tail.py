@@ -71,6 +71,9 @@ def main():
             help="displays a mark in bottom right corner of terminal")
     parser.add_option("--no-mail-silence", action="store_true", 
             dest="nomailsilence", help="silent mode but no specific notification")
+    parser.add_option("--executable", action="store_true", 
+            dest="executable", help="executes a program")
+
  
     (options,args) = parser.parse_args()
     # defaults 
@@ -125,6 +128,10 @@ def main():
     if options.cornermark:
         cornermark = notifications.CornerMark(options.cornermark)
         actions.append(cornermark)
+
+    if options.executable and properties:
+        executor = notifications.Executor(properties)
+        actions.append(executor)
     
     if options.remote:
         from log4tailer import SSHLogTailer
