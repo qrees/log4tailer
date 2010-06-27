@@ -1,4 +1,11 @@
 ====================================
+xx/xx/xx release x.x
+====================================
+- Executor notification
+- throttle one line at a time not consuming 
+whole log in each iteration.
+
+====================================
 26/06/10 release 2.6
 ====================================
 - "warning" keyword level included. Some 
