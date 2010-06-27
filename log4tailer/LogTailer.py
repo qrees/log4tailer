@@ -203,6 +203,9 @@ class LogTailer:
         message = Message(self.logcolors,self.target,self.properties)
         resume = self.resumeBuilder()
         self.posEnd()
+        get_log_lines = "readLines"
+        if self.throttleTime:
+            get_log_lines = "readLine"
         if self.silence:
             self.daemonize()
         try:
@@ -217,13 +220,15 @@ class LogTailer:
                     curpath = log.getLogPath()
                     if self.hasRotated(log):
                         found = 0
-                    lines = log.readLines()
+                    lines = getattr(log, get_log_lines)()
                     if not lines:
                         # notify actions
                         message.parse('', log)
                         resume.update(message, log)
                         self.notifyActions(message, log)
                         continue
+                    if isinstance(lines, str):
+                        lines = [lines]
                     for line in lines:
                         found = 1
                         line = line.rstrip()
