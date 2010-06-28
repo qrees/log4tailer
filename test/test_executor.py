@@ -19,6 +19,7 @@
 import unittest
 import sys
 import mocker
+import time
 sys.path.append('..')
 from log4tailer import notifications
 from log4tailer.Properties import Property
@@ -27,10 +28,22 @@ from log4tailer.LogColors import LogColors
 from log4tailer.Log import Log
 
 CONFIG = 'aconfig.txt'
+SYSOUT = sys.stdout
+
+class Writer:
+    def __init__(self):
+        self.captured = []
+    
+    def __len__(self):
+        return len(self.captured)
+
+    def write(self, txt):
+        self.captured.append(txt)
 
 class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
+        sys.stdout = Writer()
     
     def testShouldReadExecutorFromConfigFile(self):
         fh = open(CONFIG, 'w')
@@ -83,13 +96,13 @@ class TestExecutor(unittest.TestCase):
         fh = open(CONFIG, 'w')
         fh.write('executor = ls -l %s %s\n')
         fh.close()
-        trigger = "ls -l this is a log trace anylog"
-        trace = "this is a log trace"
+        trace = "this is a FATAL log trace"
+        trigger = ['ls', '-l', trace, log.getLogPath() ]
         properties = Property(CONFIG)
         properties.parseProperties()
         executor = notifications.Executor(properties)
-        os_mock = self.mocker.replace('os')
-        os_mock.system(trigger)
+        os_mock = self.mocker.replace('subprocess')
+        os_mock.Popen(trigger)
         self.mocker.result(True)
         self.mocker.replay()
         message.parse(trace, log)
@@ -99,14 +112,17 @@ class TestExecutor(unittest.TestCase):
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
+        logpath = log.getLogPath()
         fh = open(CONFIG, 'w')
         fh.write('executor = echo\n')
         fh.close()
-        trace = "this is a log trace"
+        trace = "this is a fatal log trace"
         properties = Property(CONFIG)
         properties.parseProperties()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
+        trigger = executor._build_trigger(trace, logpath)
+        self.assertEqual(['echo'], trigger)
         executor.notify(message, log)
 
     def testShouldNotifyAndContinueIfExecutorFails(self):
@@ -116,16 +132,61 @@ class TestExecutor(unittest.TestCase):
         fh = open(CONFIG, 'w')
         fh.write('executor = anycommand\n')
         fh.close()
-        trace = "this is a log trace"
+        trace = "this is a critical log trace"
         properties = Property(CONFIG)
         properties.parseProperties()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
+        self.assertTrue(sys.stdout.captured)
+
+    def testShouldContinueTailingIfExecutableTakesLongTime(self):
+        logcolor = LogColors()
+        message = Message(logcolor)
+        log = Log('anylog')
+        fh = open(CONFIG, 'w')
+        fh.write('executor = python executable.py\n')
+        fh.close()
+        trace = "this is an error log trace"
+        properties = Property(CONFIG)
+        properties.parseProperties()
+        executor = notifications.Executor(properties)
+        message.parse(trace, log)
+        start = time.time()
+        executor.notify(message, log)
+        finished = time.time()
+        ellapsed = start - finished
+        # executable.py sleeps for three seconds
+        self.assertTrue(ellapsed < 2)
+
+    def testShouldNotExecuteIfLevelNotInPullers(self):
+        logcolor = LogColors()
+        message = Message(logcolor)
+        log = Log('anylog')
+        fh = open(CONFIG, 'w')
+        fh.write('executor = anything %s %s\n')
+        fh.close()
+        trace = "this is an info log trace"
+        properties = Property(CONFIG)
+        properties.parseProperties()
+        executor = notifications.Executor(properties)
+        message.parse(trace, log)
+        executor.notify(message, log)
+        self.assertFalse(sys.stdout.captured)
+        trace = "this is an warning log trace"
+        sys.stdout.captured = []
+        message.parse(trace, log)
+        executor.notify(message, log)
+        self.assertFalse(sys.stdout.captured)
+        trace = "this is an fatal log trace"
+        message.parse(trace, log)
+        executor.notify(message, log)
+        self.assertTrue(sys.stdout.captured)
         
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
+        sys.stdout = SYSOUT
 
 if __name__ == '__main__':
     unittest.main()

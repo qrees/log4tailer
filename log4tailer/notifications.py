@@ -23,6 +23,7 @@ from log4tailer import LogColors
 from log4tailer.Timer import Timer
 from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
+import subprocess
 
 
 class Print(object):
@@ -318,6 +319,7 @@ class CornerMark(object):
 class Executor(object):
     """Will execute a program if a certain condition is given"""
     PlaceHolders = '%s'
+    Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
     def __init__(self, properties):
         executable = properties.getValue('executor')
@@ -328,15 +330,26 @@ class Executor(object):
         if self.PlaceHolders in self.executable:
             self.full_trigger_active = True
 
-    def __build_trigger(self, logtrace, logpath):
-        trigger = ' '.join(self.executable)
+    def _build_trigger(self, logtrace, logpath):
         if self.full_trigger_active:
-            trigger = ' '.join(self.executable) % (logtrace, logpath)
-        return trigger
+            params = [logtrace, logpath]
+            trigger = []
+            for param in self.executable:
+                if param == self.PlaceHolders:
+                    param = params.pop(0) 
+                trigger.append(param)
+            return trigger
+        return self.executable
 
     def notify(self, message, log):
+        msg_level = message.getMessageLevel().upper()
+        if msg_level not in self.Pullers:
+            return
         logtrace, logpath = message.getPlainMessage()
-        trigger = self.__build_trigger(logtrace, logpath)
-        print trigger
-        os.system(trigger)
+        trigger = self._build_trigger(logtrace, logpath)
+        try:
+            subprocess.Popen(trigger)
+        except Exception, err:
+            # log4tailer should continue processing
+            print err
         
