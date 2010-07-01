@@ -53,6 +53,7 @@ class TestExecutor(unittest.TestCase):
         properties.parseProperties()
         executor = notifications.Executor(properties)
         self.assertEquals(['ls', '-l'], executor.executable)
+        executor.stop()
 
     def testShouldRaiseIfExecutorNotProvided(self):
         fh = open(CONFIG, 'w')
@@ -79,6 +80,7 @@ class TestExecutor(unittest.TestCase):
         properties.parseProperties()
         executor = notifications.Executor(properties)
         self.assertEqual(True, executor.full_trigger_active)
+        executor.stop()
 
     def testFullTriggerFalseBasedOnConfig(self):
         fh = open(CONFIG, 'w')
@@ -88,6 +90,7 @@ class TestExecutor(unittest.TestCase):
         properties.parseProperties()
         executor = notifications.Executor(properties)
         self.assertEqual(False, executor.full_trigger_active)
+        executor.stop()
 
     def testShouldNotifyWithFullTrigger(self):
         logcolor = LogColors()
@@ -100,13 +103,15 @@ class TestExecutor(unittest.TestCase):
         trigger = ['ls', '-l', trace, log.getLogPath() ]
         properties = Property(CONFIG)
         properties.parseProperties()
-        executor = notifications.Executor(properties)
         os_mock = self.mocker.replace('subprocess')
-        os_mock.Popen(trigger)
+        os_mock.call(trigger)
         self.mocker.result(True)
         self.mocker.replay()
+        executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
+        time.sleep(0.2)
+        executor.stop()
     
     def testShouldNotifyWithNoFullTrigger(self):
         logcolor = LogColors()
@@ -124,6 +129,7 @@ class TestExecutor(unittest.TestCase):
         trigger = executor._build_trigger(trace, logpath)
         self.assertEqual(['echo'], trigger)
         executor.notify(message, log)
+        executor.stop()
 
     def testShouldNotifyAndContinueIfExecutorFails(self):
         logcolor = LogColors()
@@ -138,6 +144,8 @@ class TestExecutor(unittest.TestCase):
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
+        time.sleep(0.2)
+        executor.stop()
         self.assertTrue(sys.stdout.captured)
 
     def testShouldContinueTailingIfExecutableTakesLongTime(self):
@@ -156,8 +164,10 @@ class TestExecutor(unittest.TestCase):
         executor.notify(message, log)
         finished = time.time()
         ellapsed = start - finished
+        time.sleep(0.2)
+        executor.stop()
         # executable.py sleeps for three seconds
-        self.assertTrue(ellapsed < 2)
+        self.assertTrue(ellapsed < 1)
 
     def testShouldNotExecuteIfLevelNotInPullers(self):
         logcolor = LogColors()
@@ -172,17 +182,10 @@ class TestExecutor(unittest.TestCase):
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
+        time.sleep(0.2)
+        executor.stop()
         self.assertFalse(sys.stdout.captured)
-        trace = "this is an warning log trace"
-        sys.stdout.captured = []
-        message.parse(trace, log)
-        executor.notify(message, log)
-        self.assertFalse(sys.stdout.captured)
-        trace = "this is an fatal log trace"
-        message.parse(trace, log)
-        executor.notify(message, log)
-        self.assertTrue(sys.stdout.captured)
-        
+       
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()

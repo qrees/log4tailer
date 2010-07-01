@@ -1,5 +1,5 @@
 # Log4Tailer: A multicolored python tailer for log4J logs
-# Copyright (C) 2008 Jordi Carrillo Bosch
+# Copyright (C) 2010 Jordi Carrillo Bosch
 
 # This file is part of Log4Tailer Project.
 #
@@ -24,7 +24,11 @@ from log4tailer.Timer import Timer
 from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
-
+import threading
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 class Print(object):
     '''PrintAction: prints to stdout the 
@@ -315,6 +319,38 @@ class CornerMark(object):
                 self.timer.stopTimer()
                 self.count = 0
                 self.flagged = False
+                
+                
+class TriggerExecutor(threading.Thread):
+    """Triggers the trigger command, one 
+    trigger_command at a time, in its own thread.
+    """
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.queue = queue.Queue()
+        self.go = True
+
+    def landing(self, trigger_command):
+        """One command to be triggered. Enqueued 
+        to be executed when ready.
+        
+        :param trigger_command: command to be triggered.
+        """
+        self.queue.put(trigger_command)
+
+    def run(self):
+        while self.go:
+            trigger_command = self.queue.get()
+            if trigger_command == 'stop':
+                continue
+            try:
+                subprocess.call(trigger_command)
+            except Exception, err:
+                print err
+
+    def stop(self):
+        self.go = False
             
 class Executor(object):
     """Will execute a program if a certain condition is given"""
@@ -329,6 +365,8 @@ class Executor(object):
         self.full_trigger_active = False
         if self.PlaceHolders in self.executable:
             self.full_trigger_active = True
+        self.trigger_executor = TriggerExecutor()
+        self.started = False
 
     def _build_trigger(self, logtrace, logpath):
         if self.full_trigger_active:
@@ -347,9 +385,15 @@ class Executor(object):
             return
         logtrace, logpath = message.getPlainMessage()
         trigger = self._build_trigger(logtrace, logpath)
-        try:
-            subprocess.Popen(trigger)
-        except Exception, err:
-            # log4tailer should continue processing
-            print err
-        
+        if not self.started:
+            self.started = True
+            self.trigger_executor.start()
+        self.trigger_executor.landing(trigger)
+    
+    def stop(self):
+        if self.started:
+            self.trigger_executor.stop()
+            # unblock the queue
+            self.trigger_executor.landing("stop")
+            self.trigger_executor.join()
+            

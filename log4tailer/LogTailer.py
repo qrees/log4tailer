@@ -249,6 +249,9 @@ class LogTailer:
                 log.closeLog()
             if self.mailAction:
                 self.mailAction.quitSMTP()
+            for action in self.actions:
+                if hasattr(action, 'stop'):
+                    action.stop()
             print "\n"
             resume.report()
             print "Ended log4tailer, because colors are fun"
