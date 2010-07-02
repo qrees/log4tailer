@@ -52,7 +52,7 @@ screen. By providing colors, the human eye will discern and quickly identify
 specific levels or lines. 
 '''
 
-__version__='2.6'
+__version__='2.7'
     
 class Test(Command):
     user_options = []

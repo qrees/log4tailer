@@ -107,10 +107,12 @@ class TestExecutor(unittest.TestCase):
         os_mock.call(trigger)
         self.mocker.result(True)
         self.mocker.replay()
+        # we just verify the trigger gets 
+        # called in the tearDown
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
-        time.sleep(0.2)
+        time.sleep(0.0002)
         executor.stop()
     
     def testShouldNotifyWithNoFullTrigger(self):
@@ -144,7 +146,7 @@ class TestExecutor(unittest.TestCase):
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
-        time.sleep(0.2)
+        time.sleep(0.0002)
         executor.stop()
         self.assertTrue(sys.stdout.captured)
 
@@ -164,10 +166,10 @@ class TestExecutor(unittest.TestCase):
         executor.notify(message, log)
         finished = time.time()
         ellapsed = start - finished
-        time.sleep(0.2)
+        time.sleep(0.0002)
         executor.stop()
         # executable.py sleeps for three seconds
-        self.assertTrue(ellapsed < 1)
+        self.assertTrue(ellapsed < 0.1)
 
     def testShouldNotExecuteIfLevelNotInPullers(self):
         logcolor = LogColors()
@@ -182,7 +184,7 @@ class TestExecutor(unittest.TestCase):
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
-        time.sleep(0.2)
+        time.sleep(0.0002)
         executor.stop()
         self.assertFalse(sys.stdout.captured)
        
