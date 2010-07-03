@@ -4,6 +4,10 @@ xx/xx/xx release x.x
 - Executor notification
 - throttle one line at a time not consuming 
 whole log in each iteration.
+- setuptools fix
+- option to show the log4tailer's version
+provided
+- updated documentation
 
 ====================================
 26/06/10 release 2.6
