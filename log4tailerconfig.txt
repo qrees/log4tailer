@@ -56,6 +56,12 @@
 # mail_from = any from address
 # mail_to = alerts will be sent in the address you specify in here
 
+# ===================================================================
+# executor notification
+# ===================================================================
+
+# executor = program command1 command2 %s %s
+# executor = program command1 command2 
 
 # ===================================================================
 # Inactivity notification, by email or stdout.
