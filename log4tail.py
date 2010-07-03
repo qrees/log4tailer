@@ -27,6 +27,7 @@ from log4tailer import notifications
 from log4tailer.utils import setup_mail
 
 
+__version__ = 2.7
 logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
@@ -73,6 +74,112 @@ def main():
             dest="nomailsilence", help="silent mode but no specific notification")
     parser.add_option("--executable", action="store_true", 
             dest="executable", help="executes a program")
+    parser.add_option("--version", action="store_true", 
+            dest="version", help="shows log4tailer version number and exists")
+
+ 
+    (options,args) = parser.parse_args()
+    # defaults 
+    pause = 1
+    silence = False 
+    throttle = 0
+    printAction = notifications.Print()
+    actions = [printAction]
+    nlines = False
+    target = None
+    properties = None
+    logcolors = LogColors.LogColors()
+    alt_config = os.path.expanduser('~/.log4tailer')
+    config = options.configfile or alt_config
+    if options.version:
+        print __version__
+        sys.exit(0)
+    if os.path.exists(config):
+        logger.info("Configuration file [%s] found" % config)
+        properties = parseConfig(config)
+        logcolors.parseConfig(properties)
+    if options.pause:
+        pause = int(options.pause)
+    if options.throttle:
+        throttle = float(options.throttle)
+    if options.silence and properties:
+        mailAction = setup_mail(properties)
+        actions.append(mailAction)
+        silence = True
+    if options.nomailsilence:
+        # silence option with no mail
+        # up to user to provide notification by mail 
+        # or do some kind of reporting 
+        silence = True
+    if options.mail and properties:
+        mailAction = setup_mail(properties)
+        actions.append(mailAction)
+    if options.filter:
+        # overrides Print notifier
+        actions[0] = notifications.Filter(re.compile(options.filter))
+    if options.tailnlines:
+        nlines = int(options.tailnlines)
+    if options.target:
+        target = options.target
+    if options.inactivity:
+        inactivityAction = notifications.Inactivity(options.inactivity, properties)
+        if inactivityAction.getNotificationType() == 'mail':
+            if options.mail or options.silence:
+                inactivityAction.setMailNotification(actions[len(actions)-1])
+            else:
+                mailAction = setup_mail(properties)
+                inactivityAction.setMailNotification(mailAction)
+        actions.append(inactivityAction)
+
+    if options.cornermark:
+        cornermark = notifications.CornerMark(options.cornermark)
+        actions.append(cornermark)
+
+    if options.executable and properties:
+        executor = notifications.Executor(properties)
+        actions.append(executor)
+    
+    if options.remote:
+        from log4tailer import SSHLogTailer
+        tailer = SSHLogTailer.SSHLogTailer(logcolors,target,pause,
+                                           throttle,silence,
+                                           printAction,
+                                           properties)
+        if not tailer.sanityCheck():
+            print "missing config file parameters"
+            sys.exit()
+        tailer.createCommands()
+        try:
+            tailer.createChannels()
+        except Exception,e:
+            print "Could not connect"
+            print "Trace [%s]" % e
+            sys.exit()
+        tailer.tailer()
+        sys.exit()
+    tailer = LogTailer.LogTailer(logcolors,target,pause,
+                                 throttle,silence,
+                                 actions,
+                                 properties)
+    if args[0] == '-':
+        tailer.pipeOut()
+        sys.exit()
+    for i in args:
+        log = Log.Log(i,properties,options)
+        tailer.addLog(log)
+    if nlines:
+        try:
+            tailer.printLastNLines(nlines)
+            print "Ended log4tailer, because colors are fun"
+            sys.exit()
+        except KeyboardInterrupt:
+            print "Ended log4tailer, because colors are fun"
+            sys.exit()
+    tailer.tailer()
+    sys.exit()
+
+if __name__ == '__main__':
+    main()
 
  
     (options,args) = parser.parse_args()

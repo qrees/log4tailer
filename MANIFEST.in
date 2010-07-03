@@ -1,4 +1,4 @@
-include ChangeLog
-include COPYING
-include log4tailerconfig.txt
-include test/__init__.py
+recursive-exclude docs *
+recursive-exclude spyke * 
+recursive-exclude gui * 
+exclude log4tail.py

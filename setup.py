@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys 
-from distutils.core import setup, Command
+from setuptools import setup, find_packages
+from distutils.core import Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import isdir, splitext, basename, join as pjoin
@@ -213,23 +214,13 @@ class Release(Command):
             out,err = svnproc.communicate()
             print out
         
-        self.run_command("test")
+        #self.run_command("test")
         self.run_command("sdist")
-        if not os.path.isdir('dist'):
+        if not isdir('dist'):
             print "I just run sdist and no dist??"
             sys.exit()
         self.run_command("dodoc")
         
-def getDeployPackages():
-    import glob
-    log4tailerpackages = []
-    for file in glob.glob('./log4tailer/*'):
-        if isdir(file):
-            log4tailerpackages.append(basename(file))
-    return log4tailerpackages
-
-PACKAGES = getDeployPackages()
-
 setup(name="log4tailer",
       version=__version__,
       description="Not just a simple log tailer",
@@ -238,7 +229,7 @@ setup(name="log4tailer",
       author_email = "jordilin@gmail.com",
       url = "http://code.google.com/p/log4tailer/",
       license = "GNU GPL v3",
-      packages=["log4tailer"] + map("log4tailer.".__add__,PACKAGES),
+      packages= find_packages(),
       scripts = ["log4tail"],
       cmdclass = {"release":Release,
                   "test":Test, 
