@@ -27,7 +27,7 @@ from log4tailer import notifications
 from log4tailer.utils import setup_mail
 
 
-__version__ = 2.7
+__version__ = 2.71
 logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
