@@ -1,5 +1,12 @@
 ====================================
-xx/xx/xx release x.x
+04/07/10 release 2.71
+====================================
+- Minor changes in documentation
+- removed duplicated code that got pasted
+by mistake after the main() entry point. 
+
+====================================
+03/07/10 release 2.7
 ====================================
 - Executor notification
 - throttle one line at a time not consuming 
