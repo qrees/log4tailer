@@ -20,6 +20,7 @@ import unittest
 import sys
 import mocker
 import time
+import os
 sys.path.append('..')
 from log4tailer import notifications
 from log4tailer.Properties import Property
@@ -29,6 +30,14 @@ from log4tailer.Log import Log
 
 CONFIG = 'aconfig.txt'
 SYSOUT = sys.stdout
+
+
+# so we can run the tests in ../test or inside test 
+# folder
+current_directory = os.path.basename(os.getcwd())
+EXECUTABLE = 'python executable.py'
+if current_directory != 'test':
+    EXECUTABLE = 'python '+ os.path.join('test', 'executable.py')
 
 class Writer:
     def __init__(self):
@@ -155,7 +164,7 @@ class TestExecutor(unittest.TestCase):
         message = Message(logcolor)
         log = Log('anylog')
         fh = open(CONFIG, 'w')
-        fh.write('executor = python executable.py\n')
+        fh.write('executor = ' + EXECUTABLE +'\n')
         fh.close()
         trace = "this is an error log trace"
         properties = Property(CONFIG)

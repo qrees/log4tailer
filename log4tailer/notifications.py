@@ -110,7 +110,7 @@ class Mail(object):
     """Common actions to be taken
     by the Tailer"""
     
-    mailLevels = ['ERROR', 'FATAL']
+    mailLevels = ['CRITICAL', 'ERROR', 'FATAL']
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     monthname = [None,
                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

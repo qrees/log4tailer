@@ -19,7 +19,7 @@
 
 
 import os,re,sys
-from stat import *
+from stat import ST_INO, ST_SIZE
 from log4tailer.Timer import Timer
 
 class Log:

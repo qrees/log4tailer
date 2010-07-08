@@ -44,7 +44,8 @@ class Resume(object):
                                                  'CRITICAL':[]}
 
         self.nonTimeStamped = ['DEBUG','INFO','WARN','TARGET']
-        self.orderReport = ['CRITICAL','FATAL','ERROR','WARN','INFO','DEBUG','TARGET']
+        self.orderReport = ['CRITICAL','FATAL','ERROR','WARN','INFO',
+                'DEBUG','TARGET']
         self.mailAction = None
         self.notificationType = 'print'
         self.gapTime = 3600
@@ -100,7 +101,8 @@ class Resume(object):
         mins, secs = divmod(secs, 60)
         hours, mins = divmod(mins, 60)
         days, hours = divmod(hours, 24)
-        return str(years)+" years "+str(days)+" days "+ str(hours)+" hours "+ str(mins)+" mins "+str(secs)+" secs "
+        return (str(years) + " years " + str(days) + " days " + str(hours) +
+                " hours " + str(mins) + " mins " + str(secs) + " secs ")
             
     def __execTime(self):
         finish = time()
@@ -114,7 +116,8 @@ class Resume(object):
         """If notification_method is not mail or print, it will be the full
         path to the file where we will report.
         
-        :param notification_method: notification type being mail, file or print
+        :param notification_method: notification type being mail, file or 
+            print
         """ 
         if notification_method not in self.DEFAULT_METHODS:
             self.notificationType = FILE
@@ -147,7 +150,8 @@ class Resume(object):
         print "Uptime: "
         print self.__execTime()
         for log in self.arrayLog:
-            titleLog = self.colorize("Report for Log "+log.getLogPath(),colors)
+            titleLog = self.colorize("Report for Log " + log.getLogPath(), 
+                    colors)
             print titleLog
             print "Levels Report: "
             logKey = self.logsReport[log.getLogPath()]  

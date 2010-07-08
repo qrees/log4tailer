@@ -183,8 +183,11 @@ class TestResume(unittest.TestCase):
         fh.close()
         os.remove(reportfileFullPath)
         self.assertEquals(21, reportlength)
+        os.remove('aconfig')
 
     def tearDown(self):
+        if os.path.exists('aconfig'):
+            os.remove('aconfig')
         if os.path.exists('aconfig.txt'):
             os.remove('aconfig.txt')
         os.remove('out.log')
