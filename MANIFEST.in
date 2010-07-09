@@ -1,1 +1,2 @@
 exclude log4tail.py
+include log4tailer.1
