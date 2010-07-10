@@ -2,6 +2,9 @@
 xx/xx/xx release x.x
 ====================================
 - Man page for log4tailer
+- Refactored to allow more automated tests 
+to be performed and avoid manual testing as 
+much as possible.
 - Some minor fixes/clean ups for 
 the documentation
 

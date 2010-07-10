@@ -67,7 +67,8 @@ class Inactivity(object):
         self.mailAction = None
         notification = None
         if properties:
-            notification = properties.getValue(Inactivity.InactivityActionNotification)
+            notification = properties.getValue(
+                    Inactivity.InactivityActionNotification)
             self.logColors.parseConfig(properties)
         self.notification = notification or 'print'
 
@@ -78,10 +79,11 @@ class Inactivity(object):
             ellapsedTime = timer.inactivityEllapsed()
             if ellapsedTime > float(self.inactivityTime):
                 log.setInactivityAccTime(ellapsedTime)
-                messageAlert = "Inactivity in the log "+logpath+" for "+ str(log.getInactivityAccTime()) + " seconds"
-                
+                messageAlert = ("Inactivity in the log " + logpath + " for " +
+                        str(log.getInactivityAccTime()) + " seconds")
                 if self.notification == 'print':
-                    print self.logColors.backgroundemph+messageAlert+self.logColors.reset
+                    print (self.logColors.backgroundemph+messageAlert+
+                            self.logColors.reset)
                 elif self.notification == 'mail':
                     self.mailAction.setBodyMailAction(messageAlert)
                     self.mailAction.triggerAction(message,log)
@@ -157,7 +159,8 @@ class Mail(object):
         
         body = self.bodyMailAction
         if not body:
-            if message.getMessageLevel() not in Mail.mailLevels and not message.isATarget():
+            if (message.getMessageLevel() not in Mail.mailLevels 
+                    and not message.isATarget()):
                 return
             message, logpath = message.getPlainMessage()
             title = "Alert found for log "+logpath
@@ -169,7 +172,8 @@ class Mail(object):
 
         now = self.getNow()
         
-        msg = "Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
+        msg = ("Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: "
+                "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
         timer = log.getMailTimer()
         try:
             if timer.awaitSend(log.getTriggeredNotSent()):
@@ -194,7 +198,8 @@ class Mail(object):
     def sendNotificationMail(self,body):
         '''Sends a notification mail'''
         now = self.getNow()
-        msg = "Subject: Log4Tailer Notification Message\r\nFrom: %s\r\nTo: %s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body
+        msg = ("Subject: Log4Tailer Notification Message\r\nFrom: %s\r\nTo: "
+                "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
         try:
             self.conn.sendmail(self.fro,self.to,msg)
         except SMTPServerDisconnected:
@@ -275,8 +280,8 @@ class CornerMark(object):
         return self.corner_time
 
     def __term_num_cols(self):
-        """Returns the number columns in the current terminal using the Linux tputs
-        command line tool.
+        """Returns the number columns in the current terminal using the Linux 
+        tputs command line tool.
 
         :return: The number of columns currently in the terminal.
         """ 
