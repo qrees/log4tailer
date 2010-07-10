@@ -1,13 +1,19 @@
 import unittest
 import sys
-SYSOUT = sys.stdout
+import mox
+import mocker
+from mocker import ANY
+import copy
 sys.path.append('..')
 from log4tailer import reporting
 from log4tailer.LogTailer import LogTailer
 from log4tailer.LogColors import LogColors
 from log4tailer import notifications
 from log4tailer.Properties import Property
-import mox
+import log4tailer
+
+SYSOUT = sys.stdout
+LOG4TAILER_DEFAULTS = copy.deepcopy(log4tailer.defaults)
 
 class Writer:
     def __init__(self):
@@ -20,77 +26,53 @@ class Writer:
         self.captured.append(txt)
 
 class TestResume(unittest.TestCase):
+
+    def __getDefaults(self):
+        return {'pause' : 0, 
+            'silence' : False,
+            'throttle' : 0,
+            'actions' : [notifications.Print()],
+            'nlines' : False,
+            'target': None, 
+            'logcolors' : LogColors(),
+            'properties' : None,
+            'alt_config': None}
     
     def testshouldReturnTrueifMailAlreadyinMailAction(self):
-        logcolors = LogColors()
         mailActionMocker = mox.Mox()
         mailAction = mailActionMocker.CreateMock(notifications.Mail)
-        actions = [mailAction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        properties = None
-        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        defaults = self.__getDefaults()
+        defaults['actions'] = [mailAction]
+        logtailer = LogTailer(defaults)
         self.assertEqual(True,logtailer.mailIsSetup())
-
 
     def __setupAConfig(self, method = 'mail'):
         fh = open('aconfig','w')
         fh.write('inactivitynotification = ' + method + '\n')
         fh.close()
 
-    def testshouldReturnFalseifPropertiesHasInactivityActionNotificationSetToMailbutNoInactivityActionPassed(self):
+    def testshouldReturnFalseMailNotSetup(self):
         self.__setupAConfig()
         properties = Property('aconfig')
         properties.parseProperties()
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties
+        logtailer = LogTailer(defaults)
         self.assertEqual(False,logtailer.mailIsSetup())
-
     
     def testshouldReturnFalseifBothMailActionOrInactivityActionNotificationNotEnabled(self):
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        properties = None
-        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        logtailer = LogTailer(self.__getDefaults())
         self.assertEqual(False,logtailer.mailIsSetup())
     
     def testPipeOutShouldSendMessageParseThreeParams(self):
         sys.stdin = ['error > one error', 'warning > one warning']
         sys.stdout = Writer()
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        properties = None
-        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        logtailer = LogTailer(self.__getDefaults())
         logtailer.pipeOut()
         self.assertTrue('error > one error' in sys.stdout.captured[0])
 
     def testResumeBuilderWithAnalyticsFile(self):
         sys.stdout = Writer()
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
         reportfile = 'reportfile.txt'
         configfile = 'aconfig'
         fh = open(configfile, 'w')
@@ -98,7 +80,9 @@ class TestResume(unittest.TestCase):
         fh.close()
         properties = Property(configfile)
         properties.parseProperties()
-        logtailer = LogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties
+        logtailer = LogTailer(defaults)
         resumeObj = logtailer.resumeBuilder()
         self.assertTrue(isinstance(resumeObj, reporting.Resume))
         self.assertEquals('file', resumeObj.getNotificationType())
@@ -106,4 +90,114 @@ class TestResume(unittest.TestCase):
 
     def tearDown(self):
         sys.stdout = SYSOUT
+
+class TestInit(unittest.TestCase):
+    def setUp(self):
+        self.mocker = mocker.Mocker()
+
+    def __getDefaults(self):
+        return {'pause' : 0, 
+            'silence' : False,
+            'throttle' : 0,
+            'actions' : [notifications.Print()],
+            'nlines' : False,
+            'target': None, 
+            'logcolors' : LogColors(),
+            'properties' : None,
+            'alt_config': None}
+
+    def __options_mocker_generator(self, mock, params):
+        for key, val in params.iteritems():
+            getattr(mock, key)
+            self.mocker.result(val)
+    
+    class OptionsMock(object):
+        def __init__(self):
+            pass
+        def __getattr__(self, name):
+            if name == 'inactivity':
+                return True
+            elif name == 'configfile':
+                return "anythingyouwant"
+            return False
+
+    def test_monitor_inactivity_nomail(self):
+        options_mock = self.mocker.mock()
+        options_mock.inactivity
+        self.mocker.result(True)
+        self.mocker.count(1,2)
+        params = {'configfile' : 'anythingyouwant', 
+                'version' : False,
+                'filter' : False,
+                'tailnlines' : False,
+                'target' : False,
+                'cornermark' : False,
+                'executable' : False,
+                'pause' : False,
+                'throttle' : False,
+                'silence' : False, 
+                'mail' : False,
+                'nomailsilence' : False}
+        self.__options_mocker_generator(options_mock, params)
+        self.mocker.replay()
+        log4tailer.initialize(options_mock)
+        actions = log4tailer.defaults['actions']
+        self.assertEquals(2, len(actions))
+        self.assertTrue(isinstance(actions[0], notifications.Print))
+        self.assertTrue(isinstance(actions[1], notifications.Inactivity))
+        self.assertFalse(isinstance(actions[0], notifications.CornerMark))
+
+    def test_monitor_inactivity_withmail(self):
+        properties_mock = self.mocker.mock()
+        properties_mock.getValue('inactivitynotification')
+        self.mocker.result('mail')
+        properties_mock.getKeys()
+        self.mocker.result([])
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties_mock
+        log4tailer.defaults = defaults
+        utils_mock = self.mocker.replace('log4tailer.utils.setup_mail')
+        utils_mock(ANY)
+        self.mocker.result(True)
+        self.mocker.replay()
+        log4tailer.initialize(self.OptionsMock())
+        actions = log4tailer.defaults['actions']
+        self.assertEquals(2, len(actions))
+        self.assertTrue(isinstance(actions[0], notifications.Print))
+        self.assertTrue(isinstance(actions[1], notifications.Inactivity))
+        self.assertFalse(isinstance(actions[0], notifications.CornerMark))
+
+    def test_corner_mark_setup(self):
+        options_mock = self.mocker.mock()
+        options_mock.cornermark
+        self.mocker.count(1, 2)
+        self.mocker.result(True)
+        params = {'configfile' : 'anythingyouwant', 
+                'version' : False,
+                'filter' : False,
+                'tailnlines' : False,
+                'target' : False,
+                'executable' : False,
+                'pause' : False,
+                'throttle' : False,
+                'silence' : False, 
+                'mail' : False,
+                'inactivity' : False,
+                'nomailsilence' : False}
+        self.__options_mocker_generator(options_mock, params)
+        self.mocker.replay()
+        log4tailer.initialize(options_mock)
+        actions = log4tailer.defaults['actions']
+        self.assertEquals(2, len(actions))
+        self.assertTrue(isinstance(actions[0], notifications.Print))
+        self.assertTrue(isinstance(actions[1], notifications.CornerMark))
+
+    def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
+        log4tailer.defaults = LOG4TAILER_DEFAULTS
+
+if __name__ == '__main__':
+    unittest.main()
+
 

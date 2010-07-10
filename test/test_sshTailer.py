@@ -31,6 +31,17 @@ class TestSSHTailer(unittest.TestCase):
     def setUp(self):
         self.configfile = 'sshconfigfile.txt'
 
+    def __getDefaults(self):
+        return {'pause' : 0, 
+            'silence' : False,
+            'throttle' : 0,
+            'actions' : [notifications.Print()],
+            'nlines' : False,
+            'target': None, 
+            'logcolors' : LogColors(),
+            'properties' : None}
+ 
+
     def __setUpConfigFile(self):
         fh = open(self.configfile,'w')
         fh.write('sshhostnames = hostname0, hostname1, hostname2\n')
@@ -44,14 +55,9 @@ class TestSSHTailer(unittest.TestCase):
         properties = Property(self.configfile)        
         properties.parseProperties()
         logging.debug(properties.getKeys())
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        logtailer = SSHLogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties
+        logtailer = SSHLogTailer(defaults)
         self.assertTrue(logtailer.sanityCheck())
     
     def testIfParametersNotProvidedShouldExit(self):
@@ -60,23 +66,19 @@ class TestSSHTailer(unittest.TestCase):
         fh.close()
         properties = Property('wrongconfigfile')
         properties.parseProperties()
-        logtailer = SSHLogTailer(LogColors(),None,0,0,False,notifications.Print(),properties)
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties
+        logtailer = SSHLogTailer(defaults)
         self.assertFalse(logtailer.sanityCheck())
-        os.remove('wrongconfigfile')
     
     def testItShouldhaveBuildADictWithAllParamsIfAllParametersOk(self):
         self.__setUpConfigFile()
         properties = Property(self.configfile)        
         properties.parseProperties()
         logging.debug(properties.getKeys())
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        logtailer = SSHLogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties
+        logtailer = SSHLogTailer(defaults)
         logtailer.sanityCheck()
         self.assertEquals(3,len(logtailer.hostnames.keys()))
         self.assertEquals('username',logtailer.hostnames['hostname0']['username'])
@@ -86,20 +88,17 @@ class TestSSHTailer(unittest.TestCase):
         properties = Property(self.configfile)        
         properties.parseProperties()
         logging.debug(properties.getKeys())
-        logcolors = LogColors()
-        printaction = notifications.Print()
-        actions = [printaction]
-        throttleTime = 0
-        silence = False
-        target = None
-        pause = 0
-        logtailer = SSHLogTailer(logcolors, target, pause, throttleTime, silence, actions, properties)
+        defaults = self.__getDefaults()
+        defaults['properties'] = properties
+        logtailer = SSHLogTailer(defaults)
         logtailer.sanityCheck()
         command = "tail -F /var/log/anylog555 /var/log/anylog1"
         logtailer.createCommands()
         self.assertEquals(command,logtailer.hostnames['hostname0']['command'])
 
     def tearDown(self):
+        if os.path.exists('wrongconfigfile'):
+            os.remove('wrongconfigfile')
         if os.path.exists(self.configfile):
             os.remove(self.configfile)
 

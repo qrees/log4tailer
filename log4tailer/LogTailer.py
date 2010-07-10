@@ -27,15 +27,15 @@ from log4tailer.utils import setup_mail
 
 class LogTailer:
     '''Tails the log provided by Log class'''
-    def __init__(self,logcolors, target, pause, throttleTime, silence, actions, properties):
+    def __init__(self, defaults):
         self.arrayLog = []
-        self.logcolors = logcolors
-        self.pause = pause
-        self.silence = silence
-        self.actions = actions
-        self.throttleTime = throttleTime 
-        self.target = target
-        self.properties = properties
+        self.logcolors = defaults['logcolors']
+        self.pause = defaults['pause']
+        self.silence = defaults['silence']
+        self.actions = defaults['actions']
+        self.throttleTime = defaults['throttle']
+        self.target = defaults['target']
+        self.properties = defaults['properties']
         self.mailAction = None
 
     def addLog(self,log):

@@ -18,16 +18,15 @@ class SSHLogTailer:
     HOSTNAME_PROPERTY_PREFIX = "hostname "
     TAIL_COMMAND_PREFIX = "tail -F "
 
-    def __init__(self,logcolors, target, pause, throttleTime, silence, 
-                 actions, properties):
+    def __init__(self, defaults):
         self.arrayLog = []
-        self.logcolors = logcolors
-        self.pause = pause
-        self.silence = silence
-        self.actions = actions
-        self.throttleTime = throttleTime 
-        self.target = target
-        self.properties = properties
+        self.logcolors = defaults['logcolors']
+        self.pause = defaults['pause']
+        self.silence = defaults['silence']
+        self.actions = defaults['actions']
+        self.throttleTime = defaults['throttle'] 
+        self.target = defaults['target']
+        self.properties = defaults['properties']
         self.mailAction = None
         self.logger = logging.getLogger('SSHLogTailer')
         self.sshusername = None
