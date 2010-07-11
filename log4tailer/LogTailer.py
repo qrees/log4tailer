@@ -244,7 +244,7 @@ class LogTailer:
                 if found == 0:
                     #sleep for 1 sec
                     time.sleep(self.pause)
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, OSError, IOError):
             for log in self.arrayLog:
                 log.closeLog()
             if self.mailAction:

@@ -1,7 +1,11 @@
 import unittest
 import sys
-import mox
 import mocker
+import time
+import os
+import signal
+import re
+import threading
 from mocker import ANY
 import copy
 sys.path.append('..')
@@ -9,6 +13,7 @@ from log4tailer import reporting
 from log4tailer.LogTailer import LogTailer
 from log4tailer.LogColors import LogColors
 from log4tailer import notifications
+from log4tailer.Log import Log
 from log4tailer.Properties import Property
 import log4tailer
 
@@ -25,24 +30,28 @@ class Writer:
     def write(self, txt):
         self.captured.append(txt)
 
+
+def getDefaults():
+    return {'pause' : 0, 
+        'silence' : False,
+        'throttle' : 0,
+        'actions' : [notifications.Print()],
+        'nlines' : False,
+        'target': None, 
+        'logcolors' : LogColors(),
+        'properties' : None,
+        'alt_config': None}
+
 class TestResume(unittest.TestCase):
 
-    def __getDefaults(self):
-        return {'pause' : 0, 
-            'silence' : False,
-            'throttle' : 0,
-            'actions' : [notifications.Print()],
-            'nlines' : False,
-            'target': None, 
-            'logcolors' : LogColors(),
-            'properties' : None,
-            'alt_config': None}
+    def setUp(self):
+        self.mocker = mocker.Mocker()
     
     def testshouldReturnTrueifMailAlreadyinMailAction(self):
-        mailActionMocker = mox.Mox()
-        mailAction = mailActionMocker.CreateMock(notifications.Mail)
-        defaults = self.__getDefaults()
-        defaults['actions'] = [mailAction]
+        mailaction_mock = self.mocker.mock(notifications.Mail)
+        self.mocker.replay()
+        defaults = getDefaults()
+        defaults['actions'] = [mailaction_mock]
         logtailer = LogTailer(defaults)
         self.assertEqual(True,logtailer.mailIsSetup())
 
@@ -55,19 +64,19 @@ class TestResume(unittest.TestCase):
         self.__setupAConfig()
         properties = Property('aconfig')
         properties.parseProperties()
-        defaults = self.__getDefaults()
+        defaults = getDefaults()
         defaults['properties'] = properties
         logtailer = LogTailer(defaults)
         self.assertEqual(False,logtailer.mailIsSetup())
     
-    def testshouldReturnFalseifBothMailActionOrInactivityActionNotificationNotEnabled(self):
-        logtailer = LogTailer(self.__getDefaults())
+    def testReturnsFalseifMailActionOrInactivityActionNotificationNotEnabled(self):
+        logtailer = LogTailer(getDefaults())
         self.assertEqual(False,logtailer.mailIsSetup())
     
     def testPipeOutShouldSendMessageParseThreeParams(self):
         sys.stdin = ['error > one error', 'warning > one warning']
         sys.stdout = Writer()
-        logtailer = LogTailer(self.__getDefaults())
+        logtailer = LogTailer(getDefaults())
         logtailer.pipeOut()
         self.assertTrue('error > one error' in sys.stdout.captured[0])
 
@@ -80,7 +89,7 @@ class TestResume(unittest.TestCase):
         fh.close()
         properties = Property(configfile)
         properties.parseProperties()
-        defaults = self.__getDefaults()
+        defaults = getDefaults()
         defaults['properties'] = properties
         logtailer = LogTailer(defaults)
         resumeObj = logtailer.resumeBuilder()
@@ -89,22 +98,64 @@ class TestResume(unittest.TestCase):
         self.assertEquals(reportfile, resumeObj.report_file)
 
     def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
         sys.stdout = SYSOUT
+
+
+class Interruptor(threading.Thread):
+    log_name = 'out.log'
+    
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.pid = os.getpid()
+
+    def run(self):
+        onelogtrace = 'this is an info log trace'
+        anotherlogtrace = 'this is a debug log trace'
+        fh = open(self.log_name, 'a')
+        fh.write(onelogtrace + '\n')
+        fh.write(anotherlogtrace + '\n')
+        fh.close()
+        time.sleep(0.02)
+        os.kill(self.pid, signal.SIGINT)
+
+class TestTailer(unittest.TestCase):
+    log_name = 'out.log'
+   
+    def setUp(self):
+        self.onelog = Log(self.log_name)
+        onelogtrace = 'this is an info log trace'
+        anotherlogtrace = 'this is a debug log trace'
+        fh = open(self.log_name, 'w')
+        fh.write(onelogtrace + '\n')
+        fh.write(anotherlogtrace + '\n')
+        fh.close()
+    
+    def test_tailerPrintAction(self):
+        sys.stdout = Writer()
+        tailer = LogTailer(getDefaults())
+        tailer.addLog(self.onelog)
+        interruptor = Interruptor()
+        interruptor.start()
+        tailer.tailer()
+        interruptor.join()
+        finish_trace = re.compile(r'because colors are fun')
+        found = False
+        for num, line in enumerate(sys.stdout.captured):
+            if finish_trace.search(line):
+                found = True
+        if not found:
+            self.fail()
+
+    def tearDown(self):
+        sys.stdout = SYSOUT
+        if os.path.exists(self.log_name):
+            os.remove(self.log_name)
 
 class TestInit(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
-
-    def __getDefaults(self):
-        return {'pause' : 0, 
-            'silence' : False,
-            'throttle' : 0,
-            'actions' : [notifications.Print()],
-            'nlines' : False,
-            'target': None, 
-            'logcolors' : LogColors(),
-            'properties' : None,
-            'alt_config': None}
 
     def __options_mocker_generator(self, mock, params):
         for key, val in params.iteritems():
@@ -153,7 +204,7 @@ class TestInit(unittest.TestCase):
         self.mocker.result('mail')
         properties_mock.getKeys()
         self.mocker.result([])
-        defaults = self.__getDefaults()
+        defaults = getDefaults()
         defaults['properties'] = properties_mock
         log4tailer.defaults = defaults
         utils_mock = self.mocker.replace('log4tailer.utils.setup_mail')

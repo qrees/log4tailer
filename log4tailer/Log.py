@@ -67,10 +67,9 @@ class Log:
     def getcurrInode(self):
         try:
             inode = os.stat(self.path)[ST_INO]
-        except:
+        except OSError:
             print "Could not stat, file removed?"
-            print "exiting..."
-            sys.exit()
+            raise OSError
         return inode
 
     def getcurrSize(self):
@@ -81,16 +80,16 @@ class Log:
         try:
             self.size = os.stat(self.path)[ST_SIZE]
             self.inode = os.stat(self.path)[ST_INO]
-        except:
+        except OSError:
             print "file "+self.path+" does not exist"
-            sys.exit()
+            raise OSError
         try:
             fd = open(self.path,'r')
             self.fh = fd
             return fd
-        except:
+        except IOError:
             print "Could not open file "+self.path
-            sys.exit()
+            raise IOError
     
     def readLine(self):
         return self.fh.readline()
