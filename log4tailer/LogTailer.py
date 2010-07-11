@@ -25,7 +25,7 @@ from log4tailer.reporting import Resume
 from log4tailer import notifications
 from log4tailer.utils import setup_mail
 
-class LogTailer:
+class LogTailer(object):
     '''Tails the log provided by Log class'''
     def __init__(self, defaults):
         self.arrayLog = []
@@ -114,13 +114,15 @@ class LogTailer:
                         ttlines = self.getTermLines()
             log.closeLog()
 
-    def daemonize (self, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
+    def daemonize (self, stdin='/dev/null', stdout='/dev/null', 
+            stderr='/dev/null'):
         try:
             pid = os.fork( )
             if pid > 0:
                 sys.exit(0) 
         except OSError, e:
-            sys.stderr.write("first fork failed: (%d) %s\n" % (e.errno, e.strerror))
+            sys.stderr.write("first fork failed: (%d) %s\n" % (e.errno, 
+                e.strerror))
             sys.exit(1)
         os.chdir("/")
         os.umask(0)
@@ -130,7 +132,8 @@ class LogTailer:
             if pid > 0:
                 sys.exit(0)
         except OSError, e:
-            sys.stderr.write("second fork failed: (%d) %s\n" % (e.errno, e.strerror))
+            sys.stderr.write("second fork failed: (%d) %s\n" % (e.errno, 
+                e.strerror))
             sys.exit(1)
         print "daemonized"
         for f in sys.stdout, sys.stderr: f.flush()
@@ -144,7 +147,7 @@ class LogTailer:
     def pipeOut(self):
         """Reads from standard input 
         and prints to standard output"""
-        message = Message(self.logcolors,self.target,self.properties)
+        message = Message(self.logcolors, self.target, self.properties)
         stdin = sys.stdin
         anylog = Log('anylog')
         for line in stdin:
