@@ -25,14 +25,14 @@ import signal
 import re
 import threading
 import copy
+from nose.tools import raises
 sys.path.append('..')
-from log4tailer.LogColors import LogColors
-from log4tailer import notifications
 from log4tailer.Log import Log
 import log4tailer
 
 SYSOUT = sys.stdout
 LOG4TAILER_DEFAULTS = copy.deepcopy(log4tailer.defaults)
+ACONFIG = 'aconfig.cfg'
 
 class Writer:
     def __init__(self):
@@ -43,17 +43,6 @@ class Writer:
 
     def write(self, txt):
         self.captured.append(txt)
-
-def getDefaults():
-    return {'pause' : 0, 
-        'silence' : False,
-        'throttle' : 0,
-        'actions' : [notifications.Print()],
-        'nlines' : False,
-        'target': None, 
-        'logcolors' : LogColors(),
-        'properties' : None,
-        'alt_config': None}
 
 class Interruptor(threading.Thread):
     log_name = 'out.log'
@@ -69,10 +58,10 @@ class Interruptor(threading.Thread):
         fh.write(onelogtrace + '\n')
         fh.write(anotherlogtrace + '\n')
         fh.close()
-        time.sleep(0.02)
+        time.sleep(0.002)
         os.kill(self.pid, signal.SIGINT)
 
-class TestEndToEnd(object):
+class TestEndToEnd(unittest.TestCase):
     log_name = 'onelog'
 
     def setUp(self):
@@ -85,19 +74,28 @@ class TestEndToEnd(object):
         fh.write(anotherlogtrace + '\n')
         fh.close()
 
-    class OptionsMock(object):
-        def __init__(self):
-            pass
-        def __getattr__(self, name):
-            if name == 'remote':
-                return False
-            elif name == 'configfile':
-                return 'anythingyouwant'
-            return False
+    def __finished_fine(self, out_container):
+        finish_trace = re.compile(r'because colors are fun')
+        found = False
+        for num, line in enumerate(out_container.captured):
+            if finish_trace.search(line):
+                found = True
+        return found
    
     def test_tailerfrommonitor(self):
         sys.stdout = Writer()
-        options_mock = self.OptionsMock()
+
+        class OptionsMock(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, name):
+                if name == 'remote':
+                    return False
+                elif name == 'configfile':
+                    return 'anythingyouwant'
+                return False
+
+        options_mock = OptionsMock()
         log4tailer.initialize(options_mock)
         args_mock = [self.log_name]
         interruptor = Interruptor()
@@ -111,10 +109,90 @@ class TestEndToEnd(object):
                 found = True
         if not found:
             self.fail()
-    
+
+    def test_endtoend_withconfig(self):
+        sys.stdout = Writer()
+        fh = open(ACONFIG, 'w')
+        fh.write('info = green, on_blue\n')
+        fh.write('debug = yellow\n')
+        fh.close()
+
+        class OptionsMockWithConfig(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'configfile':
+                    return ACONFIG
+                return False
+
+        optionsmock_withconfig = OptionsMockWithConfig()        
+        log4tailer.initialize(optionsmock_withconfig)
+        args_mock = [self.log_name]
+        interruptor = Interruptor()
+        interruptor.start()
+        log4tailer.monitor(optionsmock_withconfig, args_mock)
+        interruptor.join()
+        finish_trace = re.compile(r'because colors are fun')
+        found = False
+        for num, line in enumerate(sys.stdout.captured):
+            if finish_trace.search(line):
+                found = True
+        if not found:
+            self.fail()
+
+    @raises(SystemExit)
+    def test_printversion_andexit(self):
+        class OptionsMock(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'version':
+                    return True
+                return False
+        log4tailer.initialize(OptionsMock())
+   
+    def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
+        sys.stdout = SYSOUT
+        log4tailer.defaults = LOG4TAILER_DEFAULTS
+        if os.path.exists(ACONFIG):
+            os.remove(ACONFIG)
+        if os.path.exists(self.log_name):
+            os.remove(self.log_name)
+
+
+class TestMonitor(unittest.TestCase):
+    log_name = 'onelog'
+
+    @raises(SystemExit)
+    def test_tailLastNlines(self):
+        sys.stdout = Writer()
+        fh = open(self.log_name, 'w')
+        onelogtrace = 'this is an info log trace'
+        anotherlogtrace = 'this is a debug log trace'
+        fh.write(onelogtrace + '\n')
+        fh.write(anotherlogtrace + '\n')
+        fh.close()
+
+        class OptionsMockWithNlines(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'tailnlines':
+                    return '50'
+                return False
+        
+        options_mock_nlines = OptionsMockWithNlines()
+        args = [self.log_name]
+        log4tailer.initialize(options_mock_nlines)
+        log4tailer.monitor(options_mock_nlines, args)
+
     def tearDown(self):
         sys.stdout = SYSOUT
         log4tailer.defaults = LOG4TAILER_DEFAULTS
+        if os.path.exists(ACONFIG):
+            os.remove(ACONFIG)
         if os.path.exists(self.log_name):
             os.remove(self.log_name)
 

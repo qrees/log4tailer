@@ -29,15 +29,15 @@ def parseConfig(configfile):
 def initialize(options):
     logcolors = defaults['logcolors']
     actions = defaults['actions']
-    properties = defaults['properties']
     config = options.configfile or defaults['alt_config']
     if options.version:
         print __version__
         sys.exit(0)
     if os.path.exists(config):
         logger.info("Configuration file [%s] found" % config)
-        properties = parseConfig(config)
-        logcolors.parseConfig(properties)
+        defaults['properties'] = parseConfig(config)
+        logcolors.parseConfig(defaults['properties'])
+    properties = defaults['properties']
     if options.pause:
         pause = int(options.pause)
     if options.throttle:
@@ -58,7 +58,7 @@ def initialize(options):
         # overrides Print notifier
         actions[0] = notifications.Filter(re.compile(options.filter))
     if options.tailnlines:
-        nlines = int(options.tailnlines)
+        defaults['nlines'] = int(options.tailnlines)
     if options.target:
         target = options.target
     if options.inactivity:
