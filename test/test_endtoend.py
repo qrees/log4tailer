@@ -165,6 +165,9 @@ class TestEndToEnd(unittest.TestCase):
 class TestMonitor(unittest.TestCase):
     log_name = 'onelog'
 
+    def setUp(self):
+        self.mocker = mocker.Mocker()
+
     @raises(SystemExit)
     def test_tailLastNlines(self):
         sys.stdout = Writer()
@@ -188,7 +191,52 @@ class TestMonitor(unittest.TestCase):
         log4tailer.initialize(options_mock_nlines)
         log4tailer.monitor(options_mock_nlines, args)
 
+    @raises(SystemExit)
+    def test_options_withremotewrongconfig(self):
+        fh = open(ACONFIG, 'w')
+        fh.write('anything = anything\n')
+        fh.close()
+        class OptionWithRemoteAndConfig(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'configfile':
+                    return ACONFIG
+                elif method == 'remote':
+                    return True
+                return False
+        options_mock = OptionWithRemoteAndConfig()
+        log4tailer.initialize(options_mock)
+        args = []
+        log4tailer.monitor(options_mock, args)
+
+    @raises(SystemExit)
+    def test_options_withremotegoodconfignoconnection(self):
+        getpass_mock = self.mocker.replace('getpass.getpass')
+        getpass_mock()
+        self.mocker.result('anypass')
+        fh = open(ACONFIG, 'w')
+        fh.write('sshhostnames = 127.999.9.9\n')
+        fh.write('127.999.9.9 = /var/log/error.log\n')
+        fh.close()
+        class OptionWithRemoteAndConfig(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'configfile':
+                    return ACONFIG
+                elif method == 'remote':
+                    return True
+                return False
+        options_mock = OptionWithRemoteAndConfig()
+        log4tailer.initialize(options_mock)
+        args = []
+        self.mocker.replay()
+        log4tailer.monitor(options_mock, args)
+
     def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
         sys.stdout = SYSOUT
         log4tailer.defaults = LOG4TAILER_DEFAULTS
         if os.path.exists(ACONFIG):
