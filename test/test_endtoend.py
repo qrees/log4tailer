@@ -1,3 +1,21 @@
+# Log4Tailer: A multicolored python tailer for log4J logs
+# Copyright (C) 2010 Jordi Carrillo Bosch
+
+# This file is part of Log4Tailer Project.
+#
+# Log4Tailer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Log4Tailer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
+
 import unittest
 import sys
 import mocker
@@ -5,7 +23,6 @@ import time
 import os
 import signal
 import re
-from nose.tools import * 
 import threading
 import copy
 sys.path.append('..')
@@ -27,7 +44,6 @@ class Writer:
     def write(self, txt):
         self.captured.append(txt)
 
-
 def getDefaults():
     return {'pause' : 0, 
         'silence' : False,
@@ -38,7 +54,6 @@ def getDefaults():
         'logcolors' : LogColors(),
         'properties' : None,
         'alt_config': None}
-
 
 class Interruptor(threading.Thread):
     log_name = 'out.log'
@@ -56,7 +71,6 @@ class Interruptor(threading.Thread):
         fh.close()
         time.sleep(0.02)
         os.kill(self.pid, signal.SIGINT)
-
 
 class TestEndToEnd(object):
     log_name = 'onelog'
@@ -80,12 +94,7 @@ class TestEndToEnd(object):
             elif name == 'configfile':
                 return 'anythingyouwant'
             return False
-
-    def __options_mocker_generator(self, mock, params):
-        for key, val in params.iteritems():
-            getattr(mock, key)
-            self.mocker.result(val)
-    
+   
     def test_tailerfrommonitor(self):
         sys.stdout = Writer()
         options_mock = self.OptionsMock()
