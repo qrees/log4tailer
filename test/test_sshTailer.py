@@ -20,11 +20,14 @@
 import unittest,logging
 import os
 import sys
+import copy
 sys.path.append('..')
 from log4tailer.LogColors import LogColors
 from log4tailer.Properties import Property
 from log4tailer import notifications
 from log4tailer.SSHLogTailer import SSHLogTailer
+import log4tailer
+from test import LOG4TAILER_DEFAULTS
 
 class TestSSHTailer(unittest.TestCase):
 
@@ -97,6 +100,7 @@ class TestSSHTailer(unittest.TestCase):
         self.assertEquals(command,logtailer.hostnames['hostname0']['command'])
 
     def tearDown(self):
+        log4tailer.defaults = copy.deepcopy(LOG4TAILER_DEFAULTS)
         if os.path.exists('wrongconfigfile'):
             os.remove('wrongconfigfile')
         if os.path.exists(self.configfile):
@@ -104,7 +108,6 @@ class TestSSHTailer(unittest.TestCase):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-
     unittest.main()
         
 

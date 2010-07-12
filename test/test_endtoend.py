@@ -29,12 +29,12 @@ from nose.tools import raises
 sys.path.append('..')
 from log4tailer.Log import Log
 import log4tailer
+from test import LOG4TAILER_DEFAULTS
 
 SYSOUT = sys.stdout
-LOG4TAILER_DEFAULTS = copy.deepcopy(log4tailer.defaults)
 ACONFIG = 'aconfig.cfg'
 
-class Writer:
+class Writer(object):
     def __init__(self):
         self.captured = []
 
@@ -62,7 +62,7 @@ class Interruptor(threading.Thread):
         os.kill(self.pid, signal.SIGINT)
 
 class TestEndToEnd(unittest.TestCase):
-    log_name = 'onelog'
+    log_name = 'out.log'
 
     def setUp(self):
         self.mocker = mocker.Mocker()
@@ -155,7 +155,7 @@ class TestEndToEnd(unittest.TestCase):
         self.mocker.restore()
         self.mocker.verify()
         sys.stdout = SYSOUT
-        log4tailer.defaults = LOG4TAILER_DEFAULTS
+        log4tailer.defaults = copy.deepcopy(LOG4TAILER_DEFAULTS)
         if os.path.exists(ACONFIG):
             os.remove(ACONFIG)
         if os.path.exists(self.log_name):
@@ -163,7 +163,7 @@ class TestEndToEnd(unittest.TestCase):
 
 
 class TestMonitor(unittest.TestCase):
-    log_name = 'onelog'
+    log_name = 'out.log'
 
     def setUp(self):
         self.mocker = mocker.Mocker()
@@ -238,7 +238,7 @@ class TestMonitor(unittest.TestCase):
         self.mocker.restore()
         self.mocker.verify()
         sys.stdout = SYSOUT
-        log4tailer.defaults = LOG4TAILER_DEFAULTS
+        log4tailer.defaults = copy.deepcopy(LOG4TAILER_DEFAULTS)
         if os.path.exists(ACONFIG):
             os.remove(ACONFIG)
         if os.path.exists(self.log_name):

@@ -16,9 +16,9 @@ from log4tailer import notifications
 from log4tailer.Log import Log
 from log4tailer.Properties import Property
 import log4tailer
+from test import LOG4TAILER_DEFAULTS
 
 SYSOUT = sys.stdout
-LOG4TAILER_DEFAULTS = copy.deepcopy(log4tailer.defaults)
 
 class Writer:
     def __init__(self):
@@ -246,7 +246,7 @@ class TestInit(unittest.TestCase):
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
-        log4tailer.defaults = LOG4TAILER_DEFAULTS
+        log4tailer.defaults = copy.deepcopy(LOG4TAILER_DEFAULTS)
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,7 +6,7 @@ from log4tailer.utils import setup_mail
 import re
 import logging
 
-__version__ = 2.71
+__version__ = 2.72
 logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
@@ -45,12 +45,12 @@ def initialize(options):
     if options.silence and properties:
         mailAction = setup_mail(properties)
         actions.append(mailAction)
-        silence = True
+        defaults['silence'] = True
     if options.nomailsilence:
         # silence option with no mail
         # up to user to provide notification by mail 
         # or do some kind of reporting 
-        silence = True
+        defaults['silence'] = True
     if options.mail and properties:
         mailAction = setup_mail(properties)
         actions.append(mailAction)
