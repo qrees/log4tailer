@@ -20,10 +20,19 @@ import sys
 import unittest
 import email
 import mocker
-
+#from nose.tools import nottest
+import decorators as dec
 sys.path.append('..')
 from log4tailer import notifications
 from log4tailer import utils
+
+
+version_info = sys.version_info
+version2_4 = (2, 4)
+skip_from_time = False
+if version_info[:2] == version2_4:
+    skip_from_time = True
+
 
 class TestMailAction(unittest.TestCase):
 
@@ -34,6 +43,7 @@ class TestMailAction(unittest.TestCase):
         mailaction = notifications.Mail()
         self.assertTrue(mailaction.getNow())
     
+    @dec.skipif(skip_from_time, "invalid for 2.4")
     def testshoulGetNowDateFromTime(self):
         mailaction = notifications.Mail()
         del(email.utils.formatdate)

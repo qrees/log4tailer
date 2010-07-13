@@ -36,14 +36,6 @@ class Options:
     def __init__(self):
         self.inactivity = None
 
-    @property
-    def inactivity(self):
-        return self.inactivity
-    
-    @inactivity.setter
-    def inactivity(self,value):
-        self.inactivity = value
-
 class Writer(object):
     def __init__(self):
         self.capt = []
