@@ -61,7 +61,7 @@ class TestExecutor(unittest.TestCase):
         properties = Property(CONFIG)
         properties.parseProperties()
         executor = notifications.Executor(properties)
-        self.assertEquals(['ls', '-'], executor.executable)
+        self.assertEquals(['ls', '-l'], executor.executable)
         executor.stop()
 
     def testShouldRaiseIfExecutorNotProvided(self):
