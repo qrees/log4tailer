@@ -42,6 +42,7 @@ def initialize(options):
         pause = int(options.pause)
     if options.throttle:
         throttle = float(options.throttle)
+        defaults['throttle'] = throttle
     if options.silence and properties:
         mailAction = setup_mail(properties)
         actions.append(mailAction)
