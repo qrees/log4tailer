@@ -79,6 +79,9 @@ class Inactivity(object):
         timer = log.getInactivityTimer()
         if not plainmessage:
             ellapsedTime = timer.inactivityEllapsed()
+            if self.alerted:
+                # already alerted
+                self.alerted = False
             if ellapsedTime > float(self.inactivityTime):
                 self.alerted = True
                 log.setInactivityAccTime(ellapsedTime)

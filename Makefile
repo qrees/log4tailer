@@ -42,7 +42,6 @@ $(TEST): $(BUILDOUT)
 
 clean:
 	@echo "clean ..."
-	rm -rf $(EXE) 
 	rm -f `find src -name "*.pyc"`
 	rm -f `find test -name "*.pyc"`
 	rm -rf cover .coverage
