@@ -74,7 +74,6 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker.VerifyAll()
     
     def testNotSendingAlertBelowInactivityTime(self):
-
         message = self.message_mocker.CreateMock(Message)
         message.getPlainMessage().AndReturn(('error> this is an error message',
             'logpath'))
@@ -102,6 +101,7 @@ class TestInactivityAction(unittest.TestCase):
         time.sleep(0.0000003)
         notifier.notify(message,self.log)
         self.assertTrue('Inactivity' in sys.stdout.capt[0])
+        self.assertTrue(notifier.alerted)
         self.message_mocker.VerifyAll()
 
     def testShouldGetInactivityNotificationTypeifInConfigFile(self):

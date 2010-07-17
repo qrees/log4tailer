@@ -21,6 +21,8 @@ import unittest
 import os,sys
 import re
 import time
+import mox
+import mocker
 sys.path.append('..')
 from log4tailer import reporting
 from log4tailer.Log import Log
@@ -28,8 +30,6 @@ from log4tailer.Properties import Property
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer import notifications
-
-import mox
 
 class TestResume(unittest.TestCase):
 
@@ -56,11 +56,11 @@ class TestResume(unittest.TestCase):
         fh2 = open('out2.log','w')
         self.writer(fh,someLogTracesForOutLog)
         self.writer(fh2,someLogTracesForOut2Log)
-        
         fh.close()
         fh2.close()
+        self.mocker = mocker.Mocker()
 
-    def readAndUpdateLines(self,log,message,resume):
+    def readAndUpdateLines(self, log, message, resume):
         fh = log.openLog()
         lines = [ line.rstrip() for line in fh.readlines() ]
         for line in lines:
@@ -77,16 +77,13 @@ class TestResume(unittest.TestCase):
         resume = reporting.Resume(arrayLogs)
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog,message,resume)
-        
         outlogReport = resume.logsReport[log.getLogPath()]
         expectedOutLogErrorReport = 'error> not so wrong'
         gotLogTrace = outlogReport['ERROR'][0].split('=>> ')[1]
         self.assertEquals(expectedOutLogErrorReport,
                 gotLogTrace)
-               
     
     def testShouldReportaTarget(self):
-        
         logline = 'this is a target line and should be reported'
         message_mocker = mox.Mox()
         message = message_mocker.CreateMock(Message)
@@ -182,10 +179,44 @@ class TestResume(unittest.TestCase):
         reportlength = len(fh.readlines())
         fh.close()
         os.remove(reportfileFullPath)
-        self.assertEquals(21, reportlength)
+        self.assertEquals(22, reportlength)
         os.remove('aconfig')
 
+    def testShouldReportOtherNotifications(self):
+        inactivity_mock = self.mocker.mock()
+        inactivity_mock.alerting_msg
+        self.mocker.count(1, None)
+        self.mocker.result('Inactivity action detected')
+        inactivity_mock.alerted
+        self.mocker.count(1, None)
+        self.mocker.result(True)
+        def populate_log():
+            fh = open('out2.log', 'w')
+            someLogTracesForLog = ['something here',
+                              'something there',
+                              'something somewhere']
+            for line in someLogTracesForLog:
+                fh.write(line + '\n')
+            fh.close()
+        populate_log()
+        log = Log('out2.log')
+        arrayLogs = [log]
+        logcolors = LogColors()
+        message = Message(logcolors)
+        resume = reporting.Resume(arrayLogs)
+        resume.add_notifier(inactivity_mock)
+        self.mocker.replay()
+        for anylog in arrayLogs:
+            self.readAndUpdateLines(anylog, message, resume)
+        outlogReport = resume.logsReport[log.getLogPath()]
+        expectedOthersReport = 'Inactivity action detected'
+        gotLogTrace = outlogReport['OTHERS'][0].split('=>> ')[1]
+        self.assertEquals(expectedOthersReport,
+                gotLogTrace)
+
     def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
         if os.path.exists('aconfig'):
             os.remove('aconfig')
         if os.path.exists('aconfig.txt'):

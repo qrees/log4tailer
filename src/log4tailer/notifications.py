@@ -71,6 +71,8 @@ class Inactivity(object):
                     Inactivity.InactivityActionNotification)
             self.logColors.parseConfig(properties)
         self.notification = notification or 'print'
+        self.alerted = False
+        self.alerting_msg = 'Inactivity action detected'
 
     def notify(self, message, log):
         plainmessage, logpath = message.getPlainMessage()
@@ -78,6 +80,7 @@ class Inactivity(object):
         if not plainmessage:
             ellapsedTime = timer.inactivityEllapsed()
             if ellapsedTime > float(self.inactivityTime):
+                self.alerted = True
                 log.setInactivityAccTime(ellapsedTime)
                 messageAlert = ("Inactivity in the log " + logpath + " for " +
                         str(log.getInactivityAccTime()) + " seconds")
@@ -96,6 +99,7 @@ class Inactivity(object):
             timer.reset()
             log.setInactivityAccTime(0)
             ellapsedTime = 0
+            self.alerted = False
 
     def getNotificationType(self):
         return self.notification

@@ -39,13 +39,14 @@ class Resume(object):
                                                  'DEBUG':0,
                                                  'INFO':0,
                                                  'WARN':0,
+                                                 'OTHERS':[],
                                                  'ERROR':[],
                                                  'FATAL':[],
                                                  'CRITICAL':[]}
 
-        self.nonTimeStamped = ['DEBUG','INFO','WARN','TARGET']
-        self.orderReport = ['CRITICAL','FATAL','ERROR','WARN','INFO',
-                'DEBUG','TARGET']
+        self.nonTimeStamped = ['DEBUG', 'INFO', 'WARN', 'TARGET']
+        self.orderReport = ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'INFO',
+                'DEBUG', 'TARGET', 'OTHERS']
         self.mailAction = None
         self.notificationType = 'print'
         self.gapTime = 3600
@@ -57,10 +58,13 @@ class Resume(object):
     def flushReport(self):
         for log,dictlog in self.logsReport.iteritems():
             for key,val in dictlog.iteritems():
-                if key in ['ERROR','FATAL','CRITICAL']:
+                if key in ['ERROR', 'FATAL', 'CRITICAL']:
                     dictlog[key] = []
                 else:
                     dictlog[key] = 0
+
+    def __get_now(self):
+        return strftime("%d %b %Y %H:%M:%S", localtime())
 
     def update(self,message,log):
         messageLevel = message.getMessageLevel()
@@ -76,8 +80,12 @@ class Resume(object):
             if messageLevel in self.nonTimeStamped:
                 logKey[messageLevel] += 1
             else:
-                res = strftime("%d %b %Y %H:%M:%S", localtime())
+                res = self.__get_now()
                 logKey[messageLevel].append(res +'=>> '+plainmessage)
+        for notifier in self.notifiers:
+            if notifier.alerted:
+                res = self.__get_now()
+                logKey['OTHERS'].append(res + '=>> '+ notifier.alerting_msg)
         self.report_now()
 
     def report_now_mail(self, body):
