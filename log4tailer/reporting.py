@@ -49,6 +49,10 @@ class Resume(object):
         self.mailAction = None
         self.notificationType = 'print'
         self.gapTime = 3600
+        self.notifiers = []
+
+    def add_notifier(self, notifier):
+        self.notifiers.append(notifier)
 
     def flushReport(self):
         for log,dictlog in self.logsReport.iteritems():
@@ -106,11 +110,11 @@ class Resume(object):
             
     def __execTime(self):
         finish = time()
-        ellapsed = finish-self.initTime
+        ellapsed = finish - self.initTime
         return self.__hoursMinsFormat(ellapsed)
 
     def colorize(self,line,colors):
-        return colors.backgroundemph+line+colors.reset
+        return colors.backgroundemph + line + colors.reset
 
     def notification_type(self, notification_method):
         """If notification_method is not mail or print, it will be the full

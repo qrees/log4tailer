@@ -198,7 +198,6 @@ class Release(Command):
         pass
 
     def run(self):
-        self.run_command("clean")
         # check everything is ok
         if self.rtag:
             # push release to svn 
@@ -212,12 +211,29 @@ class Release(Command):
             out,err = svnproc.communicate()
             print out
         
-        #self.run_command("test")
+        # buildout python shebang points to /usr/bin/python2.6
+        # bit of a hack in here.
+        log4tail = os.path.join('bin', 'log4tail')
+        log4tail_backup = log4tail + '.back'
+        shutil.copy(log4tail, log4tail_backup)
+        shebang_env = '#!/usr/bin/env python'
+        fh = open(log4tail)
+        lines = fh.readlines()
+        fh.close()
+        fh = open(log4tail_backup, 'w')
+        for num, line in enumerate(lines):
+            if num == 0:
+                fh.write(shebang_env)
+            else:
+                fh.write(line)
+        fh.close()
+        os.rename(log4tail_backup, log4tail)
         self.run_command("sdist")
         if not isdir('dist'):
             print "I just run sdist and no dist??"
             sys.exit()
         self.run_command("dodoc")
+
         
 setup(name="log4tailer",
       version=__version__,
@@ -227,8 +243,14 @@ setup(name="log4tailer",
       author_email = "jordilin@gmail.com",
       url = "http://code.google.com/p/log4tailer/",
       license = "GNU GPL v3",
-      packages= find_packages(),
-      scripts = ["log4tail"],
+      packages= find_packages('src'),
+      package_dir = {'' : 'src'},
+      include_package_data = True,
+      entry_points = { 
+          'console_scripts' : [ 
+              'log4tail = log4tailer.log4tail:main',
+              ]
+          },
       cmdclass = {"release":Release,
                   "test":Test, 
                   "clean":Clean,

@@ -157,7 +157,7 @@ class LogTailer(object):
     
     def __getAction(self,module):
         for action in self.actions:
-            if isinstance(action,module):
+            if isinstance(action, module):
                 return action
         return None
 
@@ -195,6 +195,12 @@ class LogTailer(object):
                     resume.setMailNotification(self.mailAction)
             if analyticsgap:
                 resume.setAnalyticsGapNotification(analyticsgap)
+        # check if inactivity action on the self.actions and set the inactivity 
+        # on the resume object. If inactivity is flagged, will be then
+        # reported.
+        inactivity_action = self.__getAction(notifications.Inactivity)
+        if inactivity_action:
+            resume.add_notifier(inactivity_action)
         return resume
     
     def notifyActions(self, message, log):

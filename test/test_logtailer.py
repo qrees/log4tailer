@@ -97,6 +97,14 @@ class TestResume(unittest.TestCase):
         self.assertEquals('file', resumeObj.getNotificationType())
         self.assertEquals(reportfile, resumeObj.report_file)
 
+    def testResumeBuilderWithInactivityAction(self):
+        defaults = getDefaults()
+        defaults['actions'] = [notifications.Inactivity(5)]
+        tailer = LogTailer(defaults)
+        resume = tailer.resumeBuilder()
+        self.assertTrue(isinstance(resume.notifiers[0],
+            notifications.Inactivity)) 
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()

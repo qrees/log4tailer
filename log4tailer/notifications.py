@@ -60,7 +60,7 @@ class Inactivity(object):
 
     InactivityActionNotification = 'inactivitynotification'
 
-    def __init__(self,inactivityTime,properties=None):
+    def __init__(self, inactivityTime, properties=None):
         self.inactivityTime = inactivityTime
         self.logColors = LogColors.LogColors()
         self.acumulativeTime = 0
@@ -72,7 +72,7 @@ class Inactivity(object):
             self.logColors.parseConfig(properties)
         self.notification = notification or 'print'
 
-    def notify(self,message,log):
+    def notify(self, message, log):
         plainmessage, logpath = message.getPlainMessage()
         timer = log.getInactivityTimer()
         if not plainmessage:
