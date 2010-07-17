@@ -2,8 +2,20 @@ PYTHON = python
 BUILDOUT = bin/buildout
 EXE = bin/log4tail
 TEST = bin/test
+ENV = ENV 
+ENV24 = ENV24
 
 all: $(BUILDOUT) $(EXE) $(TEST)
+
+env: $(ENV)
+
+$(ENV):
+	virtualenv --no-site-packages $(ENV)
+
+env24: $(ENV24)
+
+$(ENV24):
+	virtualenv --no-site-packages --python=python2.4 $(ENV24)
 
 runtests: $(TEST)
 	$(TEST) 
@@ -31,16 +43,15 @@ $(TEST): $(BUILDOUT)
 clean:
 	@echo "clean ..."
 	rm -rf $(EXE) 
-	rm -f `find . -name "*.pyc"`
+	rm -f `find src -name "*.pyc"`
+	rm -f `find test -name "*.pyc"`
 	rm -rf cover .coverage
 
 distclean:
 	@echo "distclean ..."
-	rm -rf build dist bin parts downloads develop-eggs eggs
-	rm -rf .installed.cfg 
-	rm -rf `find . -name "*.egg-info"`
-	
-
-
+	rm -rf build dist bin 
+	rm -f `find src -name "*.pyc"`
+	rm -f `find test -name "*.pyc"`
+	rm -rf cover .coverage
 
 
