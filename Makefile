@@ -21,7 +21,7 @@ runtests: $(TEST)
 	$(TEST) 
 
 coverage: $(TEST)
-	$(TEST) --with-coverage --cover-package=log4tailer 
+	$(TEST) -v --with-coverage --cover-package=log4tailer 
 
 $(EXE): $(BUILDOUT) 
 	$(BUILDOUT) install log4tail
