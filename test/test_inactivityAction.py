@@ -25,6 +25,7 @@ try:
 except:
     print "you need to install the mox mocking library"
     sys.exit()
+import mocker
 
 sys.path.append('..')
 from log4tailer import notifications
@@ -55,9 +56,10 @@ class TestInactivityAction(unittest.TestCase):
         self.options = Options()
         self.options.inactivity = 1
         self.log = Log('out.log',None,self.options)
-        sys.stdout = Writer()
+        self.mocker = mocker.Mocker()
 
     def testSendingAlertBeyondInactivityTime(self):
+        sys.stdout = Writer()
         message = self.message_mocker.CreateMock(Message)
         # when there is no message, inactivity action 
         # is triggered if ellapsed time is greater than
@@ -74,6 +76,7 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker.VerifyAll()
     
     def testNotSendingAlertBelowInactivityTime(self):
+        sys.stdout = Writer()
         message = self.message_mocker.CreateMock(Message)
         message.getPlainMessage().AndReturn(('error> this is an error message',
             'logpath'))
@@ -89,6 +92,7 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker.VerifyAll()
 
     def testInactivityTimeCanBeFloatingPointNumberSeconds(self):
+        sys.stdout = Writer()
         message = self.message_mocker.CreateMock(Message)
         
         # when there is no message, inactivity action 
@@ -133,7 +137,30 @@ class TestInactivityAction(unittest.TestCase):
             self.fail('should be notifier with mail Notification') 
         os.remove('config.txt')
 
+    def testalerted_not_alerted(self):
+        options = Options()
+        options.inactivity =  0.05
+        log = Log('out.log', None, options)
+        message_mock = self.mocker.replace('log4tailer.Message.Message')
+        message_mock.getPlainMessage()
+        self.mocker.count(1, None)
+        self.mocker.result(('', 'logpath'))
+        inactivityTime = 0.05
+        notifier = notifications.Inactivity(inactivityTime)
+        self.mocker.replay()
+        time.sleep(0.06)
+        notifier.notify(message_mock, log)
+        self.assertTrue(notifier.alerted)
+        notifier.notify(message_mock, log)
+        self.assertFalse(notifier.alerted)
+        notifier.notify(message_mock, log)
+        time.sleep(0.06)
+        notifier.notify(message_mock, log)
+        self.assertTrue(notifier.alerted)
+
     def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
         sys.stdout = SYSOUT
 
 if __name__ == '__main__':
