@@ -18,7 +18,7 @@ $(ENV24):
 	virtualenv --no-site-packages --python=python2.4 $(ENV24)
 
 runtests: $(TEST)
-	$(TEST) -v 
+	$(TEST) -v --with-xunit 
 
 coverage: $(TEST)
 	$(TEST) -v --with-coverage --cover-package=log4tailer 
