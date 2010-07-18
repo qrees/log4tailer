@@ -1,3 +1,4 @@
+include bin/log4tail
 include log4tailer.1
 include buildout.cfg
 include bootstrap.py
