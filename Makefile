@@ -18,10 +18,10 @@ $(ENV24):
 	virtualenv --no-site-packages --python=python2.4 $(ENV24)
 
 runtests: $(TEST)
-	$(TEST) -v
+	$(TEST) 
 
 coverage: $(TEST)
-	$(TEST) -v --with-xcoverage --cover-package=log4tailer 
+	$(TEST) --with-coverage --cover-package=log4tailer 
 
 $(EXE): $(BUILDOUT) 
 	$(BUILDOUT) install log4tail
