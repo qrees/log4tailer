@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys 
+import re
 from setuptools import setup, find_packages
 from distutils.core import Command
 from unittest import TextTestRunner, TestLoader
@@ -53,7 +54,8 @@ screen. By providing colors, the human eye will discern and quickly identify
 specific levels or lines. 
 '''
 
-__version__='2.72'
+__version__= re.search('__version__ = (\d+\.?\d+)', 
+        open("src/log4tailer/__init__.py").read()).group(1)
     
 class Test(Command):
     user_options = []
