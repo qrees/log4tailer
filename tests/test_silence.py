@@ -26,7 +26,7 @@ import copy
 sys.path.append('..')
 from log4tailer.Log import Log
 import log4tailer
-from test import LOG4TAILER_DEFAULTS
+from tests import LOG4TAILER_DEFAULTS
 
 SYSOUT = sys.stdout
 SYSIN = sys.stdin

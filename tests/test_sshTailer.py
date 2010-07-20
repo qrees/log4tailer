@@ -27,7 +27,7 @@ from log4tailer.Properties import Property
 from log4tailer import notifications
 from log4tailer.SSHLogTailer import SSHLogTailer
 import log4tailer
-from test import LOG4TAILER_DEFAULTS
+from tests import LOG4TAILER_DEFAULTS
 
 class TestSSHTailer(unittest.TestCase):
 
