@@ -140,8 +140,8 @@ class TestEndToEnd(unittest.TestCase):
         if not found:
             self.fail()
 
-    @raises(SystemExit)
     def test_printversion_andexit(self):
+        sys.stdout = Writer()
         class OptionsMock(object):
             def __init__(self):
                 pass
@@ -149,7 +149,11 @@ class TestEndToEnd(unittest.TestCase):
                 if method == 'version':
                     return True
                 return False
-        log4tailer.initialize(OptionsMock())
+        self.assertRaises(SystemExit, log4tailer.initialize, 
+                OptionsMock())
+        doc_version = re.search('\large Version (\d+\.?\d+)', 
+                open('../userguide/log4tailer.tex').read()).group(1)
+        self.assertEqual(doc_version, sys.stdout.captured[0])
    
     def tearDown(self):
         self.mocker.restore()

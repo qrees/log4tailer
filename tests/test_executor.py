@@ -36,8 +36,8 @@ SYSOUT = sys.stdout
 # folder
 current_directory = os.path.basename(os.getcwd())
 EXECUTABLE = 'python executable.py'
-if current_directory != 'test':
-    EXECUTABLE = 'python '+ os.path.join('test', 'executable.py')
+if current_directory != 'tests':
+    EXECUTABLE = 'python '+ os.path.join('tests', 'executable.py')
 
 class Writer:
     def __init__(self):
