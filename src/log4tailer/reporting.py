@@ -58,7 +58,7 @@ class Resume(object):
     def flushReport(self):
         for log,dictlog in self.logsReport.iteritems():
             for key,val in dictlog.iteritems():
-                if key in ['ERROR', 'FATAL', 'CRITICAL']:
+                if key in ['ERROR', 'FATAL', 'CRITICAL', 'OTHERS']:
                     dictlog[key] = []
                 else:
                     dictlog[key] = 0

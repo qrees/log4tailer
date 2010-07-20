@@ -214,6 +214,29 @@ class TestResume(unittest.TestCase):
         self.assertEquals(expectedOthersReport,
                 gotLogTrace)
 
+    def test_levellistflush(self):
+        log1 = Log('firstone.log')
+        log2 = Log('secondone.log')
+        logs = [log1, log2]
+        resume = reporting.Resume(logs)
+        reports = {'TARGET':0,
+             'DEBUG':0,
+             'INFO':0,
+             'WARN':0,
+             'OTHERS':[],
+             'ERROR':[],
+             'FATAL':[],
+             'CRITICAL':[]}
+        self.assertEquals(resume.logsReport['firstone.log'], reports)
+        self.assertEquals(resume.logsReport['secondone.log'], reports)
+        reports_firstone = resume.logsReport['firstone.log']
+        tobe_flushed_firstone = [ k for k in reports_firstone if
+                isinstance(reports_firstone[k], list) ]
+        resume.flushReport()
+        flushed_firstone = [ k for k in reports_firstone if
+                isinstance(reports_firstone[k], list) ]
+        self.assertEquals(tobe_flushed_firstone, flushed_firstone)
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
