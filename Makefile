@@ -43,14 +43,14 @@ $(TEST): $(BUILDOUT)
 clean:
 	@echo "clean ..."
 	rm -f `find src -name "*.pyc"`
-	rm -f `find test -name "*.pyc"`
+	rm -f `find tests -name "*.pyc"`
 	rm -rf cover .coverage
 
 distclean:
 	@echo "distclean ..."
 	rm -rf build dist bin 
 	rm -f `find src -name "*.pyc"`
-	rm -f `find test -name "*.pyc"`
+	rm -f `find tests -name "*.pyc"`
 	rm -rf cover .coverage
 
 

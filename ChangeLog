@@ -1,5 +1,5 @@
 ====================================
-xx/xx/xx release x.x
+xx/xx/xx release 2.8
 ====================================
 - Man page for log4tailer
 - Refactored to allow more automated tests 
@@ -12,8 +12,6 @@ the documentation
 05/07/10 release 2.71
 ====================================
 - Minor changes in documentation
-- removed duplicated code that got pasted
-by mistake after the main() entry point. 
 
 ====================================
 03/07/10 release 2.7
