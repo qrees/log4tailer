@@ -357,7 +357,7 @@ class TriggerExecutor(threading.Thread):
             if trigger_command == 'stop':
                 continue
             try:
-                subprocess.call(trigger_command)
+                subprocess.call(' '.join(trigger_command), shell = True)
             except Exception, err:
                 print err
 

@@ -17,8 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import os,sys
-sys.path.append('..')
+import os, sys
 from log4tailer.Log import Log
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors

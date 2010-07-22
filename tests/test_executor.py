@@ -21,7 +21,6 @@ import sys
 import mocker
 import time
 import os
-sys.path.append('..')
 from log4tailer import notifications
 from log4tailer.Properties import Property
 from log4tailer.Message import Message
@@ -113,7 +112,7 @@ class TestExecutor(unittest.TestCase):
         properties = Property(CONFIG)
         properties.parseProperties()
         os_mock = self.mocker.replace('subprocess')
-        os_mock.call(trigger)
+        os_mock.call(' '.join(trigger), shell = True)
         self.mocker.result(True)
         self.mocker.replay()
         # we just verify the trigger gets 
@@ -142,7 +141,7 @@ class TestExecutor(unittest.TestCase):
         executor.notify(message, log)
         executor.stop()
 
-    def testShouldNotifyAndContinueIfExecutorFails(self):
+    def testShouldNotContinueIfExecutorFails(self):
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
@@ -157,7 +156,6 @@ class TestExecutor(unittest.TestCase):
         executor.notify(message, log)
         time.sleep(0.0002)
         executor.stop()
-        self.assertTrue(sys.stdout.captured)
 
     def testShouldContinueTailingIfExecutableTakesLongTime(self):
         logcolor = LogColors()

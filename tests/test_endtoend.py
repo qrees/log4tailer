@@ -26,7 +26,6 @@ import re
 import threading
 import copy
 from nose.tools import raises
-sys.path.append('..')
 from log4tailer.Log import Log
 import log4tailer
 from tests import LOG4TAILER_DEFAULTS

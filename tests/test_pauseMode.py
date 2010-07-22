@@ -1,11 +1,7 @@
 import unittest
-import os,sys
-
-sys.path.append('..')
-
+import os
 from log4tailer import modes
 from log4tailer.Properties import Property
-from log4tailer.log4Exceptions import KeyAlreadyExistsException,KeyNotFoundException
 
 class TestPauseMode(unittest.TestCase):
     

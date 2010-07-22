@@ -18,12 +18,9 @@
 
 
 import unittest
-import os,sys
-
-sys.path.append('..')
+import os
 from log4tailer.Properties import Property
-from log4tailer.log4Exceptions import (KeyAlreadyExistsException,
-                                       KeyNotFoundException)
+from log4tailer.log4Exceptions import KeyAlreadyExistsException
 
 class TestProperties(unittest.TestCase):
     

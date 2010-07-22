@@ -19,9 +19,7 @@
 
 import unittest,logging
 import os
-import sys
 import copy
-sys.path.append('..')
 from log4tailer.LogColors import LogColors
 from log4tailer.Properties import Property
 from log4tailer import notifications

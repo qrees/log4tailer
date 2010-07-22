@@ -18,20 +18,17 @@
 
 
 import unittest
-import os,sys,time
-SYSOUT = sys.stdout
-try:
-    import mox
-except:
-    print "you need to install the mox mocking library"
-    sys.exit()
+import os
+import sys
+import time
 import mocker
-
-sys.path.append('..')
+import mox
 from log4tailer import notifications
 from log4tailer.Message import Message
 from log4tailer.Properties import Property
 from log4tailer.Log import Log
+
+SYSOUT = sys.stdout
 
 class Options:
     def __init__(self):
@@ -164,6 +161,6 @@ class TestInactivityAction(unittest.TestCase):
         sys.stdout = SYSOUT
 
 if __name__ == '__main__':
-        unittest.main()
+    unittest.main()
 
 

@@ -18,9 +18,8 @@
 
 
 import unittest
-import os,sys,re
-
-sys.path.append('..')
+import os
+import re
 from log4tailer.Log import Log
 from log4tailer.Properties import Property
 

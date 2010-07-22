@@ -8,7 +8,6 @@ import re
 import threading
 from mocker import ANY
 import copy
-sys.path.append('..')
 from log4tailer import reporting
 from log4tailer.LogTailer import LogTailer
 from log4tailer.LogColors import LogColors

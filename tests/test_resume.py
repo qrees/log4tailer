@@ -18,12 +18,11 @@
 
 
 import unittest
-import os,sys
+import os
 import re
 import time
 import mox
 import mocker
-sys.path.append('..')
 from log4tailer import reporting
 from log4tailer.Log import Log
 from log4tailer.Properties import Property

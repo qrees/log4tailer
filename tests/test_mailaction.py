@@ -20,9 +20,7 @@ import sys
 import unittest
 import email
 import mocker
-#from nose.tools import nottest
 import decorators as dec
-sys.path.append('..')
 from log4tailer import notifications
 from log4tailer import utils
 

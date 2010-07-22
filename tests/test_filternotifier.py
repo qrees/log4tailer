@@ -18,10 +18,7 @@
 
 import unittest
 import sys
-import os
 import re
-from os.path import dirname, abspath, join as pjoin
-sys.path.append(pjoin(abspath(dirname(__file__)), os.pardir))
 from log4tailer import notifications
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
