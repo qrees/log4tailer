@@ -141,7 +141,7 @@ class TestExecutor(unittest.TestCase):
         executor.notify(message, log)
         executor.stop()
 
-    def testShouldNotContinueIfExecutorFails(self):
+    def testShouldContinueIfExecutorFails(self):
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
