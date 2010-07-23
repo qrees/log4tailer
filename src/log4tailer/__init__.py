@@ -61,7 +61,7 @@ def initialize(options):
     if options.tailnlines:
         defaults['nlines'] = int(options.tailnlines)
     if options.target:
-        target = options.target
+        defaults['target'] = options.target
     if options.inactivity:
         inactivityAction = notifications.Inactivity(options.inactivity, properties)
         if inactivityAction.getNotificationType() == 'mail':
