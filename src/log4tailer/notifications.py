@@ -414,16 +414,34 @@ class Executor(object):
             
 
 class Poster(object):
+    """This is basically a REST client that 
+    will notify a log4tailer centralized server. 
+    It will register first to the server and will 
+    notify it anytime an undesirable trace has been found. 
+    Fatals, criticals, errors and targets will be notified.
+    """ 
     
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
     def __init__(self, properties):
+        """Instantiates a REST notifier.
+        
+        :param properties: a Property instance holding the necessary parameters
+            to connect to the centralized server. The base_url, port, service
+            uri, register and unregister uri will need to be provided in a
+            configuration file.
+        """ 
         self.url = properties.getValue('server_url')
         self.port = properties.getValue('server_port')
         self.service_uri = properties.getValue('server_service_uri')
+        self.register_uri = properties.getValue('server_service_register_uri')
+        self.unregister_uri = properties.getValue('server_service_unregister_uri')
         self.conn = HTTPConnection(self.url, self.port)
+        self.registered = False
 
     def notify(self, message, log):
+        if not self.registered:
+            self.register(log)
         msg_level = message.getMessageLevel().upper()
         if not message.isATarget() and msg_level not in self.Pullers:
             return
@@ -431,4 +449,17 @@ class Poster(object):
         params = urllib.urlencode({'logtrace': logtrace, 'log': logpath})
         self.conn.request('POST', self.service_uri, params)
         return self.conn.getresponse()
-        
+    
+    def register(self, log):
+        if not self.registered:
+            params = urllib.urlencode({'log': log.path})
+            self.conn.request('POST', self.register_uri, params)
+            return self.conn.getresponse()
+    
+    def unregister(self, log):
+        if self.registered:
+            params = urllib.urlencode({'log': log.path})
+            self.conn.request('POST', self.register_uri, params)
+            return self.conn.getresponse()
+
+
