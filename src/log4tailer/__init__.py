@@ -39,7 +39,7 @@ def initialize(options):
         logcolors.parseConfig(defaults['properties'])
     properties = defaults['properties']
     if options.pause:
-        pause = int(options.pause)
+        defaults['pause'] = int(options.pause)
     if options.throttle:
         throttle = float(options.throttle)
         defaults['throttle'] = throttle
