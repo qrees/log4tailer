@@ -1,10 +1,12 @@
 ====================================
-xx/xx/xx release 2.8
+24/06/10 release 2.8
 ====================================
 - Man page for log4tailer
 - Refactored to allow more automated tests 
 to be performed and avoid manual testing as 
 much as possible.
+- Updated documentation for executor 
+notification
 - Some minor fixes/clean ups for 
 the documentation
 
