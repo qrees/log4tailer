@@ -191,6 +191,7 @@ class TestInit(unittest.TestCase):
                 'target' : False,
                 'cornermark' : False,
                 'executable' : False,
+                'post' : False,
                 'pause' : False,
                 'throttle' : False,
                 'silence' : False, 
@@ -241,7 +242,8 @@ class TestInit(unittest.TestCase):
                 'silence' : False, 
                 'mail' : False,
                 'inactivity' : False,
-                'nomailsilence' : False}
+                'nomailsilence' : False,
+                'post' : False}
         self.__options_mocker_generator(options_mock, params)
         self.mocker.replay()
         log4tailer.initialize(options_mock)

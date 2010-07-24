@@ -25,6 +25,9 @@ from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
 import threading
+from httplib import HTTPConnection
+import urllib
+
 try:
     import queue
 except ImportError:
@@ -409,3 +412,23 @@ class Executor(object):
             self.trigger_executor.landing("stop")
             self.trigger_executor.join()
             
+
+class Poster(object):
+    
+    Pullers = ['ERROR', 'FATAL', 'CRITICAL']
+
+    def __init__(self, properties):
+        self.url = properties.getValue('server_url')
+        self.port = properties.getValue('server_port')
+        self.service_uri = properties.getValue('server_service_uri')
+        self.conn = HTTPConnection(self.url, self.port)
+
+    def notify(self, message, log):
+        msg_level = message.getMessageLevel().upper()
+        if not message.isATarget() and msg_level not in self.Pullers:
+            return
+        logtrace, logpath = message.getPlainMessage()
+        params = urllib.urlencode({'logtrace': logtrace, 'log': logpath})
+        self.conn.request('POST', self.service_uri, params)
+        return self.conn.getresponse()
+        

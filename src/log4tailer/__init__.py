@@ -19,7 +19,8 @@ defaults  = {'pause' : 1,
     'target': None, 
     'logcolors' : LogColors.LogColors(),
     'properties' : None,
-    'alt_config': os.path.expanduser('~/.log4tailer')}
+    'alt_config': os.path.expanduser('~/.log4tailer'),
+    'post' : False}
 
 def parseConfig(configfile):
     properties = Properties.Property(configfile)
@@ -63,7 +64,8 @@ def initialize(options):
     if options.target:
         defaults['target'] = options.target
     if options.inactivity:
-        inactivityAction = notifications.Inactivity(options.inactivity, properties)
+        inactivityAction = notifications.Inactivity(options.inactivity, 
+                properties)
         if inactivityAction.getNotificationType() == 'mail':
             if options.mail or options.silence:
                 inactivityAction.setMailNotification(actions[len(actions)-1])
@@ -71,11 +73,13 @@ def initialize(options):
                 mailAction = setup_mail(properties)
                 inactivityAction.setMailNotification(mailAction)
         actions.append(inactivityAction)
-
     if options.cornermark:
         cornermark = notifications.CornerMark(options.cornermark)
         actions.append(cornermark)
-
+    if options.post and properties:
+        defaults['post'] = True
+        poster = notifications.Poster(properties)
+        actions.append(poster)
     if options.executable and properties:
         executor = notifications.Executor(properties)
         actions.append(executor)

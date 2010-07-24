@@ -237,6 +237,25 @@ class TestMonitor(unittest.TestCase):
         self.mocker.replay()
         log4tailer.monitor(options_mock, args)
 
+    def test_options_with_poster_notification(self):
+        fh = open(ACONFIG, 'w')
+        fh.write('server_url = localhost\n')
+        fh.write('server_port = 8000\n')
+        fh.write('server_service_uri = /\n')
+        fh.close()
+        class OptionWithPostandConfig(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'configfile':
+                    return ACONFIG
+                elif method == 'post':
+                    return True
+                return False
+        options_mock = OptionWithPostandConfig()
+        log4tailer.initialize(options_mock)
+        self.assertTrue(log4tailer.defaults['post'])
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
