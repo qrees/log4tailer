@@ -16,19 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-import os,re,sys
+import os
+import re
 from stat import ST_INO, ST_SIZE
 from log4tailer.Timer import Timer
 
-class Log:
+class Log(object):
     '''Class that defines a common
     structure in a log'''
     
     TARGET_PROPERTY_PREFIX = "targets "
 
-    def __init__(self,path,properties=None,options=None):
+    def __init__(self, path, properties=None, options=None):
         self.path = path
         self.fh = None
         self.inode = None

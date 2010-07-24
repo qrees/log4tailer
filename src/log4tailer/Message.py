@@ -20,7 +20,7 @@ from log4tailer.ColorParser import ColorParser
 import modes
 import re
 
-class Message:
+class Message(object):
     '''the message to be actioned
     and showed being by email, stdout,...'''
 
@@ -139,7 +139,9 @@ class Message:
     def parse(self, line, log):
         '''Need to parse the line
         and check in what level we are in'''
-        self.logOwnColor, ownTarget, self.currentLogPath = log.getOptionalParameters()
+        self.logOwnColor = log.ownOutputColor
+        self.currentLogPath = log.path
+        ownTarget = log.patTarget 
         self.patOwnTarget = None
         self.log = log
         if ownTarget:
