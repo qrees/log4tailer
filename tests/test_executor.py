@@ -194,7 +194,34 @@ class TestExecutor(unittest.TestCase):
         time.sleep(0.0002)
         executor.stop()
         self.assertFalse(sys.stdout.captured)
-       
+
+    def testShouldExecuteIfTargetMessage(self):
+        logcolor = LogColors()
+        logfile = 'anylog'
+        log = Log(logfile)
+        fh = open(CONFIG, 'w')
+        fh.write("executor = echo ' %s %s '\n")
+        fh.close()
+        trace = "this is an info log trace"
+        trigger = ['echo', trace, logfile]
+        properties = Property(CONFIG)
+        properties.parseProperties()
+        message = Message(logcolor, target = 'trace')
+        executor_mock = self.mocker.mock()
+        executor_mock._build_trigger(trace, logfile)
+        self.mocker.result(trigger)
+        executor_mock.started
+        self.mocker.result(True)
+        landing_mock = self.mocker.mock()
+        landing_mock.landing(trigger)
+        self.mocker.result(True)
+        executor_mock.trigger_executor
+        self.mocker.result(landing_mock)
+        self.mocker.replay()
+        message.parse(trace, log)
+        self.assertTrue(message.isATarget())
+        notifications.Executor.notify.im_func(executor_mock, message, log)
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()

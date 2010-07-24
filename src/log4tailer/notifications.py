@@ -393,7 +393,7 @@ class Executor(object):
 
     def notify(self, message, log):
         msg_level = message.getMessageLevel().upper()
-        if msg_level not in self.Pullers:
+        if not message.isATarget() and msg_level not in self.Pullers:
             return
         logtrace, logpath = message.getPlainMessage()
         trigger = self._build_trigger(logtrace, logpath)
