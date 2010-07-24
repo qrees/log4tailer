@@ -5,6 +5,8 @@
 - Refactored to allow more automated tests 
 to be performed and avoid manual testing as 
 much as possible.
+- Inactivities in logs reported at the end 
+of execution.
 - Updated documentation for executor 
 notification
 - Some minor fixes/clean ups for 
