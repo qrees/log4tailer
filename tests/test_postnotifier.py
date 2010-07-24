@@ -3,13 +3,18 @@
 import unittest
 import mocker
 import threading
-from wsgiref.simple_server import make_server, demo_app
 from log4tailer import notifications
 from log4tailer.LogColors import LogColors
 from log4tailer.Message import Message
 from log4tailer.Log import Log
 import sys
-import decorators as dec
+
+version_info = sys.version_info
+version2_4 = (2, 4)
+if version_info[:2] == version2_4:
+    return
+
+from wsgiref.simple_server import make_server, demo_app
 
 class ServerT(threading.Thread):
     def __init__(self, host = 'localhost', port = 8000):
@@ -33,18 +38,10 @@ def require_server():
         SERVER = ServerT()
         SERVER.start()
 
-version_info = sys.version_info
-version2_4 = (2, 4)
-skip_from_time = False
-if version_info[:2] == version2_4:
-    skip_from_time = True
-
-
-@dec.skipif(skip_from_time, "invalid for 2.4")
 class TestPost(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
-    
+
     def test_post_notification(self):
         properties = self.mocker.mock()
         properties.getValue('server_url')
