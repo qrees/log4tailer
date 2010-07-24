@@ -11,6 +11,7 @@ import sys
 
 version_info = sys.version_info
 version2_4 = (2, 4)
+#FIXME I'm sure there must be some better way to do this 
 if not version_info[:2] == version2_4:
     from wsgiref.simple_server import make_server, demo_app
 
