@@ -1,0 +1,118 @@
+% Log4Tailer: A multicolored python tailer for log4J logs
+% Copyright (C) 2008 Jordi Carrillo Bosch
+% 
+% Permission is granted to copy, distribute and/or modify this
+% document under the terms of the GNU Free Documentation License,
+% Version 1.3 or any later version published by the Free Software
+% Foundation; with no Invariant Sections, no Front-Cover Texts and
+% no Back-Cover Texts.  A copy of the license is included in the
+% section entitled "GNU Free Documentation License".
+
+\documentclass[a4paper]{article}
+\usepackage[usenames, dvipsnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary[petri,arrows,decorations.pathmorphing,backgrounds,positioning,fit,shapes]
+\usepackage[hmargin=2.5cm,vmargin=2.5cm]{geometry}
+\usepackage{verbatim}
+\usepackage{epigraph}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage[stable]{footmisc}
+\usepackage{hyperref}
+
+% specific acrobat reader settings
+\hypersetup{colorlinks=true,
+            linkcolor=blue,
+            filecolor=blue,%magenta,
+            pagecolor=blue,%red,
+            urlcolor=blue,%cyan,
+            citecolor=blue,
+            pdfauthor={Jordi Carrillo},%
+			pdftitle={Log4Tailer User's Guide},%
+			pdfborder={0 0 0},%
+			pdfstartview={FitH},%
+			bookmarksnumbered=true,%
+			bookmarks=true,%
+			pdftex}
+%\usepackage[pdftex,pdfborder={0 0 0},pdfstartview={FitH},bookmarksnumbered=true]{hyperref}
+%\usepackage{makeidx}
+%\makeindex
+
+\newenvironment{cmd}{\fontsize{9pt}{11}\color{blue}\verbatim} {\endverbatim}
+\newenvironment{outlog}{\fontsize{9pt}{11}\color{red}\verbatim} {\endverbatim}
+\newenvironment{filec}{\fontsize{9pt}{11}\color{black}\verbatim} {\endverbatim}
+\newenvironment{test}{\begin{center}}{\end{center}}
+\author{Jordi Carrillo}
+\title{User Guide to Log4Tailer}
+
+\newcommand{\logftailer}{\textbf{\textcolor{black}{L}\textcolor{red}{o}%
+\textcolor{Violet}{g}4\textcolor{green}{T}\textcolor{magenta}{ail}\textcolor{red}{er}}}
+
+\newcommand{\emphlogtrace}[1]{\vspace{0.2cm}\newline\indent\colorbox{red}{\textbf{#1}}\newline\vspace{0.2cm}}
+
+%\usepackage{sectsty}
+%\usepackage{float}
+%\floatstyle{plain}
+%\newfloat{picture}{htp}{pictures}
+%\floatname{picture}{Screenshot}
+%\def\pictureautorefname{screenshot}
+
+\usepackage[figure]{hypcap}
+
+\usepackage{colortbl}
+
+
+
+%FIXME needs some cleanup in here
+\newcommand{\contentsrule}[1]{{\color{blue}\sectionrule{3ex}{3pt}{-2ex}{1pt}{#1}}}
+\renewcommand{\contentsname}{{\color{cadetblue}\rule{\textwidth}{2pt}}\\\logftailer{}'s %
+Contents\\\rule[1ex]{\textwidth}{1pt}}
+
+\begin{document}
+
+% Title page
+\include{titlepage}
+
+\newpage
+\pagecolor{white}
+
+\vbox{}
+\vskip0pt plus 1fill
+\epigraph{Colors, like features, follow the changes of the emotions.}{Pablo Picasso}
+ \vskip0pt plus 3fill
+
+\noindent
+Copyright 2010 by Jordi Carrillo
+
+\medskip
+\noindent 
+Permission is granted to copy, distribute and/or modify \emph{this document}
+under the terms of the \textsc{gnu} Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled \textsc{gnu}
+Free Documentation License.
+
+
+\vbox{}
+\newpage
+
+
+\title{{\bfseries \logftailer{} User's Guide}\\[1mm]
+  \large Version 2.9\\[1mm]
+\large\href{http://code.google.com/p/log4tailer}{\texttt{http://code.google.com/p/log4tailer}}}
+\author{Jordi Carrillo}
+
+\maketitle
+
+\tableofcontents
+%\listof{picture}{\contentsrule{\logftailer{}'s list of Pictures}}
+
+\newpage
+\include{thebasics}
+\include{advancedfeatures}
+\include{casestudies}
+%\include{development}
+
+%\printindex
+\end{document}

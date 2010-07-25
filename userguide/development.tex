@@ -1,0 +1,44 @@
+\part{Development}
+\section{Hacking}
+If you would like to collaborate, just let me know. I'm taking this project seriously now and 
+any new feature will require unit testing. This project was originally a multicolored tailer and I just 
+did not bother about unit testing as it was short in code and did basically what I wanted. This project is 
+going to grow significantly and I just do not want to break any functionality that already works. As of this 
+release I've been using unittest and mox (mocking) libraries. 
+
+\logftailer{} began in launchpad, but as I was working on my own, I moved it to googlecode. If more people joins 
+in this project, it could be moved to launchpad, as it is more suited for bigger opensource teams.
+
+\section{Class Diagram}
+In the next figure we can take a look at what is the relationship between classes in the log4tailer 
+project:
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.60]{log4tailerClassDiagram.png}
+\caption{\logftailer{} class diagram}\label{fig:class diagram}
+\end{figure}
+
+
+
+\section{Further work\footnote{work that could or could not be implemented in future releases.}}
+
+\logftailer{} began being just a multicolored tailer, but it has been growing in functionalities and new 
+concepts. With the introduction of \emph{Actions}, \logftailer{} can be expanded to use more functionalities. 
+Features that I've been thinking of:
+\begin{enumerate}
+ \item web frontend action
+ \item ncurses action
+ \item nagios action
+\item \emph{Analytics} will introduce log behaviour analysis based on patterns and log statistical analysis.
+ \item \emph{Log4Servers} and \emph{Log4Clients} will enable having log4tailers being run in remote servers and clients 
+will be able to communicate to those servers and trigger a decission based on the log4tailers action outcomes.
+\item tailing remotely from your desktop by means of ssh.
+\item Inactivity action could notify by using other actions like emailing. As of now it uses printing. Actually, 
+inactivity monitoring is not a notification action, so maybe I'll make a package for monitoring stuff to 
+separate the concept of notification actions vs monitoring actions.
+\item I'll write an optional installer to install \logftailer{} system wide, but you will be able to run it 
+in standalone mode.
+\item A GTK gui
+\end{enumerate}
+\newpage

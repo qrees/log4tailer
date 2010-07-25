@@ -1,0 +1,57 @@
+\part{Case Studies}
+\section{Full Automatic Log Monitorization}
+Full Automatic log monitorization can be performed when you execute \logftailer{} 
+in silent mode passing the parameters \emph{-s}. 
+Log4Tailer will run silently in the background notifying by email 
+when something goes wrong. As of now, it will notify errors, fatals and those targets 
+specified as a parameter or in the config file. It is important to notice that every log 
+can have its own set of targets (regexes). Apart from that, you can make log4tailer 
+to monitor inactivity in the log and notify you by email as well. You just need to specify 
+that in the config file as explained in the section \ref{sec:inactivitysection}.
+
+Summing up, full automatic monitorization will monitor inactivity, errors, fatals and targets specified 
+in the config file or command line as parameters. This will give you extra confidence on the 
+monitoring of your application if your application uses already nagios or other monitoring software.
+\footnote{It is important to notice that pausemodes should not be enabled. That feature is 
+to pause the output when having PrintAction enabled.}
+
+\section{Semi Automatic Log Monitorization}
+You can have a mix of email notification and normal colorized print action. You just 
+need to execute log4tailer passing as a parameter \emph{-m} and the 
+corresponding configfile if you want to enable additional features. 
+
+\section{No SMTP email access for log4tailer}
+Sometimes a server can have the email ports closed (firewalled) due to security policies. 
+Alternatives:
+\begin{itemize}
+\item For those cases you can use the executor notification using the mail Linux command line to 
+send email provided that the server runs some 
+kind of MTA like sendmail. Let's see an example:
+\begin{cmd}
+ log4tail --executable -c configfile.txt /var/log/out.log
+\end{cmd}
+where in the configfile.txt you could write something like\footnote{If you use the 
+\emph{echo} command line tool providing both place holders (log trace, log path), make 
+sure you leave a white space in between quotes.}:
+\begin{verbatim}
+ executor = echo ' %s %s ' | mail -s 'log4tailer alert' -t youremail@hostname.com
+\end{verbatim}
+If sendmail sends email to your localhost, then you could read the email easily by using the 
+famous command line client mutt for example. It's important to note, that you can daemonize 
+\logftailer{} in that case as well:
+\begin{cmd}
+ log4tail --no-mail-silence --executable -c configfile.txt /var/log/out.log
+\end{cmd}
+That means that log4tailer will be a daemon monitoring the out.log and sending email by using 
+the mail Linux command line. 
+
+\item You can always make \logftailer{} to report you in a file every some minutes or 
+activate the cornermark notifications (see section \ref{sec:cornermark}). 
+Both features are really nice to activate them when 
+you need to go for a break. You can setup the cornermark feature with the \emph{cornermark}
+parameter specifying a time in seconds bit longer than the time you'll be out of your desktop
+to avoid the mark going away. The marks stay in the terminal for the time you specify.
+\end{itemize}
+
+
+\newpage

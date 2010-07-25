@@ -1,0 +1,105 @@
+\part{The Basics}
+\section{Introduction}
+\logftailer{} aims to provide a different approach to traditional log tailers.
+While the famous tail linux
+command line tool does its job just well, log4tailer adds
+some more advanced features, like throttling, user defined colors and email notification just 
+to name a few. 
+List of features:
+
+\begin{itemize}
+ \item Multitailing capability. It can tail multiple logs at a time
+ \item Colors for every level: warn, info, debug, error and fatal
+ \item Emphasize multiple targets (log traces) given regular expressions
+ \item Follow log upon truncation by default
+ \item User defined colors for each level
+ \item Silent (daemonized) mode for full automatic log monitorization
+ \item Throttling mode. Slow down the information being printed in the terminal 
+ \item Inactivity log monitoring
+ \item mail notification
+ \item Every log with its own color scheme
+ \item Freeze output upon specific and well defined conditions
+ \item Cornermark notification, visual alert box in your terminal when you are out of your desktop
+ \item Log reporting by email, to a file or standard output
+ \item Tailing remote logs by means of ssh
+ 
+\end{itemize}
+
+\subsection{Why yet another tailer?}
+
+Most people use tail -F to tail the logs these days. When debugging enterprise
+class applications you cannot just follow (in many situations) what is going on
+unless you go to the log, less it and check if something was wrong, or just
+Ctrl-C tail program and scroll back. Human eye cannot distinguish or grab a line
+out of thousands when that information is showed incredibly fast in the screen.
+By providing colors, the human eye will discern and quickly identify specific
+levels or lines. 
+
+The \emph{tail} command line Unix/Linux tool has frustrated me many times, so I decided 
+to write my own \emph{tailer} adding more functionalities as I needed them. There might be 
+other tools out there, but to use them you must install them system wide or 
+write your own regexes and remember the terminal escape characters to colorize the 
+output. It wouldn't be the first time I see people writing perl one liners with complex regexes in order 
+to tail logs. \logftailer{} is an 
+standalone application that you can run from your /home directory if you desire with default common sense 
+default colours.
+Of course, you will need read access to those logs you want to monitor.  
+
+\subsection{Why should I use it?}
+Just to name a few advantages:
+
+\begin{enumerate}
+    \item \logftailer{} is opensource, free software.
+    \item It runs in standalone mode.
+At this very moment, no installation is necessary. 
+If you are a sysadmin or an engineer monitoring logs in a network operation center, 
+you can run \logftailer{} from its folder. Just untar and run the tailer. 
+
+    \item Why do it in black and white, when you can do it with colors?
+
+\end{enumerate}
+
+\section{Installation and system requirements}
+
+\subsection{System Requirements}
+
+You'll need at least version 2.4 of Python installed in your system. 
+Python is multiplatform and you can have a copy in \href{http://www.python.org}{http://www.python.org}.  
+
+\logftailer{} has been tested in Linux servers and it should run in any xterm compatible terminal 
+such as Putty, GNOME terminal and others.
+
+\subsection{Installation}
+\logftailer{} can run in standalone mode, so no installation is necessary if you don't want to. 
+Untar, go to the \textbf{bin} folder and run ;-).
+If for convenience, you want to install it, just type (having root access):
+\begin{cmd}
+ python setup.py install
+\end{cmd}
+and it will be installed system wide. For convenience, you can download the rpm, which has been packaged 
+for SUSE Enterprise Server 10.
+
+\subsection{Running the automated tests}
+The tests can be run using \href{http://somethingaboutorange.com/mrl/projects/nose/0.11.3/}
+{nosetests}. You'll need the \href{http://code.google.com/p/pymox/}{pymox}, 
+\href{http://labix.org/mocker}{mocker} and 
+\href{http://www.lag.net/paramiko/packages}{paramiko} packages to do that.
+Alternatively, you can run:
+\begin{cmd}
+ make all
+\end{cmd}
+and it will install the required dependencies in the current directory plus a test script 
+inside the bin folder. Then, just type:
+\begin{cmd}
+ make runtests
+\end{cmd}
+
+\section{Command line parameters}
+The full command line list is as follows:
+\begin{cmd}
+ ./log4tail [-s silencemode] [-n numlines] [-t targets] [--throttle secs] [-i inactivityTime] 
+                 [-m mailnotification] [--no-mail-silence] [-c configfile] fullpathToLogs
+\end{cmd}
+
+
+\newpage
