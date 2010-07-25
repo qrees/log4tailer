@@ -459,7 +459,7 @@ class Poster(object):
     def unregister(self, log):
         if self.registered:
             params = urllib.urlencode({'log': log.path})
-            self.conn.request('POST', self.register_uri, params)
+            self.conn.request('POST', self.unregister_uri, params)
             return self.conn.getresponse()
 
 
