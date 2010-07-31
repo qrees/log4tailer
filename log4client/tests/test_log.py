@@ -91,7 +91,7 @@ class TestLog(unittest.TestCase):
         properties.parseProperties()
         log = Log(self.logname,properties)
         log.openLog()
-        self.assertTrue(log.getOwnOutputColor())
+        self.assertTrue(log.ownOutputColor)
         log.closeLog()
         os.remove(self.config)
 
@@ -134,7 +134,7 @@ class TestLog(unittest.TestCase):
 
     def testshouldNotHaveItsOwnColorifConfigNotPassed(self):
         log = self.openLog()
-        self.assertFalse(log.getOwnOutputColor())
+        self.assertFalse(log.ownOutputColor)
         log.closeLog()
 
     def testTargetsNoColors(self):
