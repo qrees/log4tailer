@@ -1,4 +1,12 @@
 ====================================
+xx/xx/xx release 2.9
+====================================
+- minor refactoring
+- Poster notification to allow communication with 
+a centralized web app.
+
+
+====================================
 24/06/10 release 2.8
 ====================================
 - Man page for log4tailer
