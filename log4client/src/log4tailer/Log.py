@@ -149,9 +149,6 @@ class Log(object):
             pass
         count += 1
         return count
-
-    def getLogPath(self):
-        return self.path
     
     def getOwnOutputColor(self):
         return self.ownOutputColor

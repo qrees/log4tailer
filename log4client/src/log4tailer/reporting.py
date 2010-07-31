@@ -35,7 +35,7 @@ class Resume(object):
         self.initTime = time()
         self.logsReport = {}
         for log in arrayLog:
-            self.logsReport[log.getLogPath()] = {'TARGET':0,
+            self.logsReport[log.path] = {'TARGET':0,
                                                  'DEBUG':0,
                                                  'INFO':0,
                                                  'WARN':0,
@@ -70,7 +70,7 @@ class Resume(object):
         messageLevel = message.getMessageLevel()
         plainmessage,logpath = message.getPlainMessage()
         isTarget = message.isATarget()
-        logPath = log.getLogPath()
+        logPath = log.path
         logKey = self.logsReport[logPath]
         # targets have preference over levels
         if isTarget:
@@ -162,11 +162,11 @@ class Resume(object):
         print "Uptime: "
         print self.__execTime()
         for log in self.arrayLog:
-            titleLog = self.colorize("Report for Log " + log.getLogPath(), 
+            titleLog = self.colorize("Report for Log " + log.path, 
                     colors)
             print titleLog
             print "Levels Report: "
-            logKey = self.logsReport[log.getLogPath()]  
+            logKey = self.logsReport[log.path]  
             for level in self.orderReport:
                 print level+":"
                 if level in self.nonTimeStamped:
@@ -180,13 +180,13 @@ class Resume(object):
         body += "Uptime: \n"
         body += self.__execTime()+"\n"
         for log in self.arrayLog:
-            titleLog = "Report for Log "+log.getLogPath()
+            titleLog = "Report for Log "+log.path
             fancyheader = len(titleLog) * '='
             body += fancyheader+"\n"
             body += titleLog+"\n"
             body += fancyheader+"\n"
             body += "Levels Report: \n"
-            logKey = self.logsReport[log.getLogPath()]  
+            logKey = self.logsReport[log.path]  
             for level in self.orderReport:
                 body += level+":\n"
                 if level in self.nonTimeStamped:

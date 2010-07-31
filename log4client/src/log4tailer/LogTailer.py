@@ -60,7 +60,7 @@ class LogTailer(object):
         cont = 0
         for log in self.arrayLog:
             cont += 1
-            self.__printHeaderLog(log.getLogPath())
+            self.__printHeaderLog(log.path)
             line = log.readLine()
             while line != '':
                 line = line.rstrip()
@@ -226,7 +226,7 @@ class LogTailer(object):
                 time.sleep(self.throttleTime)
                 for log in self.arrayLog:
                     changed = 0
-                    curpath = log.getLogPath()
+                    curpath = log.path
                     if self.hasRotated(log):
                         found = 0
                     lines = getattr(log, get_log_lines)()
@@ -244,8 +244,8 @@ class LogTailer(object):
                         # to emulate the tail command
                         if curpath != lastLogPathChanged:
                             print
-                            self.__printHeaderLog(log.getLogPath())
-                        lastLogPathChanged = log.getLogPath()
+                            self.__printHeaderLog(log.path)
+                        lastLogPathChanged = log.path
                         message.parse(line, log)
                         resume.update(message, log)
                         self.notifyActions(message, log)

@@ -76,7 +76,7 @@ class TestResume(unittest.TestCase):
         resume = reporting.Resume(arrayLogs)
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog,message,resume)
-        outlogReport = resume.logsReport[log.getLogPath()]
+        outlogReport = resume.logsReport[log.path]
         expectedOutLogErrorReport = 'error> not so wrong'
         gotLogTrace = outlogReport['ERROR'][0].split('=>> ')[1]
         self.assertEquals(expectedOutLogErrorReport,
@@ -94,7 +94,7 @@ class TestResume(unittest.TestCase):
         arraylogs = [mylog]
         resume = reporting.Resume(arraylogs)
         resume.update(message,mylog)
-        outLogReport = resume.logsReport[mylog.getLogPath()]
+        outLogReport = resume.logsReport[mylog.path]
         numofTargets = 1
         gotnumTargets = outLogReport['TARGET']
         self.assertEquals(numofTargets, gotnumTargets)
@@ -118,7 +118,7 @@ class TestResume(unittest.TestCase):
         logtrace = "log trace info target should be reported"
         message.parse(logtrace, mylog)
         resume.update(message, mylog)
-        outLogReport = resume.logsReport[mylog.getLogPath()]
+        outLogReport = resume.logsReport[mylog.path]
         numofTargets = 1
         gotnumTargets = outLogReport['TARGET']
         self.assertEquals(numofTargets, gotnumTargets)
@@ -207,7 +207,7 @@ class TestResume(unittest.TestCase):
         self.mocker.replay()
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog, message, resume)
-        outlogReport = resume.logsReport[log.getLogPath()]
+        outlogReport = resume.logsReport[log.path]
         expectedOthersReport = 'Inactivity action detected'
         gotLogTrace = outlogReport['OTHERS'][0].split('=>> ')[1]
         self.assertEquals(expectedOthersReport,

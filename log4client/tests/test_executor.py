@@ -108,7 +108,7 @@ class TestExecutor(unittest.TestCase):
         fh.write('executor = ls -l %s %s\n')
         fh.close()
         trace = "this is a FATAL log trace"
-        trigger = ['ls', '-l', trace, log.getLogPath() ]
+        trigger = ['ls', '-l', trace, log.path ]
         properties = Property(CONFIG)
         properties.parseProperties()
         os_mock = self.mocker.replace('subprocess')
@@ -127,7 +127,7 @@ class TestExecutor(unittest.TestCase):
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
-        logpath = log.getLogPath()
+        logpath = log.path
         fh = open(CONFIG, 'w')
         fh.write('executor = echo\n')
         fh.close()
