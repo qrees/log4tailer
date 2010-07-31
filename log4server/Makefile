@@ -1,11 +1,10 @@
 PYTHON = python
 BUILDOUT = bin/buildout
 EXE = bin/log4server
-TEST = bin/test
 ENV = ENV 
 ENV24 = ENV24
 
-all: $(BUILDOUT) $(EXE) $(TEST)
+all: $(BUILDOUT) $(EXE) 
 
 env: $(ENV)
 
@@ -36,9 +35,6 @@ release: $(EXE)
 # sdist and tag into subversion
 releasetag: $(EXE)
 	$(PYTHON) setup.py release --rtag
-
-$(TEST): $(BUILDOUT)
-	$(BUILDOUT) install test
 
 clean:
 	@echo "clean ..."

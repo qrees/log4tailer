@@ -1,19 +1,9 @@
-
-from django.conf.urls.defaults import patterns, include, handler500
-from django.conf import settings
-from django.contrib import admin
-admin.autodiscover()
-
-handler500 # Pyflakes
+from django.conf.urls.defaults import patterns, include
+from django.conf.urls import defaults
 
 urlpatterns = patterns(
     '',
-    (r'^admin/(.*)', admin.site.root),
-    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    (r'^alerts/', include('log4server.logs.urls')),
 )
+handler500 = defaults.handler500
 
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve',
-         {'document_root': settings.MEDIA_ROOT}),
-    )
