@@ -5,5 +5,7 @@ urlpatterns = patterns(
     '',
     (r'^alerts/', include('log4server.logs.urls')),
 )
+
+handler404 = defaults.handler404
 handler500 = defaults.handler500
 
