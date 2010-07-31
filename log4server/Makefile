@@ -1,6 +1,6 @@
 PYTHON = python
 BUILDOUT = bin/buildout
-EXE = bin/log4tail
+EXE = bin/log4server
 TEST = bin/test
 ENV = ENV 
 ENV24 = ENV24
@@ -24,7 +24,7 @@ coverage: $(TEST)
 	$(TEST) -v --with-coverage --cover-package=log4tailer 
 
 $(EXE): $(BUILDOUT) 
-	$(BUILDOUT) install log4tail
+	$(BUILDOUT) install django
 
 $(BUILDOUT): bootstrap.py
 	$(PYTHON) bootstrap.py
