@@ -141,7 +141,6 @@ class Log(object):
         # and the following \n
         currpos = self.fh.tell()+2
         return currpos
-        
 
     def numLines(self):
         count = -1
@@ -149,30 +148,6 @@ class Log(object):
             pass
         count += 1
         return count
-    
-    def getOwnOutputColor(self):
-        return self.ownOutputColor
-
-    def getOwnTarget(self):
-        return self.patTarget
-    
-    def getOptionalParameters(self):
-        return (self.ownOutputColor, self.patTarget, self.path)
-
-    def getInactivityTimer(self):
-        return self.inactivityTimer
-
-    def getMailTimer(self):
-        return self.mailTimer
-
-    def getTriggeredNotSent(self):
-        return self.triggeredNotSent 
-
-    def setTriggeredNotSent(self, notsent):
-        self.triggeredNotSent = notsent
-
-    def getInactivityAccTime(self):
-        return self.inactivityAccTime
 
     def setInactivityAccTime(self, acctime):
         if acctime == 0:

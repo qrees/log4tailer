@@ -111,7 +111,8 @@ class TestResume(unittest.TestCase):
         properties.parseProperties()
         mylog = Log(logfile, properties)
         optional_params = (None, re.compile("should"), logfile)
-        self.assertEqual(optional_params, mylog.getOptionalParameters())
+        self.assertEqual(optional_params, (mylog.ownOutputColor,
+            mylog.patTarget, mylog.path))
         arraylogs = [mylog]
         resume = reporting.Resume(arraylogs)
         message = Message(logcolors, properties = properties)

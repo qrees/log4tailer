@@ -79,7 +79,7 @@ class Inactivity(object):
 
     def notify(self, message, log):
         plainmessage, logpath = message.getPlainMessage()
-        timer = log.getInactivityTimer()
+        timer = log.inactivityTimer
         if not plainmessage:
             ellapsedTime = timer.inactivityEllapsed()
             if self.alerted:
@@ -89,7 +89,7 @@ class Inactivity(object):
                 self.alerted = True
                 log.setInactivityAccTime(ellapsedTime)
                 messageAlert = ("Inactivity in the log " + logpath + " for " +
-                        str(log.getInactivityAccTime()) + " seconds")
+                        str(log.inactivityAccTime) + " seconds")
                 if self.notification == 'print':
                     print (self.logColors.backgroundemph+messageAlert+
                             self.logColors.reset)
@@ -184,10 +184,10 @@ class Mail(object):
         
         msg = ("Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: "
                 "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
-        timer = log.getMailTimer()
+        timer = log.mailTimer
         try:
-            if timer.awaitSend(log.getTriggeredNotSent()):
-                log.setTriggeredNotSent(True)
+            if timer.awaitSend(log.triggeredNotSent):
+                log.triggeredNotSent = True
                 return
             self.conn.sendmail(self.fro,self.to,msg)
         except SMTPServerDisconnected:
@@ -199,7 +199,7 @@ class Mail(object):
             self.conn.sendmail(self.fro,self.to,msg)
 
         self.bodyMailAction = None
-        log.setTriggeredNotSent(False)
+        log.triggeredNotSent = False
         return
 
     def setBodyMailAction(self,body):

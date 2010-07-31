@@ -66,7 +66,7 @@ class TestInactivityAction(unittest.TestCase):
         inactivityTime = 0.0000001
         notifier = notifications.Inactivity(inactivityTime)
         time.sleep(0.0000002)
-        timer = self.log.getInactivityTimer()
+        timer = self.log.inactivityTimer
         self.assertTrue(timer.inactivityEllapsed() > inactivityTime)
         notifier.notify(message,self.log)
         self.assertTrue('Inactivity' in sys.stdout.capt[0])
@@ -81,7 +81,7 @@ class TestInactivityAction(unittest.TestCase):
         inactivityTime = 0.005
         notifier = notifications.Inactivity(inactivityTime)
         self.options.inactivity = inactivityTime
-        timer = self.log.getInactivityTimer()
+        timer = self.log.inactivityTimer
         time.sleep(0.000000001)
         self.assertTrue(timer.inactivityEllapsed() < inactivityTime)
         notifier.notify(message,self.log)

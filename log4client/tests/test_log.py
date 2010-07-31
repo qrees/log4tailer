@@ -127,7 +127,8 @@ class TestLog(unittest.TestCase):
 
     def testshouldGetTupleOfOptionalParameters(self):
         log = Log('/var/log/messages',self.__createAConfigWithProperties())
-        ownColors, ownTargets, logpath = log.getOptionalParameters()
+        ownColors, ownTargets, logpath = (log.ownOutputColor, log.patTarget, 
+                log.path)
         self.assertTrue(ownColors)
         self.assertTrue(ownTargets)
         self.assertTrue(logpath)
@@ -151,7 +152,7 @@ class TestLog(unittest.TestCase):
         log = Log('/var/log/messages', property)
         logTargetsColors = {}
         self.assertEqual(logTargetsColors, log.logTargetColor)
-        self.assertTrue(log.getOwnTarget())
+        self.assertTrue(log.patTarget)
         os.remove('config.txt')
 
     def tearDown(self):
