@@ -30,8 +30,13 @@ class AlertTest(TestCase):
         self.assertEqual(404, response.status_code)
 
     def test_info_alerts(self):
+        alog = Log(logtrace = 'info trace',
+                logpath = '/var/log/onelog.log')
+        alog.save()
         response = self.client.get('/alerts/info/')
         self.assertEqual(200, response.status_code)
+        logs = Log.objects.all()
+        self.assertEqual(1, len(response.content))
  
  
 
