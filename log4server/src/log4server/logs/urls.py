@@ -1,9 +1,10 @@
 from django.conf.urls.defaults import patterns
-from log4server.logs.views import alert, info
+from views import alert, status, register
 
 urlpatterns = patterns(
     '',
     (r'^$', alert),
-    (r'^info/', info),
+    (r'^status/', status),
+    (r'^register/', register),
 )
 

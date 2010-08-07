@@ -1,15 +1,30 @@
 from django.db import models
 
+
 class Log(models.Model):
-    logpath = models.CharField(max_length=200, blank = False)
-    server = models.CharField(max_length=200, blank = False)
+    logpath = models.CharField(max_length = 200, blank = False)
+    logserver = models.CharField(max_length = 200, blank = False)
     
     def __unicode__(self):
         return self.logpath
+    
+    @staticmethod
+    def json_mapper():
+        callables = {}
+        return callables
 
 class LogTrace(models.Model):
-    logtrace = models.ForeignKey(Log)
+    log = models.ForeignKey(Log, blank = False)
+    logtrace = models.CharField(max_length = 1000, blank = False)
+    level = models.CharField(max_length = 15, blank = False)
     
     def __unicode__(self):
         return self.logtrace
+
+    @staticmethod
+    def json_mapper():
+        callables  = {'log' : Log}
+        return callables
         
+
+
