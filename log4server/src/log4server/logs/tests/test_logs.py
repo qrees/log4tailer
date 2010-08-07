@@ -6,7 +6,7 @@ from log4server.logs.models import Log, LogTrace
 JSON_STR = 'application/json'
 
 class AlertTest(TestCase):
-    fixtures = ['fatal.json']
+    fixtures = ['logs.json']
 
     def setUp(self):
         self.client = Client()

@@ -1,0 +1,1 @@
+[{"pk": 1, "model": "logs.log", "fields": {"logpath": "/var/log/out.log", "logserver": "192.168.1.2"}}, {"pk": 2, "model": "logs.log", "fields": {"logpath": "/var/log/out.log", "logserver": "anyserver"}}]
