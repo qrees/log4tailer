@@ -17,6 +17,8 @@ class LogTrace(models.Model):
     log = models.ForeignKey(Log, blank = False)
     logtrace = models.CharField(max_length = 1000, blank = False)
     level = models.CharField(max_length = 15, blank = False)
+    insertion_date = models.DateTimeField(auto_now_add=True, auto_now=True,
+            blank=False)
     
     def __unicode__(self):
         return self.logtrace

@@ -1,5 +1,4 @@
-# Create your views here.
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.http import (HttpResponse, 
         HttpResponseNotFound,
         HttpResponseBadRequest)
@@ -51,10 +50,16 @@ def alert(request):
     logtrace.save()
     return HttpResponse(content='', status=201)
 
+colors = {'FATAL' : 'Red', 'ERROR' : 'Magenta', 'TARGET' : 'LightSkyBlue'}
+
 @allowed('GET')
 def status(request):
+    logtraces = LogTrace.objects.all().order_by('-insertion_date')[:10]
+    for logtrace in logtraces:
+        logtrace.color = colors.get(logtrace.level, colors['TARGET'])
     logs = Log.objects.all()
-    return HttpResponse(content = logs, status = 200)
+    return render_to_response('status.html', 
+            {'logs' : logs, 'logtraces' : logtraces})
     
 @allowed('POST')
 @data_required

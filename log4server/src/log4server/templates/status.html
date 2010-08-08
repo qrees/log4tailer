@@ -1,0 +1,34 @@
+<html>
+    <h2 id="heading">Logs Status Page</h2>
+    <h3> Registered logs </h3>
+    <table border="1">
+        <tr>
+            <th>Servers</th>
+            <th>Logs</th>
+        </tr>
+    {% for log in logs %}
+        <tr>
+            <td>{{ log.logserver }}</td>
+            <td>{{ log.logpath }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <h3> Last log traces </h3>
+    <table border="1">
+        <tr>
+            <th>LogTrace</th>
+            <th>Time triggered</th>
+            <th>Log</th>
+            <th>Log Server</th>
+        </tr>
+    {% for logtrace in logtraces %}
+        <tr bgcolor="{{ logtrace.color }}">
+            <td>{{ logtrace }}</td>
+            <td>{{ logtrace.insertion_date }}</td>
+            <td>{{ logtrace.log.logpath }}</td>
+            <td>{{ logtrace.log.logserver }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</html>
