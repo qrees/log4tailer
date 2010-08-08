@@ -12,7 +12,7 @@ class AlertTest(TestCase):
         self.client = Client()
 
     def test_postalert(self):
-        params = {'logtrace' : 'fatal alert here', 'level' : 'fatal',
+        params = {'logtrace' : 'fatal alert here', 'loglevel' : 'fatal',
                 'log' : {'id' : 1, 'logpath' : '/var/log/out.log',
                 'logserver' : 'anyserver'}}
         response = self.client.post('/alerts/', json.dumps(params), JSON_STR)
@@ -22,7 +22,7 @@ class AlertTest(TestCase):
         self.assertTrue(traces > 0)
 
     def test_alert_saved(self):
-        params = {'logtrace' : 'fatal alert overthere', 'level' : 'fatal',
+        params = {'logtrace' : 'fatal alert overthere', 'loglevel' : 'fatal',
                 'log' : {'id' : 2, 'logpath' : '/var/log/out.log',
                 'logserver' : 'anyserver'}}
         response = self.client.post('/alerts/', json.dumps(params), JSON_STR)
@@ -52,7 +52,7 @@ class AlertTest(TestCase):
 
 class AlertNoInfoDB(TestCase):
     def test_no_info_db(self):
-        params = {'logtrace' : 'fatal alert overthere', 'level' : 'fatal',
+        params = {'logtrace' : 'fatal alert overthere', 'loglevel' : 'fatal',
                 'log' : {'id' : 2, 'logpath' : '/var/log/out.log',
                 'logserver' : 'anyserver'}}
         response = self.client.post('/alerts/', json.dumps(params), JSON_STR)
