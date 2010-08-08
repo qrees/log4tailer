@@ -44,10 +44,9 @@ def alert(request):
     params = from_json(LogTrace, data)
     incoming_log = params.get('log', None)
     incoming_logtrace = params.get('logtrace', None)
-    if not (incoming_log and incoming_logtrace):
+    if not (incoming_log and incoming_logtrace): 
         return HttpResponseBadRequest("Not enough information provided")
-    get_object_or_404(Log, logpath = incoming_log.logpath, logserver =
-            incoming_log.logserver)
+    get_object_or_404(Log, id = incoming_log.id)
     logtrace = LogTrace(**params)
     logtrace.save()
     return HttpResponse(content='', status=201)
@@ -65,10 +64,14 @@ def register(request):
     logserver = data.get('logserver', None)
     if not (logpath and logserver):
         return HttpResponseBadRequest("Not enough information provided")
-    num_logs = Log.objects.filter(logpath = logpath, logserver = logserver).count()
-    if not num_logs:
+    logs = Log.objects.filter(logpath = logpath, logserver = logserver)
+    if len(logs) == 0:
         log = Log(**data)
         log.save()
-    return HttpResponse(status = 201)
+    else: 
+        # there could be more than one (logs identified by ids, 
+        # just grab first one
+        log = logs[0]
+    return HttpResponse(content = log.id, status = 201)
     
 
