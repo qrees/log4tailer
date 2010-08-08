@@ -19,6 +19,8 @@
 \usepackage{graphicx}
 \usepackage[stable]{footmisc}
 \usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{colortbl}
 
 % specific acrobat reader settings
 \hypersetup{colorlinks=true,
@@ -68,6 +70,18 @@
 \renewcommand{\contentsname}{{\color{cadetblue}\rule{\textwidth}{2pt}}\\\logftailer{}'s %
 Contents\\\rule[1ex]{\textwidth}{1pt}}
 
+
+\definecolor{myblue}{rgb}{0.8,0.8,1}
+\makeatletter\newenvironment{codeexample}{%
+   \noindent\begin{lrbox}{\@tempboxa}\begin{minipage}{\columnwidth}\setlength{\parindent}{1em}}{\end{minipage}\end{lrbox}%
+   \colorbox{myblue}{\usebox{\@tempboxa}}
+}\makeatother
+
+% \usepackage{float}
+% \floatstyle{boxed} 
+% \restylefloat{figure}
+
+
 \begin{document}
 
 % Title page
@@ -106,11 +120,13 @@ Free Documentation License.
 \maketitle
 
 \tableofcontents
+%\listoffigures
 %\listof{picture}{\contentsrule{\logftailer{}'s list of Pictures}}
 
 \newpage
 \include{thebasics}
 \include{advancedfeatures}
+\include{server}
 \include{casestudies}
 %\include{development}
 
