@@ -25,7 +25,7 @@ from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
 import threading
-from httplib import HTTPConnection
+import httplib
 import urllib
 try:
     import json
@@ -441,8 +441,8 @@ class Poster(object):
         self.unregister_uri = properties.getValue('server_service_unregister_uri')
         self.headers = {'Content-type' : 'application/json'}
         self.registered_logs = {}
-        self.hostname = "any"
-        self.conn = HTTPConnection(self.url, self.port)
+        from socket import gethostname
+        self.hostname = gethostname()
 
     def notify(self, message, log):
         if log not in self.registered_logs:
@@ -455,14 +455,20 @@ class Poster(object):
         log_id = log_info['id']
         params = json.dumps({'logtrace': logtrace, 'level' : msg_level, 'log': {
             'id' : log_id, 'logpath' : log.path, 'logserver' : self.hostname}})
-        self.conn.request('POST', self.service_uri, params, self.headers)
-        response = self.conn.getresponse()
+        response = ''
+        conn = httplib.HTTPConnection(self.url, self.port)
+        try:
+            conn.request('POST', self.service_uri, params, self.headers)
+        except Exception, err:
+            print err
+        response = conn.getresponse()
         return response
     
     def register(self, log):
         params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
-        self.conn.request('POST', self.register_uri, params, self.headers)
-        response = self.conn.getresponse()
+        conn = httplib.HTTPConnection(self.url, self.port)
+        conn.request('POST', self.register_uri, params, self.headers)
+        response = conn.getresponse()
         log_id = response.read()
         self.registered_logs[log] = {'id' : log_id, 'logserver' :
                 self.hostname}
@@ -471,7 +477,8 @@ class Poster(object):
     def unregister(self, log):
         if log in self.registered_logs:
             params = urllib.urlencode({'log': log.path})
-            self.conn.request('POST', self.unregister_uri, params)
-            return self.conn.getresponse()
+            conn = httplib.HTTPConnection(self.url, self.port)
+            conn.request('POST', self.unregister_uri, params)
+            return conn.getresponse()
 
 
