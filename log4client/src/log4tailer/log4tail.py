@@ -62,7 +62,7 @@ def parse_command_line():
             dest="executable", help="executes a program")
     parser.add_option("--version", action="store_true", 
             dest="version", help="shows log4tailer version number and exists")
-    parser.add_option("--post", dest="post", 
+    parser.add_option("--post", action="store_true", dest="post", 
         help="sends http alert to a centralized web server")
  
     return parser.parse_args()

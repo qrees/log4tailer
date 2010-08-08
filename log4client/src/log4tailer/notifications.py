@@ -27,6 +27,10 @@ import subprocess
 import threading
 from httplib import HTTPConnection
 import urllib
+try:
+    import json
+except:
+    import simplejson as json
 
 try:
     import queue
@@ -420,7 +424,6 @@ class Poster(object):
     notify it anytime an undesirable trace has been found. 
     Fatals, criticals, errors and targets will be notified.
     """ 
-    
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
     def __init__(self, properties):
@@ -436,28 +439,37 @@ class Poster(object):
         self.service_uri = properties.getValue('server_service_uri')
         self.register_uri = properties.getValue('server_service_register_uri')
         self.unregister_uri = properties.getValue('server_service_unregister_uri')
+        self.headers = {'Content-type' : 'application/json'}
+        self.registered_logs = {}
+        self.hostname = "any"
         self.conn = HTTPConnection(self.url, self.port)
-        self.registered = False
 
     def notify(self, message, log):
-        if not self.registered:
+        if log not in self.registered_logs:
             self.register(log)
         msg_level = message.getMessageLevel().upper()
         if not message.isATarget() and msg_level not in self.Pullers:
             return
         logtrace, logpath = message.getPlainMessage()
-        params = urllib.urlencode({'logtrace': logtrace, 'log': logpath})
-        self.conn.request('POST', self.service_uri, params)
-        return self.conn.getresponse()
+        log_info = self.registered_logs[log]
+        log_id = log_info['id']
+        params = json.dumps({'logtrace': logtrace, 'level' : msg_level, 'log': {
+            'id' : log_id, 'logpath' : log.path, 'logserver' : self.hostname}})
+        self.conn.request('POST', self.service_uri, params, self.headers)
+        response = self.conn.getresponse()
+        return response
     
     def register(self, log):
-        if not self.registered:
-            params = urllib.urlencode({'log': log.path})
-            self.conn.request('POST', self.register_uri, params)
-            return self.conn.getresponse()
-    
+        params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
+        self.conn.request('POST', self.register_uri, params, self.headers)
+        response = self.conn.getresponse()
+        log_id = response.read()
+        self.registered_logs[log] = {'id' : log_id, 'logserver' :
+                self.hostname}
+        return response
+
     def unregister(self, log):
-        if self.registered:
+        if log in self.registered_logs:
             params = urllib.urlencode({'log': log.path})
             self.conn.request('POST', self.unregister_uri, params)
             return self.conn.getresponse()

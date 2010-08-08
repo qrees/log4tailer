@@ -68,6 +68,7 @@ class Message(object):
         levelcolor = None
         if not self.plainMessage:
             return (0,'')
+        #FIXME too much return exits in this method
         # targets have priority over Levels
         if self.isTarget or self.isOwnTarget:
             self.log.emphcolor = self.targetColor or self.color.backgroundemph

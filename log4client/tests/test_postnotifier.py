@@ -138,7 +138,7 @@ if not version_info[:2] == version2_4:
             message.parse(logtrace, log)
             self.mocker.replay()
             poster = notifications.Poster(properties)
-            poster.registered = True
+            poster.registered_logs[log] = True
             response = poster.notify(message, log)
             self.assertFalse(response)
 
@@ -179,7 +179,7 @@ if not version_info[:2] == version2_4:
             self.mocker.replay()
             require_server()
             poster = notifications.Poster(properties)
-            poster.registered = True
+            poster.registered_logs[log] = True
             response = poster.unregister(log)
             self.assertEqual(response.status, 200)
 
