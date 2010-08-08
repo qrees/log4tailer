@@ -19,7 +19,7 @@
 \colorlet{lowgreen}{green!50!orange!25!yellow!15}
 %\pagecolor{aliceblue}
 %\pagecolor{greeny}
-\pagecolor{kaki}
+\pagecolor{lowgreen}
 
 \vbox{}
   \vskip3pt plus 2fill
@@ -31,55 +31,55 @@
 %\includegraphics{log4tailerdoc.png}
 %\end{flushright}
 % Some tikz fun ;-)
-\begin{center}
-\begin{tikzpicture}
-[node distance=1.3cm,place/.style={circle,draw=blue!50,fill=blue!20,thick,
-               inner sep=5pt,minimum size=6mm},
- transition/.style={rectangle,draw=black!50,fill=black!20,thick,
-                    inner sep=5pt,minimum size=6mm}]
+%\begin{center}
+%\begin{tikzpicture}
+%[node distance=1.3cm,place/.style={circle,draw=blue!50,fill=blue!20,thick,
+               %inner sep=5pt,minimum size=6mm},
+ %transition/.style={rectangle,draw=black!50,fill=black!20,thick,
+                    %inner sep=5pt,minimum size=6mm}]
 
-\node[place, fill=green] (begin) {Logs};
-\node[transition] (stdout) [right=of begin] {{\color{red}\textbf{STDOUT}}};
-\node[place] (executor) [above= of stdout] {{\color{magenta}\textbf{Executor}}};
+%\node[place, fill=green] (begin) {Logs};
+%\node[transition] (stdout) [right=of begin] {{\color{red}\textbf{STDOUT}}};
+%\node[place] (executor) [above= of stdout] {{\color{magenta}\textbf{Executor}}};
 
-\node[place] (mail) [above=of executor, label={[label distance=0.5cm]above:\Large\textbf{Notifications}}] {Email};
-%\node[cloud, fill=white] (poster) [left= of mail] {{\color{blue}\textbf{Poster}}};
-\node[place, very thick, draw=green, fill=white] (log4tailer) [left=of
- begin, %,label=below:\emph{Not just a simple log tailer},
-pin={[pin edge={<-, blue,thick}]180:\textbf{Configuration File}}] {\Large \logftailer{}};
+%\node[place] (mail) [above=of executor, label={[label distance=0.5cm]above:\Large\textbf{Notifications}}] {Email};
+%%\node[cloud, fill=white] (poster) [left= of mail] {{\color{blue}\textbf{Poster}}};
+%\node[place, very thick, draw=green, fill=white] (log4tailer) [left=of
+ %begin, %,label=below:\emph{Not just a simple log tailer},
+%pin={[pin edge={<-, blue,thick}]180:\textbf{Configuration File}}] {\Large \logftailer{}};
 
-\node[place, draw=red, thick, fill=yellow!20,node distance=2cm] (reporting) [below= of log4tailer] {\textbf{Reporting}};
+%\node[place, draw=red, thick, fill=yellow!20,node distance=2cm] (reporting) [below= of log4tailer] {\textbf{Reporting}};
 
-%\node[place, draw=red, thick, fill=yellow!20,node distance=2cm] (reporting) at (-8, -4) {\textbf{Reporting}};
-\node[place] (reportingemail) [below= of reporting] {Email};
-\node[transition] (reportingstdout) [right= of reportingemail] {{\color{red}\textbf{STDOUT}}};
-\node[place, fill=red!50] (reportingfile) [left= of reportingemail] {File};
-\node[place, draw=red, fill=red] (cornermark) [below=of stdout] {\textbf{cornerMark}};
-\node[place, fill=orange] (inactivity) [below=of cornermark] {inactivity};
-\node[place, fill=yellow] (filter) [below=of inactivity] {filter};
+%%\node[place, draw=red, thick, fill=yellow!20,node distance=2cm] (reporting) at (-8, -4) {\textbf{Reporting}};
+%\node[place] (reportingemail) [below= of reporting] {Email};
+%\node[transition] (reportingstdout) [right= of reportingemail] {{\color{red}\textbf{STDOUT}}};
+%\node[place, fill=red!50] (reportingfile) [left= of reportingemail] {File};
+%\node[place, draw=red, fill=red] (cornermark) [below=of stdout] {\textbf{cornerMark}};
+%\node[place, fill=orange] (inactivity) [below=of cornermark] {inactivity};
+%\node[place, fill=yellow] (filter) [below=of inactivity] {filter};
 
-\draw [->, decorate, blue, thick, decoration={snake}] (log4tailer) -- (begin);
-\draw [->] (begin) to [out=90, in=180] node[sloped, above, midway] {\textbf{notify}} (mail);%.. controls +(up:5mm) .. (mail.west);
-\draw[->, red, thick] (begin) to [out=45, in=180] (executor);
-\draw [->, draw=blue, thick] (begin.east) -- (stdout.west);
-\draw [->] (begin) to [out=270,in=130] (cornermark);  %+(down:2mm) and +(up:5mm) .. (cornermark.west);
-\draw [->] (begin) to [out=270,in=140] (inactivity);%.. controls +(down:5mm) .. (inactivity.west);
-\draw [->] (begin) to [out=270,in=135] (filter);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, decorate, blue, thick, decoration={snake}] (log4tailer) -- (begin);
+%\draw [->] (begin) to [out=90, in=180] node[sloped, above, midway] {\textbf{notify}} (mail);%.. controls +(up:5mm) .. (mail.west);
+%\draw[->, red, thick] (begin) to [out=45, in=180] (executor);
+%\draw [->, draw=blue, thick] (begin.east) -- (stdout.west);
+%\draw [->] (begin) to [out=270,in=130] (cornermark);  %+(down:2mm) and +(up:5mm) .. (cornermark.west);
+%\draw [->] (begin) to [out=270,in=140] (inactivity);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->] (begin) to [out=270,in=135] (filter);%.. controls +(down:5mm) .. (inactivity.west);
 
-\draw [->, decorate, red, thick, decoration={snake}] (log4tailer) to [out=270,in=90] (reporting);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, decorate, red, thick, decoration={snake}] (log4tailer) to [out=270,in=90] (reporting);%.. controls +(down:5mm) .. (inactivity.west);
 
-\draw [->, decorate, blue, thick, decoration={snake}] (log4tailer) to [out=285,in=75] (reporting);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, decorate, blue, thick, decoration={snake}] (log4tailer) to [out=285,in=75] (reporting);%.. controls +(down:5mm) .. (inactivity.west);
 
-\draw [->, decorate, orange, thick, decoration={snake}] (log4tailer) to [out=255,in=105] (reporting);%.. controls +(down:5mm) .. (inactivity.west);
-\draw [->, blue, thick] (reporting.south) to [out=225,in=45] (reportingfile);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, decorate, orange, thick, decoration={snake}] (log4tailer) to [out=255,in=105] (reporting);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, blue, thick] (reporting.south) to [out=225,in=45] (reportingfile);%.. controls +(down:5mm) .. (inactivity.west);
 
 
-\draw [->, blue, thick] (reporting.south) to [out=270,in=90] (reportingemail);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, blue, thick] (reporting.south) to [out=270,in=90] (reportingemail);%.. controls +(down:5mm) .. (inactivity.west);
 
-\draw [->, blue, thick] (reporting.south) to [out=315,in=135] node[auto, midway] {\textbf{Ctrl-C}} (reportingstdout);%.. controls +(down:5mm) .. (inactivity.west);
+%\draw [->, blue, thick] (reporting.south) to [out=315,in=135] node[auto, midway] {\textbf{Ctrl-C}} (reportingstdout);%.. controls +(down:5mm) .. (inactivity.west);
 
-\end{tikzpicture}
-\end{center}
+%\end{tikzpicture}
+%\end{center}
 %+(right:5mm) and +(up:5mm)
 
 %\tikz \draw (0,0) node[fill=darkgreen,text width=14cm]

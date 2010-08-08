@@ -1,0 +1,177 @@
+\part{Log4Server}
+
+\section{A centralized reporting web application}
+The \logftailer{} project includes a web backend application that receives notifications 
+from the log4tailer clients, notifying in a web front page about the status of the logs 
+in several machines. The log4server is implemented using the Django web framework and can run 
+in any wsgi compliant web server, such as Apache, Cherokee, Nginx or CherryPy, just to name 
+a few. Basically, the clients will register first to the server and then notify if any fatal, 
+error, critical or target logtrace has been found. 
+
+A network diagram is showed in figure \autoref{fig:serverdiagram}:
+
+\begin{figure}[hb]
+\centering
+\includegraphics[scale=0.50]{serverdiagram.png}
+\caption{Log4Server network diagram}\label{fig:serverdiagram}
+\end{figure}
+
+
+In the next section, we will describe the API that the log4server application implements and the 
+one being used by the log4tailer poster notification.
+
+\section{Log4Tailer compliant server}
+\logftailer{} client has the poster notification that allows the tailer to communicate 
+with a centralized web application, notifying it of possible problems from remote logs. 
+The poster notification will first register the tailer client to the server, and next 
+calls will be for alert notifications only. The compliant API interface is as follows:
+
+\subsection{Registration}
+
+Log4tailer client registers to the server on startup when poster notification is provided.
+
+\begin{flushleft}
+ \begin{tabular}{|c|c|l|}
+ \hline 
+ \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
+  \textit{\textbf{URL}}}  & {\color{white} 
+ \textit{\textbf{Description}}}\\
+ POST & /register & Log4tailer client registration to the server\\
+ \hline
+\end{tabular}
+\end{flushleft}
+The POST method will have in the body a JSON object with the following information:
+
+\begin{itemize}
+ \item logpath Full path of the log 
+ \item hostname log's server hostname
+\end{itemize}
+
+\noindent
+Upon a successul POST the server will reply a 201 CREATED answer.
+
+\noindent
+Example:
+
+\begin{codeexample}
+
+POST /register
+
+ \{``logpath'' : ``/var/log/messages'', ``logserver'' : ``localhost''\} 
+
+RESPONSE
+
+ \{``id'' : 3\} 
+
+HTTP/1.1 201 CREATED.
+\end{codeexample}
+
+The id returned is the log identifier id.
+
+\subsection{Alerting}
+
+\begin{flushleft}
+ \begin{tabular}{|c|c|l|}
+ \hline 
+ \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
+  \textit{\textbf{URL}}}  & {\color{white} 
+ \textit{\textbf{Description}}}\\
+ POST & /alert & New alert has been found.\\
+ \hline
+\end{tabular}
+\end{flushleft}
+The POST method will have in the body a JSON object with the following information:
+
+\begin{itemize}
+ \item logtrace logtrace that triggered the alert.
+ \item level level of the aforementioned logtrace.
+ \item log log where the logtrace belongs to.
+    \begin{itemize}
+      \item logpath Full path of the log 
+      \item hostname log's server hostname
+    \end{itemize}
+\end{itemize}
+Upon a successul POST the server will reply a 201 CREATED answer.
+
+\noindent
+Example:
+
+\begin{codeexample}
+
+POST /alerts
+
+ \{``logtrace'' : ``This is an error trace'', 
+   ``loglevel'' : ``error'',
+   ``log'' : \{``id'' : ``logid'', ``logpath'' : ``/var/log/messages'', ``logserver'': ``192.168.1.1''\}\} 
+
+RESPONSE
+
+HTTP/1.1 201 CREATED.
+\end{codeexample}
+
+\subsection{Status}
+
+\begin{flushleft}
+ \begin{tabular}{|c|c|l|}
+ \hline 
+ \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
+  \textit{\textbf{URL}}}  & {\color{white} 
+ \textit{\textbf{Description}}}\\
+ GET & /status & Status of the log files.\\
+ \hline
+\end{tabular}
+\end{flushleft}
+It returns the last 10 log traces triggered along with the log and server they belong to. The 
+date when it happened is reported as well.
+
+\noindent
+Example:
+
+\begin{codeexample}
+
+GET /alerts/status
+
+RESPONSE
+
+HTTP/1.1 200 OK.
+\end{codeexample}
+
+
+\noindent
+If you go to /alerts/status in your web browser, you would see something as showed in figure 
+\autoref{fig:logstatus}:
+
+\begin{figure}[ht]
+%\centering
+\includegraphics[scale=0.50]{logstatus.png}
+\caption{Log4Server status web reporting}\label{fig:logstatus}
+\end{figure}
+
+\section{Log4Server deployment}
+Log4Server is implemented using the Django web framework. It persists alertable log traces into a 
+database for easy reporting and log4tailer client registrations. 
+
+The application uses buildout to manage all application dependencies and deployment. By issuing 
+the bin/buildout command, it will build a log4server.wsgi file, that is the one that will need to 
+be used when setting up the web server. In this document, we will show the instructions on how to 
+set it up by using the Apache web server. 
+
+\subsection{Log4Server deployment dependencies}
+
+You'll need to install a web server such as Apache listening on the port you want Log4Server to listen 
+to. Make sure to setup the clients to post notifications to that port. Apart from that, a Django 
+compatible Python runtime should be available in the server as well. Python 2.6 runtime 
+is the recommended one. 
+
+\subsection{Deciding on database}
+
+Log4Server needs a database in order to persist the alertable logtraces. Sqlite3, Mysql or PostGres 
+should be, by far, enough. If you use Sqlite3, make sure that Apache process has write permissions 
+on the database file. 
+
+\subsection{Apache setup}
+
+You'll need to setup a VirtualHost for that and make sure that the mod\_wsgi module is available 
+for Apache. 
+
+\newpage
