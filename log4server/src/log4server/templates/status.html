@@ -15,6 +15,33 @@
     </table>
 
     <h3> Last log traces </h3>
+    <div class="pagination">
+        Page {{ logtraces.number }} of {{ logtraces.paginator.num_pages }}
+        <br> </br>
+        {% if logtraces.number >= 5 %}
+            <a href="?page=1">First</a>
+        {% endif %}
+        <span class="step-links">
+            {% if logtraces.has_previous %}
+            <a href="?page={{ logtraces.previous_page_number }}">&lt</a>
+            {% endif %}
+            <span class="current">
+                {% for page in pages_iter %}
+                    {% if logtraces.number != page %}
+                        <a href="?page={{ page }}">{{ page }}</a>
+                    {% else %}
+                        {{ logtraces.number }}
+                    {% endif %}
+                {% endfor %}
+            </span>
+            {% if logtraces.has_next %}
+                <a href="?page={{ logtraces.next_page_number }}">&gt</a>
+            {% endif %}
+        </span>
+        {% if logtraces.number <= logtraces.paginator.num_pages %}
+            <a href="?page={{ logtraces.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
     <table border="1">
         <tr>
             <th>LogTrace</th>
@@ -22,7 +49,7 @@
             <th>Log</th>
             <th>Log Server</th>
         </tr>
-    {% for logtrace in logtraces %}
+    {% for logtrace in logtraces.object_list %}
         <tr bgcolor="{{ logtrace.color }}">
             <td>{{ logtrace }}</td>
             <td>{{ logtrace.insertion_date }}</td>
@@ -31,4 +58,5 @@
         </tr>
     {% endfor %}
     </table>
+
 </html>

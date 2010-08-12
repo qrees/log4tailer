@@ -22,6 +22,7 @@ from django.http import (HttpResponse,
         HttpResponseBadRequest)
 from models import Log, LogTrace
 from django.utils import simplejson as json
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 def allowed(verb):
     def required(func):
@@ -72,12 +73,38 @@ colors = {'FATAL' : 'Red', 'ERROR' : 'Magenta', 'TARGET' : 'LightSkyBlue'}
 
 @allowed('GET')
 def status(request):
-    logtraces = LogTrace.objects.all().order_by('-insertion_date')[:10]
-    for logtrace in logtraces:
-        logtrace.color = colors.get(logtrace.level, colors['TARGET'])
+    logtraces_list = LogTrace.objects.all().order_by('-insertion_date')
+    paginator = Paginator(logtraces_list, 20)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        logtraces = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        logtraces = paginator.page(paginator.num_pages)
+    for logtrace in logtraces.object_list:
+        logtrace.color = colors.get(logtrace.loglevel, colors['TARGET'])
     logs = Log.objects.all()
-    return render_to_response('status.html', 
-            {'logs' : logs, 'logtraces' : logtraces})
+    bottom = logtraces.number - 3
+    pages_iter = [bottom, logtraces.number]
+    if logtraces.number <= 3:
+        pages_iter = range(1, 6)
+    else:
+        pos = 1
+        down = 2 
+        for number in range(1, 6):
+            top = logtraces.number + number
+            bottom += 1
+            if bottom < logtraces.number:
+                pages_iter.insert(pos, logtraces.number - down)
+                pos += 1
+                down -= 1
+            elif logtraces.has_next() and top <= paginator.num_pages:
+                    pages_iter.append(top-2)
+
+    return render_to_response('status.html', {'logs' : logs, 
+        'logtraces' : logtraces, 'pages_iter' : pages_iter})
     
 @allowed('POST')
 @data_required
