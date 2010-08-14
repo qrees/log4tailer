@@ -73,13 +73,19 @@ Contents\\\rule[1ex]{\textwidth}{1pt}}
 
 \definecolor{myblue}{rgb}{0.8,0.8,1}
 \makeatletter\newenvironment{codeexample}{%
-   \noindent\begin{lrbox}{\@tempboxa}\begin{minipage}{\columnwidth}\setlength{\parindent}{1em}}{\end{minipage}\end{lrbox}%
-   \colorbox{myblue}{\usebox{\@tempboxa}}
+   \vspace{0.15cm}\noindent\begin{lrbox}{\@tempboxa}\begin{minipage}{0.98\columnwidth}\setlength{\parindent}{1em}}{\end{minipage}\end{lrbox}%
+   \colorbox{myblue}{\usebox{\@tempboxa}}\vspace{0.15cm}
 }\makeatother
 
 % \usepackage{float}
 % \floatstyle{boxed} 
 % \restylefloat{figure}
+
+\definecolor{myorange}{rgb}{1,0.8,0}
+\makeatletter\newenvironment{config}{%
+   \vspace{0.2cm}\noindent\begin{lrbox}{\@tempboxa}\begin{minipage}{0.98\textwidth}\setlength{\parindent}{1em}}{\end{minipage}\end{lrbox}%
+   \colorbox{lowgreen}{\usebox{\@tempboxa}}\vspace{0.2cm}
+}\makeatother
 
 
 \begin{document}

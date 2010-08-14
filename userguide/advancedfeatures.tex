@@ -17,15 +17,23 @@ double quotes.
 \subsection{Every log with its own target scheme}
 If you want every log with its own targets, then you must provide them in a config file. 
 In order to do that, just edit a text file and specify the next key, value optional parameters:
+
+\begin{config}
 \begin{verbatim}
 targets fullpathToLog0 = regex0, regex1,.., regexN | colorregex0,.., coloregexN
 targets fullpathToLog1 = regex0, regex1,.., regexN | colorregex0,.., coloregexN
 \end{verbatim}
+\end{config}
+
 An example of that could be:
+
+\begin{config}
 \begin{verbatim}
 targets /var/log/messages = iptables$, ^2009-08-07 user | blue, red
 targets /var/log/mail.log = incoming \d+, \d{1,3} something | on_cyan
 \end{verbatim}
+\end{config}
+
 If an specific regex does not have a corresponding color, then it will be emphasized using
 the default color setup, which is the log trace on a red background.
 
@@ -143,11 +151,16 @@ and pass -c pathtoconfig as a parameter to \logftailer{}.
 It is not necessary to 
 provide all the colors in the config file. If yellow is fine for warn and red for 
 fatal, you could say something like:
+
+\begin{config}
 \begin{verbatim}
  error = red
  info = magenta
  debug = green
 \end{verbatim}
+\end{config}
+
+\noindent
 error, info and debug colors will be overriden by your ones provided in the config 
 file. 
 
@@ -156,10 +169,14 @@ If you want to just tail different logs and you want each log with its own speci
 then you can specify that in the config file. This feature overrides the level colors for that 
 specific log, printing all traces with the same color. 
 For example, if we write in a config file something like:
+
+\begin{config}
 \begin{verbatim}
  /opt/log4/out0.log = green
  /opt/log4/out1.log = yellow, on_blue
 \end{verbatim}
+\end{config}
+
 In that specific case, if we run:
 \begin{cmd}
  log4tail -c configfile /opt/log4/out0.log /opt/log4/out1.log /opt/log4/out2.log
@@ -182,7 +199,7 @@ The example in \autoref{fig:multiple_colors} will clarify that.
 % {\color{green} INFO this is an info log trace from fullPathLog2}}}
 % \end{center}
 
-\begin{figure}[hb]
+\begin{figure}[ht]
 \centering
 \includegraphics[scale=0.60]{multiple_colors.png}
 \caption{\logftailer{} each log with its own color scheme}\label{fig:multiple_colors}
@@ -216,7 +233,7 @@ where numberofseconds can be any number.
 Example of what you would see if that notification is activated can be seen in
  \autoref{fig:cornermark}.
 
-\begin{figure}
+\begin{figure}[ht]
 \centering
 \includegraphics[scale=0.60]{terminalcornermark.png}
 \caption{\logftailer{} with cornermark activated}\label{fig:cornermark}
@@ -248,6 +265,7 @@ specifying the mail details in a configuration file.
 
 \textbf{You'll need to provide a configuration file} with the following key parameters:
 
+\begin{config}
 \begin{verbatim}
  mail_username = yourusername
  mail_hostname = youremailhostname 
@@ -256,6 +274,9 @@ specifying the mail details in a configuration file.
  mail_from = Email from, it can be the same as your to address 
  mail_to = Email to where you will receive the alerts
 \end{verbatim}
+\end{config}
+
+\noindent
 The password will be asked during runtime to avoid being left 
 in plain ascii in the configuration file. For SSL connection you will need a Python 2.6 runtime, otherwise 
 mail\_ssl should be left to False.
@@ -313,9 +334,14 @@ The command line interface to activate the inactivity monitoring is:
 \subsubsection{Inactivity Mail Notification}
 If you want a notification by email when inactivityAction is raised, just specify in the 
 config file:
+
+\begin{config}
 \begin{verbatim}
  inactivitynotification = mail
 \end{verbatim}
+\end{config}
+
+\noindent
 By default is notification to the standard output as shown before. 
 
 \subsection{Executor}
@@ -355,6 +381,8 @@ targets found in the log.
  log4tail --post -c configfile.txt pathToLogs
 \end{cmd}
 where in the configfile.txt you will need to specify the following parameters:
+
+\begin{config}
 \begin{verbatim}
  server_url = url to the server
  server_port = port
@@ -362,7 +390,7 @@ where in the configfile.txt you will need to specify the following parameters:
  server_service_register_uri = /register/log4tailer/toserver
  server_service_unregister_uri = / unregister/log4tailer/fromserver
 \end{verbatim}
-
+\end{config}
 
 \section{Pause Modes}
 
@@ -370,6 +398,8 @@ where in the configfile.txt you will need to specify the following parameters:
 to pause or freeze the output by a number of seconds if an specific level or target 
 has been found. In order to enable pausemodes, you must configure them in a config file 
 providing any of the following keys\footnote{the keys are case insensitive, so is the same pauseDEBUG or pausedebug\ldots} :
+
+\begin{config}
 \begin{verbatim}
  pausedebug = secondsfordebug
  pauseinfo = secondsforinfo
@@ -378,11 +408,19 @@ providing any of the following keys\footnote{the keys are case insensitive, so i
  pausefatal = secondsforfatal
  pausetarget = secondsfortarget
 \end{verbatim}
+\end{config}
+
+\noindent
 You specify only those ones you want to use.
 For instance, if we want to freeze the output momentarily (one second) for warnings:
+
+\begin{config}
 \begin{verbatim}
  pausewarn = 1
 \end{verbatim}
+\end{config}
+
+\noindent
 Then, we should run log4tailer like:
 \begin{cmd}
 ./log4tail -c yourconfig /pathToLogs
@@ -422,10 +460,14 @@ Ended log4tailer, because colors are fun
 \subsection{Reports by email}
 If you want a report by email after a given amount of time, then you can do that by means 
 of the config file. There are two values that can be setup, namely:
+
+\begin{config}
 \begin{verbatim}
  analyticsnotification = mail
  analyticsgaptime = 10.5
 \end{verbatim}
+\end{config}
+
 If these two values are uncommented, then you will be required to provide the mail 
 details in the same configuration file, please check the \autoref{sec:mailnotification}. The analyticsgaptime should be given in seconds, by default is 3600 seconds (1 hour). 
 You'll receive a report after that period. After that period the statistical information is 
@@ -433,7 +475,7 @@ flushed and then sent again once the gap notification time is expired and so on.
 In \autoref{fig:emailnotification} %in page \pageref{fig:emailnotification}, 
 you can see an email report notification in a Google gmail account.
 
-\begin{figure}
+\begin{figure}[hb]
 %\centering
 \includegraphics[scale=0.50]{emailnotification.png}
 \caption{\logftailer{} email report notification}\label{fig:emailnotification}
@@ -444,10 +486,13 @@ you can see an email report notification in a Google gmail account.
 \logftailer{} can give you a report to a file if you want to. Just provide the
 analyticsnotification in the configuration file pointing to the reporting file
 (full path). An example of that would be:
+
+\begin{config}
 \begin{verbatim}
  analyticsnotification = /opt/reportlog4tailer.txt
  analyticsgaptime = 10.5
 \end{verbatim}
+\end{config}
 
 \section{Silent Mode}
 Silent mode, tails the logs in the background (daemonized tailer) and triggers
@@ -506,12 +551,17 @@ along with some config file parameters:
  ./log4tail -r -t targets -c yourconfig.txt
 \end{cmd}
 In your configfile you must provide the following parameters:
+
+\begin{config}
 \begin{verbatim}
  sshhostnames = hostname0, hostname1, hostnameN-1
  hostname0 = username0, /var/log/log0, /var/log/log1, /var/log/logN-1
  hostname1 = username1, /var/log/log0, /var/log/log1, /var/log/logN-1
  hostnameN-1 = usernameN-1, /var/log/log0, /var/log/log1, /var/log/logN-1
 \end{verbatim}
+\end{config}
+
+\noindent
 Where:
 \begin{itemize}
 \item \textbf{sshhostnames} is a comma separated values of hostnames
@@ -523,9 +573,14 @@ $\sim$/.ssh/id\_rsa key if it exists, otherwise it will use normal username, pas
 authentication. If you want to use another rsa key other than the default
 id\_rsa key then you can provide one in the config file by using the rsa\_key
 parameter. Example:
+
+\begin{config}
 \begin{verbatim}
  rsa_key = /home/youruser/.ssh/myrsakey
 \end{verbatim} 
+\end{config}
+
+\noindent
 rsa\_key value must be the full path to the rsa\_key.
 
 Some considerations are to be taking into account. As of now, remote tailing \textbf{only} provides 

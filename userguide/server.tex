@@ -68,6 +68,43 @@ HTTP/1.1 201 CREATED.
 
 The id returned is the log identifier id.
 
+\subsection{Unregistration}
+
+Log4tailer client unregisters from the server ones it is stopped.
+
+\begin{flushleft}
+ \begin{tabular}{|c|c|l|}
+ \hline 
+ \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
+  \textit{\textbf{URL}}}  & {\color{white} 
+ \textit{\textbf{Description}}}\\
+ POST & /unregister & Log4tailer client unregistration to the server\\
+ \hline
+\end{tabular}
+\end{flushleft}
+The POST method will have in the body a JSON object with the following information:
+
+\begin{itemize}
+ \item id log registration id 
+\end{itemize}
+
+\noindent
+Upon a successul POST the server will reply a 200 OK answer
+
+\noindent
+Example:
+
+\begin{codeexample}
+
+POST /unregister
+
+ \{``id'' : 4 \}
+
+RESPONSE
+
+HTTP/1.1 200 OK.
+\end{codeexample}
+
 \subsection{Alerting}
 
 \begin{flushleft}
@@ -117,12 +154,13 @@ HTTP/1.1 201 CREATED.
  \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
   \textit{\textbf{URL}}}  & {\color{white} 
  \textit{\textbf{Description}}}\\
- GET & /status & Status of the log files.\\
+ GET & /alerts/status & Status of the log files.\\
  \hline
 \end{tabular}
 \end{flushleft}
-It returns the last 10 log traces triggered along with the log and server they belong to. The 
-date when it happened is reported as well.
+It returns all log traces triggered along with the log and server they belong to. The 
+date when it happened is reported as well. The results are paginated in reverse
+order, the newest first.
 
 \noindent
 Example:
