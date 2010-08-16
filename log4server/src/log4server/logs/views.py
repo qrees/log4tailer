@@ -71,9 +71,7 @@ def alert(request):
 
 colors = {'FATAL' : 'Red', 'ERROR' : 'Magenta', 'TARGET' : 'LightSkyBlue'}
 
-@allowed('GET')
-def status(request):
-    logtraces_list = LogTrace.objects.all().order_by('-insertion_date')
+def paginate_logtraces(request, logtraces_list):
     paginator = Paginator(logtraces_list, 20)
     try:
         page = int(request.GET.get('page', '1'))
@@ -102,10 +100,37 @@ def status(request):
                 down -= 1
             elif logtraces.has_next() and top <= paginator.num_pages:
                     pages_iter.append(top-2)
+    return (logtraces, logs, pages_iter)
 
+# contains the last searched results 
+# only in the search_results page
+logtraces_found = None
+LAST_QUERY = None
+
+@allowed('GET')
+def status(request):
+    global logtraces_found 
+    logtraces_found = None
+    logtraces_list = LogTrace.objects.all().order_by('-insertion_date')
+    logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_list)
     return render_to_response('status.html', {'logs' : logs, 
         'logtraces' : logtraces, 'pages_iter' : pages_iter})
-    
+
+@allowed('GET')
+def search(request):
+    global logtraces_found
+    global LAST_QUERY
+    query = request.GET.get('query')
+    results = 0
+    if query:
+        LAST_QUERY = query
+        logtraces_list = LogTrace.objects.filter(logtrace__contains = query)
+        logtraces_found = logtraces_list
+    logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
+    return render_to_response('search_results.html', {'logs' : logs, 
+        'logtraces' : logtraces, 'pages_iter' : pages_iter, 
+        'query' : LAST_QUERY})
+
 @allowed('POST')
 @data_required
 def register(request):
@@ -123,5 +148,5 @@ def register(request):
         # just grab first one
         log = logs[0]
     return HttpResponse(content = log.id, status = 201)
-    
+
 

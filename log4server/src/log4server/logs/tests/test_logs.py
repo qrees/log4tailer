@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test import Client
 from django.utils import simplejson as json
 from log4server.logs.models import Log, LogTrace
+import urllib
 
 JSON_STR = 'application/json'
 
@@ -74,4 +75,23 @@ class LogRegisterDB(TestCase):
         response = self.client.post('/register/', json.dumps(params), JSON_STR)
         self.assertEqual(400, response.status_code)
         
+class SearchLogs(TestCase):
+    fixtures = ['logs.json']
+    
+    def setUp(self):
+        self.client = Client()
+    
+    def test_search(self):
+        params = {'logtrace' : 'fatal alert here', 'loglevel' : 'fatal',
+                'log' : {'id' : 1, 'logpath' : '/var/log/out.log',
+                'logserver' : 'anyserver'}}
+        response = self.client.post('/alerts/', json.dumps(params), JSON_STR)
+        self.assertEqual(201, response.status_code)
+ 
+        params = {'query' : 'fatal alert'}
+        url = '/alerts/search/?' + urllib.urlencode(params)
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+
+
 

@@ -1,11 +1,4 @@
 <html>
-  <head>
-
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="/media/js/autocomplete.js"></script>
-   </head>
-
 	<body style="background-color: #D5E1DD; ">
     <h2 id="heading">Logs Status Page</h2>
     <h3> Registered logs </h3>
@@ -21,16 +14,14 @@
         </tr>
     {% endfor %}
     </table>
-
     <br></br>
 
-    <form name="input" action="/alerts/search/" method="get">
-        <label for="q">Search for log trace:</label>
-        <input type="text" name="query" value="{{ query }}">
-        <input type="submit" value="Search" />
-    </form> 
+    <form action="/alerts/status" method="get" accept-charset="utf-8">
+    <input type="submit" value="Back to results page">
+    </form>
 
-    <font color="#2B3E42"><h3> Last log traces </h3></font>
+    <h3> Results for: "{{ query }}"</h3>
+        <h3> Log traces found</h3>
         <div class="pagination">
             {% if logtraces.number >= 5 %}
                 <a href="?page=1">First</a>
@@ -56,6 +47,8 @@
                 <a href="?page={{ logtraces.paginator.num_pages }}">Last</a>
             {% endif %}
             Page {{ logtraces.number }} of {{ logtraces.paginator.num_pages }}
+
+
         </div>
         <table border="1">
             <tr>
