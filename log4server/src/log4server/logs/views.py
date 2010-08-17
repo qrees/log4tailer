@@ -86,7 +86,9 @@ def paginate_logtraces(request, logtraces_list):
     logs = Log.objects.all()
     bottom = logtraces.number - 3
     pages_iter = [bottom, logtraces.number]
-    if logtraces.number <= 3:
+    if paginator.num_pages <= 3:
+        pages_iter = range(1, paginator.num_pages)
+    elif logtraces.number <= 3:
         pages_iter = range(1, 6)
     else:
         pos = 1
@@ -129,7 +131,7 @@ def search(request):
     logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
     return render_to_response('search_results.html', {'logs' : logs, 
         'logtraces' : logtraces, 'pages_iter' : pages_iter, 
-        'query' : LAST_QUERY})
+        'query' : LAST_QUERY, 'num_results' : len(logtraces_found)})
 
 @allowed('POST')
 @data_required

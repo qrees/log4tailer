@@ -1,28 +1,11 @@
-<html>
-  <head>
+{% extends "base.html" %}
+    {% block title %} Logs Status Page {% endblock %}
 
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="/media/js/autocomplete.js"></script>
-   </head>
+    {% block registeredlogs %}
+        {{ block.super }} 
+    {% endblock %}
 
-	<body style="background-color: #D5E1DD; ">
-    <h2 id="heading">Logs Status Page</h2>
-    <h3> Registered logs </h3>
-    <table border="1">
-        <tr>
-            <th>Servers</th>
-            <th>Logs</th>
-        </tr>
-    {% for log in logs %}
-        <tr bgcolor="#52B552">
-            <td>{{ log.logserver }}</td>
-            <td>{{ log.logpath }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-
-    <br></br>
+    {% block pagination_headers %}
 
     <form name="input" action="/alerts/search/" method="get">
         <label for="q">Search for log trace:</label>
@@ -31,47 +14,9 @@
     </form> 
 
     <font color="#2B3E42"><h3> Last log traces </h3></font>
-        <div class="pagination">
-            {% if logtraces.number >= 5 %}
-                <a href="?page=1">First</a>
-            {% endif %}
-            <span class="step-links">
-                {% if logtraces.has_previous %}
-                <a href="?page={{ logtraces.previous_page_number }}">&lt</a>&nbsp;
-                {% endif %}
-                <span class="current">
-                    {% for page in pages_iter %}
-                        {% if logtraces.number != page %}
-                            <a href="?page={{ page }}">{{ page }}</a>
-                        {% else %}
-                <font size="+2" color="#2B3E42">{{ logtraces.number }}</font>                       
-                        {% endif %}
-                    {% endfor %}
-                </span>
-                {% if logtraces.has_next %}
-                   &nbsp<a href="?page={{ logtraces.next_page_number }}">&gt</a>
-                {% endif %}
-            </span>
-            {% if logtraces.number < logtraces.paginator.num_pages %}
-                <a href="?page={{ logtraces.paginator.num_pages }}">Last</a>
-            {% endif %}
-            Page {{ logtraces.number }} of {{ logtraces.paginator.num_pages }}
-        </div>
-        <table border="1">
-            <tr>
-                <th>LogTrace</th>
-                <th>Time triggered</th>
-                <th>Log</th>
-                <th>Log Server</th>
-            </tr>
-        {% for logtrace in logtraces.object_list %}
-            <tr bgcolor="{{ logtrace.color }}">
-                <td>{{ logtrace }}</td>
-                <td>{{ logtrace.insertion_date }}</td>
-                <td>{{ logtrace.log.logpath }}</td>
-                <td>{{ logtrace.log.logserver }}</td>
-            </tr>
-        {% endfor %}
-        </table>
-	</body>
-</html>
+    
+    {% endblock %}
+
+    {% block pagination %}
+        {{ block.super }} 
+{% endblock %}

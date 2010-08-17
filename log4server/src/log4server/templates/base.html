@@ -1,0 +1,74 @@
+<html>
+    <h1>{% block title %}Log Status Page{% endblock %}</h1>
+
+	<body style="background-color: #D5E1DD; ">
+
+    {% block registeredlogs %}
+    <h3> Registered logs </h3>
+    <table border="1">
+        <tr>
+            <th>Servers</th>
+            <th>Logs</th>
+        </tr>
+    {% for log in logs %}
+        <tr bgcolor="#52B552">
+            <td>{{ log.logserver }}</td>
+            <td>{{ log.logpath }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% endblock %}
+
+    <br></br>
+    
+    {% block pagination_headers %}
+    {% endblock %}
+
+    <p></p>
+        <div class="pagination">
+            {% block pagination %}
+            
+            {% if logtraces.number >= 5 %}
+                <a href="?page=1">First</a>
+            {% endif %}
+            <span class="step-links">
+                {% if logtraces.has_previous %}
+                <a href="?page={{ logtraces.previous_page_number }}">&lt</a>&nbsp;
+                {% endif %}
+                <span class="current">
+                    {% for page in pages_iter %}
+                        {% if logtraces.number != page %}
+                            <a href="?page={{ page }}">{{ page }}</a>
+                        {% else %}
+                <font size="+2" color="#2B3E42">{{ logtraces.number }}</font>                       
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                {% if logtraces.has_next %}
+                   &nbsp<a href="?page={{ logtraces.next_page_number }}">&gt</a>
+                {% endif %}
+            </span>
+            {% if logtraces.number < logtraces.paginator.num_pages %}
+                <a href="?page={{ logtraces.paginator.num_pages }}">Last</a>
+            {% endif %}
+            Page {{ logtraces.number }} of {{ logtraces.paginator.num_pages }}
+        </div>
+        <table border="1">
+            <tr>
+                <th>LogTrace</th>
+                <th>Time triggered</th>
+                <th>Log</th>
+                <th>Log Server</th>
+            </tr>
+        {% for logtrace in logtraces.object_list %}
+            <tr bgcolor="{{ logtrace.color }}">
+                <td>{{ logtrace }}</td>
+                <td>{{ logtrace.insertion_date }}</td>
+                <td>{{ logtrace.log.logpath }}</td>
+                <td>{{ logtrace.log.logserver }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+            {% endblock %}
+	</body>
+<html>
