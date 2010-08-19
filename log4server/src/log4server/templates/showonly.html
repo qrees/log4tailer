@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+    {% block title %} Logs Status Page {% endblock %}
+
+    {% block registeredlogs %}
+        {{ block.super }} 
+    {% endblock %}
+
+    {% block pagination_headers %}
+    <form name="input" action="/alerts/search/" method="get">
+        <label for="q">Search for log trace:</label>
+        <input type="text" name="query" value="{{ query }}">
+        <input type="hidden" name="logname" value="{{ logname }}">
+        <input type="submit" value="Search" />
+    </form>
+    <form action="/alerts/status/" method="GET" accept-charset="utf-8">
+    <input type="submit" value="Back to status page">
+    </form>
+    <h3> Log Traces for log: "{{ logname }}"</h3>
+
+    {% endblock %}
+    {% block pagination %}
+        {{ block.super }} 
+    {% endblock %}
+
