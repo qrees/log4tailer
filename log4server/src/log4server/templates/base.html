@@ -23,11 +23,11 @@
     
     {% block pagination_headers %}
     {% endblock %}
-
+    
     <p></p>
+
+    {% block pagination %}
         <div class="pagination">
-            {% block pagination %}
-            
             {% if logtraces.number >= 5 %}
                 <a href="?page=1">First</a>
             {% endif %}
@@ -52,7 +52,6 @@
                 <a href="?page={{ logtraces.paginator.num_pages }}">Last</a>
             {% endif %}
             Page {{ logtraces.number }} of {{ logtraces.paginator.num_pages }}
-        </div>
         <table border="1">
             <tr>
                 <th>LogTrace</th>
@@ -69,6 +68,7 @@
             </tr>
         {% endfor %}
         </table>
-            {% endblock %}
+        </div>
+        {% endblock %}
 	</body>
 <html>

@@ -139,6 +139,11 @@ def search(request):
         LAST_QUERY = query
         logtraces_list = LogTrace.objects.filter(logtrace__contains = query)
         logtraces_found = logtraces_list
+    else:
+        # no query was introduced in search box
+        return render_to_response('base_no_search.html', {'logs' :
+            Log.objects.all()})
+
     logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
     return render_to_response('search_results.html', {'logs' : logs, 
         'logtraces' : logtraces, 'pages_iter' : pages_iter, 
