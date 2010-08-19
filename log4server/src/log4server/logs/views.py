@@ -69,7 +69,9 @@ def alert(request):
     logtrace.save()
     return HttpResponse(content='', status=201)
 
-colors = {'FATAL' : 'Red', 'ERROR' : 'Magenta', 'TARGET' : 'LightSkyBlue'}
+colors = {'FATAL' : 'Red', 
+    'ERROR' : 'Magenta', 
+    'TARGET' : 'LightSkyBlue'}
 
 def paginate_logtraces(request, logtraces_list):
     paginator = Paginator(logtraces_list, 20)
@@ -108,6 +110,7 @@ def paginate_logtraces(request, logtraces_list):
 # only in the search_results page
 logtraces_found = None
 LAST_QUERY = None
+LAST_LOGNAME = None
 
 @allowed('GET')
 def status(request):
@@ -122,16 +125,41 @@ def status(request):
 def search(request):
     global logtraces_found
     global LAST_QUERY
+    global LAST_LOGNAME
     query = request.GET.get('query')
+    logname = request.GET.get('logname')
     results = 0
-    if query:
+    if logname and query:
+        LAST_QUERY = query
+        LAST_LOGNAME = logname
+        logtraces_list = LogTrace.objects.filter(logtrace__contains = query, 
+                log__logpath = logname)
+        logtraces_found = logtraces_list
+    elif query:
         LAST_QUERY = query
         logtraces_list = LogTrace.objects.filter(logtrace__contains = query)
         logtraces_found = logtraces_list
     logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
     return render_to_response('search_results.html', {'logs' : logs, 
         'logtraces' : logtraces, 'pages_iter' : pages_iter, 
-        'query' : LAST_QUERY, 'num_results' : len(logtraces_found)})
+        'query' : LAST_QUERY, 'num_results' : len(logtraces_found),
+        'logname' : LAST_LOGNAME})
+
+@allowed('GET')
+def showonly(request):
+    global logtraces_found
+    global LAST_LOGNAME
+    logname = request.GET.get('logname')
+    if logname:
+        LAST_LOGNAME = logname
+        logtraces_list = (LogTrace.objects.
+                filter(log__logpath=logname).
+                order_by('-insertion_date'))
+        logtraces_found = logtraces_list
+    logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
+    return render_to_response('showonly.html', {'logs' : logs, 
+        'logtraces' : logtraces, 'pages_iter' : pages_iter,
+        'logname' : LAST_LOGNAME})
 
 @allowed('POST')
 @data_required

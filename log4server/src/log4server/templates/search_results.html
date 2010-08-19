@@ -7,9 +7,16 @@
     {% endblock %}
 
     {% block pagination_headers %}
+    {% if logname  %}
+        <form action="/alerts/tracesonelog" method="GET" accept-charset="utf-8">
+        <input type="hidden" name="logname" value="{{ logname }}">
+        <input type="submit" value="Back to results page">
+    </form>
+    {% else %}
     <form action="/alerts/status" method="GET" accept-charset="utf-8">
     <input type="submit" value="Back to results page">
     </form>
+    {% endif %}
     <h3> {{ num_results }} results for: "{{ query }}"</h3>
         <h3> Log traces found</h3>
 

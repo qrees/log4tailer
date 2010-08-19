@@ -12,6 +12,15 @@
         <input type="text" name="query" value="{{ query }}">
         <input type="submit" value="Search" />
     </form> 
+    <form name = "logs" action="/alerts/tracesonelog/" method="get">
+        <select name="logname" onChange="logs.submit();">
+            <option value="" selected>Show log traces for log</option>
+            {% for log in logs %}
+                <option value="{{ log.logpath }}">{{ log.logpath }}</option>
+            {% endfor %}
+        </select>
+        <!--<input type="submit" value="Show log traces for log:">-->
+    </form>
 
     <font color="#2B3E42"><h3> Last log traces </h3></font>
     

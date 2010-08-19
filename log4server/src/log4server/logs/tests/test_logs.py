@@ -93,5 +93,14 @@ class SearchLogs(TestCase):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
 
+    #def test_showonly(self):
+# 
+        #params = {'query' : 'fatal alert'}
+        #url = '/alerts/search/ComboN?' + urllib.urlencode(params)
+        #response = self.client.get(url)
+        #self.assertEqual(200, response.status_code)
+#
+
+
 
 
