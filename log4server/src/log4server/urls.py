@@ -8,6 +8,7 @@ urlpatterns = patterns(
     (r'^alerts/$', 'log4server.logs.views.alert'),
     (r'^alerts/status/', 'log4server.logs.views.status'),
     (r'^alerts/search/', 'log4server.logs.views.search'),
+    (r'^alerts/tracesonelog/', 'log4server.logs.views.showonly'),
     (r'^register/', 'log4server.logs.views.register'),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT }),
 

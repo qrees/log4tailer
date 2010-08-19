@@ -106,16 +106,26 @@ def paginate_logtraces(request, logtraces_list):
                     pages_iter.append(top-2)
     return (logtraces, logs, pages_iter)
 
+
+class LogQueries(object):
+    def __init__(self):
+        self.logtraces_found = None
+        self.last_query = None
+        self.last_logname = None
+
+    def reset(self):
+        self.logtraces_found = None
+        self.last_logname = None
+        self.last_query = None
+        
+
 # contains the last searched results 
 # only in the search_results page
-logtraces_found = None
-LAST_QUERY = None
-LAST_LOGNAME = None
+logqueries = LogQueries()
 
 @allowed('GET')
 def status(request):
-    global logtraces_found 
-    logtraces_found = None
+    logqueries.reset()
     logtraces_list = LogTrace.objects.all().order_by('-insertion_date')
     logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_list)
     return render_to_response('status.html', {'logs' : logs, 
@@ -123,48 +133,48 @@ def status(request):
 
 @allowed('GET')
 def search(request):
-    global logtraces_found
-    global LAST_QUERY
-    global LAST_LOGNAME
     query = request.GET.get('query')
     logname = request.GET.get('logname')
     results = 0
     if logname and query:
-        LAST_QUERY = query
-        LAST_LOGNAME = logname
+        logqueries.last_query = query
+        logqueries.last_logname = logname
         logtraces_list = LogTrace.objects.filter(logtrace__contains = query, 
                 log__logpath = logname)
-        logtraces_found = logtraces_list
+        logqueries.logtraces_found = logtraces_list
     elif query:
-        LAST_QUERY = query
+        logqueries.last_query = query
         logtraces_list = LogTrace.objects.filter(logtrace__contains = query)
-        logtraces_found = logtraces_list
-    else:
+        logqueries.logtraces_found = logtraces_list
+    # no query and no query introduced before = empty
+    elif not logqueries.last_query:
         # no query was introduced in search box
         return render_to_response('base_no_search.html', {'logs' :
             Log.objects.all()})
 
-    logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
+    logtraces, logs, pages_iter = paginate_logtraces(request, 
+            logqueries.logtraces_found)
     return render_to_response('search_results.html', {'logs' : logs, 
         'logtraces' : logtraces, 'pages_iter' : pages_iter, 
-        'query' : LAST_QUERY, 'num_results' : len(logtraces_found),
-        'logname' : LAST_LOGNAME})
+        'query' : logqueries.last_query, 
+        'num_results' : len(logqueries.logtraces_found),
+        'logname' : logqueries.last_logname})
 
 @allowed('GET')
 def showonly(request):
-    global logtraces_found
-    global LAST_LOGNAME
+    logqueries.last_query = None
     logname = request.GET.get('logname')
     if logname:
-        LAST_LOGNAME = logname
+        logqueries.last_logname = logname
         logtraces_list = (LogTrace.objects.
                 filter(log__logpath=logname).
                 order_by('-insertion_date'))
-        logtraces_found = logtraces_list
-    logtraces, logs, pages_iter = paginate_logtraces(request, logtraces_found)
+        logqueries.logtraces_found = logtraces_list
+    logtraces, logs, pages_iter = paginate_logtraces(request, 
+            logqueries.logtraces_found)
     return render_to_response('showonly.html', {'logs' : logs, 
         'logtraces' : logtraces, 'pages_iter' : pages_iter,
-        'logname' : LAST_LOGNAME})
+        'logname' : logqueries.last_logname})
 
 @allowed('POST')
 @data_required
