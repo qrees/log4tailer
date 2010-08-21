@@ -24,9 +24,13 @@ one being used by the log4tailer poster notification.
 \logftailer{} client has the poster notification that allows the tailer to communicate 
 with a centralized web application, notifying it of possible problems from remote logs. 
 The poster notification will first register the tailer client to the server, and next 
-calls will be for alert notifications only. The compliant API interface is as follows:
+calls will be for alert notifications only.
 
-\subsection{Registration}
+\subsection{Log4Tailer server API REST interface}
+
+The compliant API interface is as follows:
+
+\subsubsection{Registration}
 
 Log4tailer client registers to the server on startup when poster notification is provided.
 
@@ -68,7 +72,7 @@ HTTP/1.1 201 CREATED.
 
 The id returned is the log identifier id.
 
-\subsection{Unregistration}
+\subsubsection{Unregistration}
 
 Log4tailer client unregisters from the server ones it is stopped.
 
@@ -105,7 +109,7 @@ RESPONSE
 HTTP/1.1 200 OK.
 \end{codeexample}
 
-\subsection{Alerting}
+\subsubsection{Alerting}
 
 \begin{flushleft}
  \begin{tabular}{|c|c|l|}
@@ -146,7 +150,7 @@ RESPONSE
 HTTP/1.1 201 CREATED.
 \end{codeexample}
 
-\subsection{Status}
+\subsubsection{Status}
 
 \begin{flushleft}
  \begin{tabular}{|c|c|l|}
