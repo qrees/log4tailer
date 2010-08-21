@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+    {% block title %} Logs Status Page {% endblock %}
+
+    {% block registeredlogs %}
+        {{ block.super }} 
+    {% endblock %}
+
+    {% block pagination_headers %}
+    <form action="/alerts/status/" method="GET" accept-charset="utf-8">
+    <input type="submit" value="Back to status page">
+    </form>
+
+    <h2>Oops!! Nothing to search</h2>
+    {% endblock %}
+
