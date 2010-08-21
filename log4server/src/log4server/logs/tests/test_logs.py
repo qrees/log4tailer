@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test import Client
 from django.utils import simplejson as json
 from log4server.logs.models import Log, LogTrace
+from django.core.exceptions import ObjectDoesNotExist
 import urllib
 
 JSON_STR = 'application/json'
@@ -93,14 +94,30 @@ class SearchLogs(TestCase):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
 
-    #def test_showonly(self):
-# 
-        #params = {'query' : 'fatal alert'}
-        #url = '/alerts/search/ComboN?' + urllib.urlencode(params)
-        #response = self.client.get(url)
-        #self.assertEqual(200, response.status_code)
-#
+class LogUnRegisterDB(TestCase):
+    fixtures = ['logs.json']
 
+    def setUp(self):
+        self.client = Client()
+        
+    def test_unregister_db(self):
+        params = {'id' : 1}
+        response = self.client.post('/unregister/', json.dumps(params), JSON_STR)
+        self.assertEqual(200, response.status_code)
+        try:
+            log = Log.objects.get(id = 1)
+            self.fail()
+        except ObjectDoesNotExist:
+            pass
 
+    def test_unregister_db_lognotexists(self):
+        params = {'id' : 99}
+        response = self.client.post('/unregister/', json.dumps(params), JSON_STR)
+        self.assertEqual(404, response.status_code)
+
+    def test_unregister_db_id_notinjson(self):
+        params = {'anything' : 99}
+        response = self.client.post('/unregister/', json.dumps(params), JSON_STR)
+        self.assertEqual(404, response.status_code)
 
 

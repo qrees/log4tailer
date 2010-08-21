@@ -23,6 +23,10 @@ from django.http import (HttpResponse,
 from models import Log, LogTrace
 from django.utils import simplejson as json
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.exceptions import ObjectDoesNotExist
+
+
+###### Convenience decorators 
 
 def allowed(verb):
     def required(func):
@@ -54,6 +58,9 @@ def from_json(model, data):
         else:
             vals[key] = value
     return vals
+
+
+###### Request handlers
 
 @allowed('POST')
 @data_required
@@ -108,12 +115,18 @@ def paginate_logtraces(request, logtraces_list):
 
 
 class LogQueries(object):
+    """Just a wrapper to mantain 
+    a record of what was last log to 
+    be queried. Avoids having global declarations
+    in several handlers"""
     def __init__(self):
         self.logtraces_found = None
         self.last_query = None
         self.last_logname = None
 
     def reset(self):
+        """Convenience method. 
+        """ 
         self.logtraces_found = None
         self.last_logname = None
         self.last_query = None
@@ -142,13 +155,13 @@ def search(request):
         logtraces_list = LogTrace.objects.filter(logtrace__contains = query, 
                 log__logpath = logname)
         logqueries.logtraces_found = logtraces_list
+    # no logname, just query
     elif query:
         logqueries.last_query = query
         logtraces_list = LogTrace.objects.filter(logtrace__contains = query)
         logqueries.logtraces_found = logtraces_list
-    # no query and no query introduced before = empty
+    # no logname, no query and no query introduced before = empty
     elif not logqueries.last_query:
-        # no query was introduced in search box
         return render_to_response('base_no_search.html', {'logs' :
             Log.objects.all()})
 
@@ -194,4 +207,17 @@ def register(request):
         log = logs[0]
     return HttpResponse(content = log.id, status = 201)
 
+@allowed('POST')
+@data_required
+def unregister(request):
+    data = request.data
+    log_id = data.get('id', None)
+    if not log_id:
+        return HttpResponseNotFound("Missing log_id for unregistering")
+    try:
+        log = Log.objects.get(pk = log_id)
+    except ObjectDoesNotExist, err:
+        return HttpResponseNotFound("Log already unregistered")
+    log.delete()
+    return HttpResponse(status = 200)
 
