@@ -6,6 +6,7 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'log4server.db'
@@ -51,7 +52,6 @@ ROOT_URLCONF = 'log4server.urls'
 INSTALLED_APPS = (
     'log4server.logs',
     'test_extensions',
-    'django_cpserver',
 )
 
 TEMPLATE_LOADERS = (
