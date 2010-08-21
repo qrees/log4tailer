@@ -24,9 +24,11 @@ from log4tailer.Timer import Timer
 from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
+from subprocess import PIPE
 import threading
 import httplib
 import urllib
+
 try:
     import json
 except:
@@ -445,8 +447,8 @@ class Poster(object):
         self.unregister_uri = properties.getValue('server_service_unregister_uri')
         self.headers = {'Content-type' : 'application/json'}
         self.registered_logs = {}
-        from socket import gethostname
-        self.hostname = gethostname()
+        self.hostname = subprocess.Popen(['hostname'], 
+                stdout = PIPE).communicate()[0].strip()
 
     def notify(self, message, log):
         if log not in self.registered_logs:
