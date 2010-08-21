@@ -30,7 +30,11 @@ import urllib
 try:
     import json
 except:
-    import simplejson as json
+    try:
+        import simplejson as json
+    except:
+        print ("no json library could be imported, "
+                "you need simplejson for Poster notification")
 
 try:
     import queue
@@ -453,7 +457,7 @@ class Poster(object):
         logtrace, logpath = message.getPlainMessage()
         log_info = self.registered_logs[log]
         log_id = log_info['id']
-        params = json.dumps({'logtrace': logtrace, 'level' : msg_level, 'log': {
+        params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 'log': {
             'id' : log_id, 'logpath' : log.path, 'logserver' : self.hostname}})
         response = ''
         conn = httplib.HTTPConnection(self.url, self.port)
@@ -476,7 +480,9 @@ class Poster(object):
 
     def unregister(self, log):
         if log in self.registered_logs:
-            params = urllib.urlencode({'log': log.path})
+            log_info = self.registered_logs[log]
+            log_id = log_info['id']
+            params = urllib.urlencode({'id': log_id})
             conn = httplib.HTTPConnection(self.url, self.port)
             conn.request('POST', self.unregister_uri, params)
             return conn.getresponse()
