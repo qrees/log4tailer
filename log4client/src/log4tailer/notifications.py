@@ -484,9 +484,9 @@ class Poster(object):
         if log in self.registered_logs:
             log_info = self.registered_logs[log]
             log_id = log_info['id']
-            params = urllib.urlencode({'id': log_id})
+            params = {'id' : log_id}
             conn = httplib.HTTPConnection(self.url, self.port)
-            conn.request('POST', self.unregister_uri, params)
+            conn.request('POST', self.unregister_uri, json.dumps(params))
             return conn.getresponse()
 
 
