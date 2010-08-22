@@ -44,7 +44,6 @@
 # pausefatal = 1
 # pausetarget = 1
 
-
 # ======================================================
 # Mail details 
 # ======================================================
@@ -62,6 +61,16 @@
 
 # executor = program command1 command2 %s %s
 # executor = program command1 command2 
+
+# ===================================================================
+# poster notification
+# ===================================================================
+
+# server_url = url to the server
+# server_port = port
+# server_service_uri = /where/go/notifications
+# server_service_register_uri = /register/log4tailer/toserver
+# server_service_unregister_uri = /unregister/log4tailer/fromserver
 
 # ===================================================================
 # Inactivity notification, by email or stdout.
