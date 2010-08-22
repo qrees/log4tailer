@@ -388,9 +388,14 @@ where in the configfile.txt you will need to specify the following parameters:
  server_port = port
  server_service_uri = /where/go/notifications
  server_service_register_uri = /register/log4tailer/toserver
- server_service_unregister_uri = / unregister/log4tailer/fromserver
+ server_service_unregister_uri = /unregister/log4tailer/fromserver
 \end{verbatim}
 \end{config}
+
+Upon unregistration, the server will delete the log from the database and all its related 
+logtraces. So, if you don't want that happen, just point the unregister uri to a non existent one, 
+and the server will not do anything, although it will keep the log as registered. Please, take a 
+look at \autoref{sec:log4server}.
 
 \section{Pause Modes}
 
@@ -609,6 +614,7 @@ If you always use the same configuration file, you can copy it in your HOME dire
 don't provide the -c option.
 
 The config file provided for convenience is called log4tailerconfig.txt and is quoted below:
+
 \begin{verbatim}
 
 # Optional config for log4tailer
@@ -657,7 +663,6 @@ The config file provided for convenience is called log4tailerconfig.txt and is q
 # pausefatal = 1
 # pausetarget = 1
 
-
 # ======================================================
 # Mail details 
 # ======================================================
@@ -669,6 +674,22 @@ The config file provided for convenience is called log4tailerconfig.txt and is q
 # mail_from = any from address
 # mail_to = alerts will be sent in the address you specify in here
 
+# ===================================================================
+# executor notification
+# ===================================================================
+
+# executor = program command1 command2 %s %s
+# executor = program command1 command2 
+
+# ===================================================================
+# poster notification
+# ===================================================================
+
+# server_url = url to the server
+# server_port = port
+# server_service_uri = /where/go/notifications
+# server_service_register_uri = /register/log4tailer/toserver
+# server_service_unregister_uri = /unregister/log4tailer/fromserver
 
 # ===================================================================
 # Inactivity notification, by email or stdout.
@@ -687,7 +708,6 @@ The config file provided for convenience is called log4tailerconfig.txt and is q
 # analyticsnotification = mail
 # analyticsnotification = fullPathToaFile
 # analyticsgaptime = 10.5
-
 
 # ==============================
 # SSH Tailing parameters

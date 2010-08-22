@@ -90,7 +90,6 @@
 # analyticsnotification = fullPathToaFile
 # analyticsgaptime = 10.5
 
-
 # ==============================
 # SSH Tailing parameters
 # ==============================
