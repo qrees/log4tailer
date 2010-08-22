@@ -2,14 +2,15 @@
 
 \section{A centralized reporting web application}
 \label{sec:log4server}
-The \logftailer{} project includes a web backend application that receives notifications 
-from the log4tailer clients, notifying in a web front page about the status of the logs 
-in several machines. The log4server is implemented using the Django web framework and can run 
-in any wsgi compliant web server, such as Apache, Cherokee, Nginx or CherryPy, just to name 
-a few. Basically, the clients will register first to the server and then notify if any fatal, 
-error, critical or target logtrace has been found. 
+The \logftailer{} project includes a web backend application that receives
+notifications from the log4tailer clients, notifying in a web front page about
+the status of the logs in several machines. The log4server is implemented using
+the Django web framework and can run in any wsgi compliant web server, such as
+Apache, Cherokee, Nginx or CherryPy, just to name a few. Basically, the clients
+will register first to the server and then notify if any fatal, error, critical
+or target logtrace has been found. 
 
-A network diagram is showed in figure \autoref{fig:serverdiagram}:
+A network diagram is showed in figure \autoref{fig:serverdiagram}.
 
 \begin{figure}[hb]
 \centering
@@ -144,7 +145,8 @@ POST /alerts
 
  \{``logtrace'' : ``This is an error trace'', 
    ``loglevel'' : ``error'',
-   ``log'' : \{``id'' : ``logid'', ``logpath'' : ``/var/log/messages'', ``logserver'': ``192.168.1.1''\}\} 
+   ``log'' : \{``id'' : ``logid'', ``logpath'' : ``/var/log/messages'', ``logserver'': 
+``192.168.1.1''\}\} 
 
 RESPONSE
 
@@ -182,7 +184,7 @@ HTTP/1.1 200 OK.
 
 \noindent
 If you go to /alerts/status in your web browser, you would see something as showed in figure 
-\autoref{fig:logstatus}:
+\autoref{fig:logstatus}.
 
 \begin{figure}[ht]
 %\centering
@@ -191,30 +193,70 @@ If you go to /alerts/status in your web browser, you would see something as show
 \end{figure}
 
 \section{Log4Server deployment}
-Log4Server is implemented using the Django web framework. It persists alertable log traces into a 
-database for easy reporting and log4tailer client registrations. 
+Log4Server is implemented using the Django web framework. It persists alertable
+log traces into a database for easy reporting and log4tailer client
+registrations. 
 
-The application uses buildout to manage all application dependencies and deployment. By issuing 
-the bin/buildout command, it will build a log4server.wsgi file, that is the one that will need to 
-be used when setting up the web server. In this document, we will show the instructions on how to 
-set it up by using the Apache web server. 
+The application uses buildout to manage all application dependencies and
+deployment. By issuing the bin/buildout command, it will build a
+log4server.wsgi file, that is the one that you will need to use when setting up
+the web server. In this document, we will show the instructions on how to set
+it up by using the Apache web server. 
 
-\subsection{Log4Server deployment dependencies}
+\subsection{Building the wsgi file}
 
-You'll need to install a web server such as Apache listening on the port you want Log4Server to listen 
-to. Make sure to setup the clients to post notifications to that port. Apart from that, a Django 
-compatible Python runtime should be available in the server as well. Python 2.6 runtime 
-is the recommended one. 
+First of all, download the log4server distribution sources from googlecode
+site. Untar the package and execute\footnote{The project provides a Makefile
+that executes the bin/buildout command for convenience. It can take a while, so 
+relax and take a cup of tea.}:
+
+\begin{cmd}
+    make
+\end{cmd}
+If everything is fine\footnote{You need external internet connectivity, as it
+will download all dependencies such as Django web framework in the current
+directory.} you will see a directory called \emph{bin}. If you go
+into that directory you will see a file called log4tailer.wsgi. 
+
+\subsection{Apache configuration}
+In a Debian system such as Ubuntu, you'll need to install Apache and
+libapache2-mod-wsgi. Once installed, proceed as follows:
+
+\begin{cmd}
+    cd /etc/apache2/sites-available
+\end{cmd}
+and place a file called log4tailer.conf with the following contents:
+
+\begin{config}
+\begin{verbatim}
+
+Listen 127.0.0.1:8000
+<VirtualHost *:8000>
+    WSGIDaemonProcess log4server processes=1 threads=5 display-name=%{GROUP}
+    WSGIProcessGroup log4server
+    WSGIScriptAlias / /path\_to\_thewsgi/log4server/bin/log4server.wsgi
+</VirtualHost>
+
+\end{verbatim}
+\end{config}
+
+Then, go to:
+
+\begin{cmd}
+    cd /etc/apache2/sites-enabled
+\end{cmd}
+and place a soft link to the previous created log4tailer.conf file:
+
+\begin{cmd}
+    ln -s ../sites-available/log4tailer.conf
+\end{cmd}
+
 
 \subsection{Deciding on database}
 
-Log4Server needs a database in order to persist the alertable logtraces. Sqlite3, Mysql or PostGres 
-should be, by far, enough. If you use Sqlite3, make sure that Apache process has write permissions 
-on the database file. 
+Log4Server needs a database in order to persist the alertable logtraces.
+Sqlite3, Mysql or PostGres should be, by far, enough. If you use Sqlite3, make
+sure that Apache process has writing permissions on the database file. 
 
-\subsection{Apache setup}
-
-You'll need to setup a VirtualHost for that and make sure that the mod\_wsgi module is available 
-for Apache. 
 
 \newpage
