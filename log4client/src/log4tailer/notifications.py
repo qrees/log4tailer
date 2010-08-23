@@ -447,8 +447,8 @@ class Poster(object):
         self.unregister_uri = properties.getValue('server_service_unregister_uri')
         self.headers = {'Content-type' : 'application/json'}
         self.registered_logs = {}
-        self.hostname = subprocess.Popen(['hostname'], 
-                stdout = PIPE).communicate()[0].strip()
+        from socket import gethostname
+        self.hostname = gethostname()
 
     def notify(self, message, log):
         if log not in self.registered_logs:
@@ -468,13 +468,18 @@ class Poster(object):
         except Exception, err:
             print err
         response = conn.getresponse()
+        conn.close()
         return response
     
     def register(self, log):
         params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
         conn = httplib.HTTPConnection(self.url, self.port)
-        conn.request('POST', self.register_uri, params, self.headers)
+        try:
+            conn.request('POST', self.register_uri, params, self.headers)
+        except Exception, err:
+            print err
         response = conn.getresponse()
+        conn.close()
         log_id = response.read()
         self.registered_logs[log] = {'id' : log_id, 'logserver' :
                 self.hostname}
@@ -486,7 +491,12 @@ class Poster(object):
             log_id = log_info['id']
             params = {'id' : log_id}
             conn = httplib.HTTPConnection(self.url, self.port)
-            conn.request('POST', self.unregister_uri, json.dumps(params))
-            return conn.getresponse()
+            try:
+                conn.request('POST', self.unregister_uri, json.dumps(params))
+            except Exception, err:
+                print err
+            response = conn.getresponse()
+            conn.close()
+            return response
 
 

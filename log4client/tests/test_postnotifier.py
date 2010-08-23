@@ -8,6 +8,7 @@ from log4tailer.LogColors import LogColors
 from log4tailer.Message import Message
 from log4tailer.Log import Log
 import sys
+import time
 
 version_info = sys.version_info
 version2_4 = (2, 4)
@@ -27,6 +28,7 @@ if not version_info[:2] == version2_4:
 
         def stop(self):
             self.httpd.shutdown()
+            time.sleep(0.01)
             self.join()
 
     SERVER = None
