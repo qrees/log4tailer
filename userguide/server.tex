@@ -10,7 +10,7 @@ Apache, Cherokee, Nginx or CherryPy, just to name a few. Basically, the clients
 will register first to the server and then notify if any fatal, error, critical
 or target logtrace has been found. 
 
-A network diagram is showed in figure \autoref{fig:serverdiagram}.
+A network diagram is showed in \autoref{fig:serverdiagram}.
 
 \begin{figure}[hb]
 \centering
@@ -183,7 +183,7 @@ HTTP/1.1 200 OK.
 
 
 \noindent
-If you go to /alerts/status in your web browser, you would see something as showed in figure 
+If you go to /alerts/status in your web browser, you would see something as showed in  
 \autoref{fig:logstatus}.
 
 \begin{figure}[ht]
@@ -254,9 +254,17 @@ and place a soft link to the previous created log4tailer.conf file:
 
 \subsection{Deciding on database}
 
-Log4Server needs a database in order to persist the alertable logtraces.
-Sqlite3, Mysql or PostGres should be, by far, enough. If you use Sqlite3, make
-sure that Apache process has writing permissions on the database file. 
+Log4Server needs a database in order to persist the alertable logtraces. 
+Sqlite3, Mysql or PostGres should be, by far, enough. Actually, with just an
+Sqlite3 would be just fine. Before starting starting the server, you should
+sync the database the first time or any time that the database does not exist
+already. In order to do that, execute the following command:
 
+\begin{cmd}
+   bin/log4server syncdb 
+\end{cmd}
+\emph{log4server} is just a wrapper for the \emph{manage.py} Django python
+script. Make sure you setup \todo[size=\footnotesize,color=yellow]{should we
+provide an etc settings.py? in buildout}.
 
 \newpage
