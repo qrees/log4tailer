@@ -103,9 +103,6 @@ class Message(object):
     def __getMultipleTargets(self, target):
         target = target.replace(' ','').replace(',','|')
         return target
-    
-    def getMessageLevel(self):
-        return self.messageLevel
 
     def getPlainMessage(self):
         return (self.plainMessage, self.currentLogPath)

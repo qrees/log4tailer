@@ -128,7 +128,7 @@ class TestColors(unittest.TestCase):
         message.parse(trace, anylog)
         notifier.notify(message,anylog)
         self.assertEqual(trace, sys.stdout.captured[0])
-        self.assertEqual('', message.getMessageLevel())        
+        self.assertEqual('', message.messageLevel)        
     
     def testLogColorsParseConfig(self):
         logcolors = LogColors()
@@ -154,11 +154,11 @@ class TestColors(unittest.TestCase):
         message.parse(trace0, anylog)
         notifier.notify(message, anylog)
         self.assertEqual(expectedLogTrace0, sys.stdout.captured[0])
-        self.assertEqual('FATAL', message.getMessageLevel())        
+        self.assertEqual('FATAL', message.messageLevel)        
         message.parse(trace1, anylog)
         notifier.notify(message, anylog)
         self.assertEqual(expectedLogTrace1, sys.stdout.captured[2])
-        self.assertEqual('FATAL', message.getMessageLevel())        
+        self.assertEqual('FATAL', message.messageLevel)        
 
     def testshouldColorizeWithBackground(self):
         trace = "FATAL there could be an error in the application"

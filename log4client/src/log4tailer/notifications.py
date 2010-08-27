@@ -177,7 +177,7 @@ class Mail(object):
         
         body = self.bodyMailAction
         if not body:
-            if (message.getMessageLevel() not in Mail.mailLevels 
+            if (message.messageLevel not in Mail.mailLevels 
                     and not message.isATarget()):
                 return
             message, logpath = message.getPlainMessage()
@@ -320,7 +320,7 @@ class CornerMark(object):
         :param message: the message object wrapping the current log trace
         :param log: the log associated with the current message
         """ 
-        level = message.getMessageLevel().upper()
+        level = message.messageLevel.upper()
         isTarget = message.isATarget()
         # target has priority over markable levels
         if isTarget:
@@ -403,7 +403,7 @@ class Executor(object):
         return self.executable
 
     def notify(self, message, log):
-        msg_level = message.getMessageLevel().upper()
+        msg_level = message.messageLevel.upper()
         if not message.isATarget() and msg_level not in self.Pullers:
             return
         logtrace, logpath = message.getPlainMessage()
@@ -451,7 +451,7 @@ class Poster(object):
     def notify(self, message, log):
         if log not in self.registered_logs:
             self.register(log)
-        msg_level = message.getMessageLevel().upper()
+        msg_level = message.messageLevel.upper()
         if not message.isATarget() and msg_level not in self.Pullers:
             return
         logtrace, logpath = message.getPlainMessage()

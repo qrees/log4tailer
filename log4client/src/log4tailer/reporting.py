@@ -67,7 +67,7 @@ class Resume(object):
         return strftime("%d %b %Y %H:%M:%S", localtime())
 
     def update(self,message,log):
-        messageLevel = message.getMessageLevel()
+        messageLevel = message.messageLevel
         plainmessage,logpath = message.getPlainMessage()
         isTarget = message.isATarget()
         logPath = log.path

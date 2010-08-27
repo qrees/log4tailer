@@ -84,12 +84,14 @@ class TestResume(unittest.TestCase):
     
     def testShouldReportaTarget(self):
         logline = 'this is a target line and should be reported'
-        message_mocker = mox.Mox()
-        message = message_mocker.CreateMock(Message)
-        message.getMessageLevel().AndReturn('INFO')
-        message.getPlainMessage().AndReturn((logline,'out.log'))
-        message.isATarget().AndReturn(True)
-        message_mocker.ReplayAll()
+        message = self.mocker.mock()
+        message.messageLevel
+        self.mocker.result('INFO')
+        message.getPlainMessage()
+        self.mocker.result((logline, 'out.log'))
+        message.isATarget()
+        self.mocker.result(True)
+        self.mocker.replay()
         mylog = Log('out.log')
         arraylogs = [mylog]
         resume = reporting.Resume(arraylogs)
@@ -98,7 +100,6 @@ class TestResume(unittest.TestCase):
         numofTargets = 1
         gotnumTargets = outLogReport['TARGET']
         self.assertEquals(numofTargets, gotnumTargets)
-        message_mocker.VerifyAll()
 
     def testShouldReportaLogOwnTarget(self):
         logfile = "/any/path/outtarget.log"
