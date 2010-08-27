@@ -195,6 +195,10 @@ class LogTailer(object):
                     resume.setMailNotification(self.mailAction)
             if analyticsgap:
                 resume.setAnalyticsGapNotification(analyticsgap)
+            if self.silence:
+                # if no notify has been setup and we are in daemonized mode 
+                # we need to flush the reporting to avoid filling up memory
+                pass
         # check if inactivity action on the self.actions and set the inactivity 
         # on the resume object. If inactivity is flagged, will be then
         # reported.
@@ -269,3 +273,4 @@ class LogTailer(object):
             print "\n"
             resume.report()
             print "Ended log4tailer, because colors are fun"
+

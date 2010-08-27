@@ -24,10 +24,8 @@ from log4tailer.Timer import Timer
 from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
-from subprocess import PIPE
 import threading
 import httplib
-import urllib
 
 try:
     import json
