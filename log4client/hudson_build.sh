@@ -1,6 +1,5 @@
 cd $WORKSPACE/log4client
 CWD=`pwd`
-SOURCES=$CWD/src/log4tailer
 make env
 export PATH=$CWD/ENV/bin:$PATH
 make all
