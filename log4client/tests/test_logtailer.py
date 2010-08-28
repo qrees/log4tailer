@@ -252,6 +252,15 @@ class TestInit(unittest.TestCase):
         self.assertTrue(isinstance(actions[0], notifications.Print))
         self.assertTrue(isinstance(actions[1], notifications.CornerMark))
 
+    def test_daemonized_resumedaemonizedtrue(self):
+        defaults = getDefaults()
+        defaults['silence'] = True
+        logtailer = LogTailer(defaults)
+        resumeObj = logtailer.resumeBuilder()
+        self.assertTrue(isinstance(resumeObj, reporting.Resume))
+        self.assertEquals('print', resumeObj.getNotificationType())
+        self.assertTrue(resumeObj.is_daemonized)
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()

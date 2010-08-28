@@ -48,9 +48,12 @@ class Resume(object):
         self.orderReport = ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'INFO',
                 'DEBUG', 'TARGET', 'OTHERS']
         self.mailAction = None
-        self.notificationType = 'print'
+        self.notificationType = PRINT
         self.gapTime = 3600
         self.notifiers = []
+        self.is_daemonized = False
+        self.timer = Timer.Timer(self.gapTime)
+        self.timer.startTimer()
 
     def add_notifier(self, notifier):
         self.notifiers.append(notifier)
@@ -88,6 +91,9 @@ class Resume(object):
                 logKey['OTHERS'].append(res + '=>> '+ notifier.alerting_msg)
         self.report_now()
 
+    def report_now_print(self, body):
+        return
+
     def report_now_mail(self, body):
         self.mailAction.sendNotificationMail(body)
 
@@ -99,7 +105,7 @@ class Resume(object):
         fh.close()
     
     def report_now(self):
-        if self.notificationType == PRINT:
+        if self.notificationType == PRINT and not self.is_daemonized:
             return
         if self.timer.inactivityEllapsed() > self.gapTime:
             body = self.reportBody()

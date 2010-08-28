@@ -238,6 +238,29 @@ class TestResume(unittest.TestCase):
                 isinstance(reports_firstone[k], list) ]
         self.assertEquals(tobe_flushed_firstone, flushed_firstone)
 
+    def test_flush_report_aftergaptime_daemonized(self):
+        log = Log('out.log')
+        arrayLogs = [log]
+        logcolors = LogColors()
+        message = Message(logcolors)
+        resume = reporting.Resume(arrayLogs)
+        resume.is_daemonized = True
+        resume.gapTime = 0.05
+        for anylog in arrayLogs:
+            self.readAndUpdateLines(anylog, message, resume)
+        time.sleep(0.05)
+        resume.update(message, log)
+        expected = {'TARGET':0,
+             'DEBUG':0,
+             'INFO':0,
+             'WARN':0,
+             'OTHERS':[],
+             'ERROR':[],
+             'FATAL':[],
+             'CRITICAL':[]}
+        outlogReport = resume.logsReport[log.path]
+        self.assertEquals(expected, outlogReport)
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
