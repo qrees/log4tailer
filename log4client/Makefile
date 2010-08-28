@@ -3,6 +3,7 @@ BUILDOUT = bin/buildout
 EXE = bin/log4tail
 TEST = bin/test
 PYLINT = bin/pylint
+COVERAGE = bin/coverage
 ENV = ENV 
 ENV24 = ENV24
 
@@ -18,8 +19,9 @@ env24: $(ENV24)
 $(ENV24):
 	virtualenv --no-site-packages --python=python2.4 $(ENV24)
 
-runtests: $(TEST)
-	$(TEST) -v --with-xunit 
+runtests: $(TEST) 
+	$(COVERAGE) run $(TEST) -v --with-xunit 
+	$(COVERAGE) xml src/log4tailer/*.py
 
 pylint: $(PYLINT)
 	$(PYLINT) -f parseable > report.txt
