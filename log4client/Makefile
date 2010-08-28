@@ -6,7 +6,7 @@ PYLINT = bin/pylint
 ENV = ENV 
 ENV24 = ENV24
 
-all: $(BUILDOUT) $(EXE) $(TEST)
+all: $(BUILDOUT)
 
 env: $(ENV)
 
@@ -32,6 +32,7 @@ $(EXE): $(BUILDOUT)
 
 $(BUILDOUT): bootstrap.py
 	$(PYTHON) bootstrap.py
+	$(BUILDOUT)
 
 # just sdist
 release: $(EXE)
