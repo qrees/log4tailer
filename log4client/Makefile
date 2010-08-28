@@ -21,7 +21,7 @@ $(ENV24):
 
 runtests: $(TEST) 
 	$(TEST) -v --with-coverage --cover-package=log4tailer --with-xunit 
-	$(ENV)/bin/coverage xml src/log4tailer/*.py
+	coverage xml src/log4tailer/*.py
 
 pylint: $(PYLINT)
 	$(PYLINT) -f parseable > report.txt
