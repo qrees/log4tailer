@@ -2,6 +2,7 @@ PYTHON = python
 BUILDOUT = bin/buildout
 EXE = bin/log4tail
 TEST = bin/test
+PYLINT = bin/pylint
 ENV = ENV 
 ENV24 = ENV24
 
@@ -19,6 +20,9 @@ $(ENV24):
 
 runtests: $(TEST)
 	$(TEST) -v --with-xunit 
+
+pylint: $(PYLINT)
+	$(PYLINT) 
 
 coverage: $(TEST)
 	$(TEST) -v --with-coverage --cover-package=log4tailer 
