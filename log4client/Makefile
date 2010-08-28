@@ -22,7 +22,7 @@ runtests: $(TEST)
 	$(TEST) -v --with-xunit 
 
 pylint: $(PYLINT)
-	$(PYLINT) 
+	$(PYLINT) -f parseable > report.txt
 
 coverage: $(TEST)
 	$(TEST) -v --with-coverage --cover-package=log4tailer 
