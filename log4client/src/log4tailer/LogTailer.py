@@ -199,7 +199,6 @@ class LogTailer(object):
             # if no notify has been setup and we are in daemonized mode 
             # we need to flush the reporting to avoid filling up memory.
             resume.is_daemonized = True
-                
         # check if inactivity action on the self.actions and set the inactivity 
         # on the resume object. If inactivity is flagged, will be then
         # reported.
