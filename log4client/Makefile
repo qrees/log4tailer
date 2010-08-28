@@ -53,6 +53,7 @@ clean:
 
 distclean:
 	@echo "distclean ..."
+	rm -rf $(ENV)
 	rm -rf build dist bin 
 	rm -f `find src -name "*.pyc"`
 	rm -f `find tests -name "*.pyc"`
