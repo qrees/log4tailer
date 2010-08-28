@@ -20,8 +20,8 @@ $(ENV24):
 	virtualenv --no-site-packages --python=python2.4 $(ENV24)
 
 runtests: $(TEST) 
-	$(TEST) -v --with-coverage --cover-package=log4tailer --with-xunit 
-	coverage xml src/log4tailer/*.py
+	$(COVERAGE) run $(TEST) -v --with-xunit 
+	$(COVERAGE) xml src/log4tailer/*.py
 
 pylint: $(PYLINT)
 	$(PYLINT) -f parseable > report.txt
