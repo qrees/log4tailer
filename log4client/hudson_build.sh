@@ -1,5 +1,5 @@
 cd $WORKSPACE/log4client
-CWD=`PWD`
+CWD=`pwd`
 make distclean
 make env
 export PATH=$CWD/ENV/bin:$PATH
