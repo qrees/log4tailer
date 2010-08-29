@@ -33,9 +33,13 @@ kind of MTA like sendmail. Let's see an example:
 where in the configfile.txt you could write something like\footnote{If you use the 
 \emph{echo} command line tool providing both place holders (log trace, log path), make 
 sure you leave a white space in between quotes.}:
+
+\begin{config}
 \begin{verbatim}
  executor = echo ' %s %s ' | mail -s 'log4tailer alert' -t youremail@hostname.com
 \end{verbatim}
+\end{config}
+
 If sendmail sends email to your localhost, then you could read the email easily by using the 
 famous command line client mutt for example. It's important to note, that you can daemonize 
 \logftailer{} in that case as well:
