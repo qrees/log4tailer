@@ -447,6 +447,8 @@ class Poster(object):
         self.registered_logs = {}
         from socket import gethostname
         self.hostname = gethostname()
+        # TODO should we set socket timeout?
+        # socket.setdefaulttimeout(timeout)
 
     def notify(self, message, log):
         if log not in self.registered_logs:
@@ -459,25 +461,14 @@ class Poster(object):
         log_id = log_info['id']
         params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 'log': {
             'id' : log_id, 'logpath' : log.path, 'logserver' : self.hostname}})
-        response = ''
-        conn = httplib.HTTPConnection(self.url, self.port)
-        try:
-            conn.request('POST', self.service_uri, params, self.headers)
-        except Exception, err:
-            print err
-        response = conn.getresponse()
-        conn.close()
+        response = self.send(self.service_uri, params)
         return response
     
     def register(self, log):
         params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
-        conn = httplib.HTTPConnection(self.url, self.port)
-        try:
-            conn.request('POST', self.register_uri, params, self.headers)
-        except Exception, err:
-            print err
-        response = conn.getresponse()
-        conn.close()
+        response = self.send(self.register_uri, params)
+        if not response:
+            return
         log_id = response.read()
         self.registered_logs[log] = {'id' : log_id, 'logserver' :
                 self.hostname}
@@ -488,13 +479,17 @@ class Poster(object):
             log_info = self.registered_logs[log]
             log_id = log_info['id']
             params = {'id' : log_id}
-            conn = httplib.HTTPConnection(self.url, self.port)
-            try:
-                conn.request('POST', self.unregister_uri, json.dumps(params))
-            except Exception, err:
-                print err
-            response = conn.getresponse()
-            conn.close()
+            response = self.send(self.unregister_uri, json.dumps(params))
             return response
 
+    def send(self, uri, params):
+        conn = httplib.HTTPConnection(self.url, self.port)
+        try:
+            conn.request('POST', uri, params, self.headers)
+        except Exception, err:
+            print err
+            return None
+        response = conn.getresponse()
+        conn.close()
+        return response
 
