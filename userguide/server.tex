@@ -42,7 +42,7 @@ Log4tailer client registers to the server on startup when poster notification is
  \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
   \textit{\textbf{URL}}}  & {\color{white} 
  \textit{\textbf{Description}}}\\
- POST & /register & Log4tailer client registration to the server\\
+ POST & /register/ & Log4tailer client registration to the server\\
  \hline
 \end{tabular}
 \end{flushleft}
@@ -61,7 +61,7 @@ Example:
 
 \begin{codeexample}
 
-POST /register
+POST /register/
 
  \{``logpath'' : ``/var/log/messages'', ``logserver'' : ``localhost''\} 
 
@@ -84,7 +84,7 @@ Log4tailer client unregisters from the server ones it is stopped.
  \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
   \textit{\textbf{URL}}}  & {\color{white} 
  \textit{\textbf{Description}}}\\
- POST & /unregister & Log4tailer client unregistration to the server\\
+ POST & /unregister/ & Log4tailer client unregistration to the server\\
  \hline
 \end{tabular}
 \end{flushleft}
@@ -102,7 +102,7 @@ Example:
 
 \begin{codeexample}
 
-POST /unregister
+POST /unregister/
 
  \{``id'' : 4 \}
 
@@ -119,7 +119,7 @@ HTTP/1.1 200 OK.
  \rowcolor{cyan} {\color{white} \textit{\textbf{HTTP Method}}} &  {\color{white} 
   \textit{\textbf{URL}}}  & {\color{white} 
  \textit{\textbf{Description}}}\\
- POST & /alert & New alert has been found.\\
+ POST & /alerts/ & New alert has been found.\\
  \hline
 \end{tabular}
 \end{flushleft}
@@ -141,7 +141,7 @@ Example:
 
 \begin{codeexample}
 
-POST /alerts
+POST /alerts/
 
  \{``logtrace'' : ``This is an error trace'', 
    ``loglevel'' : ``error'',
