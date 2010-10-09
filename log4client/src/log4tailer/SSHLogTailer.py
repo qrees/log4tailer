@@ -3,6 +3,7 @@ from Log import Log
 from Message import Message
 from TermColorCodes import TermColorCodes
 from subprocess import Popen, PIPE
+import notifications
 
 try:
     import paramiko
@@ -23,7 +24,7 @@ class SSHLogTailer:
         self.logcolors = defaults['logcolors']
         self.pause = defaults['pause']
         self.silence = defaults['silence']
-        self.actions = defaults['actions']
+        self.actions = notifications.Print()
         self.throttleTime = defaults['throttle'] 
         self.target = defaults['target']
         self.properties = defaults['properties']
