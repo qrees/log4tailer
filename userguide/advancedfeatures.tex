@@ -1,22 +1,23 @@
 \part{Advanced features}
 \section{Targets}
-\label{sec:Targets} Target option -t provides an easy way to identify, by means of a regular
-expression, a particular log trace in your logs. By default, it will tail as
-normal and if your regex is matched, then that line will be emphasized in a red
-background.\\
+\label{sec:Targets} Target option -t provides an easy way to identify, by means
+of a regular expression, a particular log trace in your logs. By default, it
+will tail as normal and if your regex is matched, then that line will be
+emphasized in a red background.\\
 Example:\\
 \emphlogtrace{this is a log trace matched by target option}
 
-You can specify multiple comma separated targets. Each target is just an string being 
-itself a simple string or just a regular expression. It must be enclosed within simple or 
-double quotes.
+You can specify multiple comma separated targets. Each target is just an string
+being itself a simple string or just a regular expression. It must be enclosed
+within simple or double quotes.
 \begin{cmd}
  ./log4tail -t [--target] 'regex1,regex2,regex3,...,regexN' pathToLogs
 \end{cmd}
 
 \subsection{Every log with its own target scheme}
-If you want every log with its own targets, then you must provide them in a config file. 
-In order to do that, just edit a text file and specify the next key, value optional parameters:
+If you want every log with its own targets, then you must provide them in a
+config file.  In order to do that, just edit a text file and specify the next
+key, value optional parameters:
 
 \begin{config}
 \begin{verbatim}
@@ -34,10 +35,9 @@ targets /var/log/mail.log = incoming \d+, \d{1,3} something | on_cyan
 \end{verbatim}
 \end{config}
 
-If an specific regex does not have a corresponding color, then it will be emphasized using
-the default color setup, which is the log trace on a red background.
-
-
+If an specific regex does not have a corresponding color, then it will be
+emphasized using the default color setup, which is the log trace on a red
+background.
 
 \section{Throttling}
 In release v05, the throttling option is provided. Many applications when
@@ -66,10 +66,12 @@ provided as of version v05 are:
  \item Inactivity (see \autoref{sec:inactivitysection})
  \item Executor (see \autoref{sec:executor})
  \item Poster (see \autoref{sec:poster})
+ \item PrintShot (see \autoref{sec:PrintShot})
 \end{itemize}
 
 \subsection{Print Notification}
-\label{sec:PrintAction}PrintAction does what the famous \emph{tail} command does, just printing in the
+\label{sec:PrintAction}
+PrintAction does what the famous \emph{tail} command does, just printing in the
 screen (terminal) but with colors. When an application logs information very
 fast, colors provide and easy way to quickly identify a certain pattern or
 problem. Every color identify an specific level according to the log4j java
@@ -205,8 +207,6 @@ The example in \autoref{fig:multiple_colors} will clarify that.
 \caption{\logftailer{} each log with its own color scheme}\label{fig:multiple_colors}
 \end{figure}
 
-
-
 \subsection{Filter Notification}
 \label{sec:filter}
 With filter you can filter out information you don't want to be printed out 
@@ -277,16 +277,17 @@ specifying the mail details in a configuration file.
 \end{config}
 
 \noindent
-The password will be asked during runtime to avoid being left 
-in plain ascii in the configuration file. For SSL connection you will need a Python 2.6 runtime, otherwise 
-mail\_ssl should be left to False.
+The password will be asked during runtime to avoid being left in plain ascii in
+the configuration file. For SSL connection you will need a Python 2.6 runtime,
+otherwise mail\_ssl should be left to False.
 
-If an alert is raised, you will receive an email from mail\_from with the subject ``Log4tailer 
-alert'' for easy filtering.
+If an alert is raised, you will receive an email from mail\_from with the
+subject ``Log4tailer alert'' for easy filtering.
 
-\logftailer{} works with SMTP Google email accounts\footnote{Using SMTP SSL connection. For SMTP SSL
-connectivity you'll need a Python 2.6 runtime, as Python 2.4 does not support it.} if you have one. 
-In \autoref{fig:mailalert} you can see how it looks like.
+\logftailer{} works with SMTP Google email accounts\footnote{Using SMTP SSL
+connection. For SMTP SSL connectivity you'll need a Python 2.6 runtime, as
+Python 2.4 does not support it.} if you have one.  In \autoref{fig:mailalert}
+you can see how it looks like.
 
 \begin{figure}[hb]
 %\centering
@@ -294,35 +295,39 @@ In \autoref{fig:mailalert} you can see how it looks like.
 \caption{\logftailer{} email alert in gmail}\label{fig:mailalert}
 \end{figure}
 
-
-I have not tested \logftailer{} 
-with \textbf{sendmail}. For that you would have to configure sendmail to accept smtp localhost connections. 
-Explaining that is out of the scope of this document. You can take a look in the sendmail documentation 
-book in the Sendmail Consortium webpage at \href{http://www.sendmail.org}{http://www.sendmail.org}.
+I have not tested \logftailer{} with \textbf{sendmail}. For that you would have
+to configure sendmail to accept smtp localhost connections.  Explaining that is
+out of the scope of this document. You can take a look in the sendmail
+documentation book in the Sendmail Consortium webpage at
+\href{http://www.sendmail.org}{http://www.sendmail.org}.
 
 \subsubsection{Flood control}
-In order to avoid being sent lots of notification emails when a flood of undesirable log traces
-turn up, log4tailer has a way to control that by means of a 60 second gap, which means that non desirable 
-levels that happen within that gap are not notified. After that expiration time, the first undesirable log 
-trace to be found will be notified, triggering again a 60 second gap period. 
+In order to avoid being sent lots of notification emails when a flood of
+undesirable log traces turn up, log4tailer has a way to control that by means
+of a 60 second gap, which means that non desirable levels that happen within
+that gap are not notified. After that expiration time, the first undesirable
+log trace to be found will be notified, triggering again a 60 second gap
+period. 
  
 \subsubsection{When should I use Mail notification}
 
-MailAction would be like having additional eyes taking a look at the logs. That means, that you can take 
-a rest from time to time basically. If something is found, then 
-you are notified. At this stage, it will notify errors and fatals, considered to be non desired levels in 
-an application. Along with that, you can specify a series of patterns (regexes), log4tailer's targets,
-that if found could mean that the application is not behaving as expected. In that specific case, you will 
-get notified as well.
+MailAction would be like having additional eyes taking a look at the logs. That
+means, that you can take a rest from time to time basically. If something is
+found, then you are notified. At this stage, it will notify errors and fatals,
+considered to be non desired levels in an application. Along with that, you can
+specify a series of patterns (regexes), log4tailer's targets, that if found
+could mean that the application is not behaving as expected. In that specific
+case, you will get notified as well.
   
 \subsection{Inactivity Notification}
 \label{sec:inactivitysection}
-Inactivity monitors for inactivity time in the logs. Inactivity as of this release 
-will just send an emphasized line in the standard output notifying that there has been 
-a lot of inactivity in that log. The inactivity time must be provided in the command line 
-with the -i parameter followed by the number of seconds of inactivity to be monitored in the log.
-If there has not been any activity for the number of seconds given, \logftailer{} will print 
-an emphasized line in the standard output.\\
+Inactivity monitors for inactivity time in the logs. Inactivity as of this
+release will just send an emphasized line in the standard output notifying that
+there has been a lot of inactivity in that log. The inactivity time must be
+provided in the command line with the -i parameter followed by the number of
+seconds of inactivity to be monitored in the log.  If there has not been any
+activity for the number of seconds given, \logftailer{} will print an
+emphasized line in the standard output.\\ 
 As an example:\\
 \emphlogtrace{{Inactivity in the log for 5.99955296516 seconds}}
  
@@ -347,12 +352,14 @@ By default is notification to the standard output as shown before.
 \subsection{Executor}
 \label{sec:executor}
 
-The executor is another type of notification. \logftailer{} will execute a program provided 
-by the user if the levels Error, Fatal or Critical have been found in the log trace. The user 
-must provide the command line option \emph{--executable} along with a config file specifying 
-the key \emph{executor} with value the program you want log4tailer to execute and its parameters 
-separated by whitespaces. You can specify a couple of place holders as well, where the first will 
-be the log trace found and the second the log path where the trace was found.
+The executor is another type of notification. \logftailer{} will execute a
+program provided by the user if the levels Error, Fatal or Critical have been
+found in the log trace. The user must provide the command line option
+\emph{--executable} along with a config file specifying the key \emph{executor}
+with value the program you want log4tailer to execute and its parameters
+separated by whitespaces. You can specify a couple of place holders as well,
+where the first will be the log trace found and the second the log path where
+the trace was found.
 
 \begin{cmd}
  ./log4tail --executable -c configfile pathToLogs
@@ -397,12 +404,42 @@ logtraces. So, if you don't want that happen, just point the unregister uri to a
 and the server will not do anything, although it will keep the log as registered. Please, take a 
 look at \autoref{sec:log4server}.
 
-\section{Pause Modes}
+\subsection{PrintShot}
+\label{sec:PrintShot}
+The PrintShot notification is basically the Print notification adding the
+capability of taking an screenshot whenever we find an alertable log trace. An
+alertable log trace is any trace within levels Critical, Fatal and Error or
+those that are targetable. In order to activate this notification, you need to
+execute \logftailer{} in the following manner:
 
-\label{sec:PauseModes}As of release 1.2 \logftailer{} includes pausemodes feature. You will be able 
-to pause or freeze the output by a number of seconds if an specific level or target 
-has been found. In order to enable pausemodes, you must configure them in a config file 
-providing any of the following keys\footnote{the keys are case insensitive, so is the same pauseDEBUG or pausedebug\ldots} :
+\begin{cmd}
+ log4tail --screenshot -c configfile.txt pathToLogs
+\end{cmd}
+
+Where in the configfile.txt you should specify the following key:
+
+\begin{config}
+screenshot = fullpathtopicture.png
+\end{config}
+
+\subsubsection{requirements}
+The PrintShot notification requires you have the \textbf{import} command line
+program to take screenshots. So, make sure you have that software installed.
+Most modern Linux distributions have it. 
+
+\subsubsection{When should I use this feature}
+This feature is useful whenever you are testing in your local desktop any
+software and you would like to have a proof that some log trace is getting
+traced by that software. It would be good for software documentation purposes
+as well. 
+
+\section{Pause Modes}
+\label{sec:PauseModes}
+As of release 1.2 \logftailer{} includes pausemodes feature. You will be able
+to pause or freeze the output by a number of seconds if an specific level or
+target has been found. In order to enable pausemodes, you must configure them
+in a config file providing any of the following keys\footnote{the keys are case
+insensitive, so is the same pauseDEBUG or pausedebug\ldots} :
 
 \begin{config}
 \begin{verbatim}
@@ -430,14 +467,15 @@ Then, we should run log4tailer like:
 \begin{cmd}
 ./log4tail -c yourconfig /pathToLogs
 \end{cmd}
-Pausetarget keyword will pause the output for any regex found in the log when running log4tailer with -t option.
-
+Pausetarget keyword will pause the output for any regex found in the log when
+running log4tailer with -t option.
 
 \section{Reporting}
-Every time we finish the tailing, log4tailer will output a report, specifying how long 
-log4tailer has been running and the number of events for debug, info and warn. In case of 
-error and fatal, it will provide the timestamps when they were found and their corresponding logtrace.
-Example:
+Every time we finish the tailing, log4tailer will output a report, specifying
+how long log4tailer has been running and the number of events for debug, info
+and warn. In case of error and fatal, it will provide the timestamps when they
+were found and their corresponding logtrace.  Example:
+
 \begin{verbatim}
 Analytics: 
 Uptime: 
@@ -463,8 +501,9 @@ Ended log4tailer, because colors are fun
 \end{verbatim}
 
 \subsection{Reports by email}
-If you want a report by email after a given amount of time, then you can do that by means 
-of the config file. There are two values that can be setup, namely:
+If you want a report by email after a given amount of time, then you can do
+that by means of the config file. There are two values that can be setup,
+namely:
 
 \begin{config}
 \begin{verbatim}
@@ -473,19 +512,20 @@ of the config file. There are two values that can be setup, namely:
 \end{verbatim}
 \end{config}
 
-If these two values are uncommented, then you will be required to provide the mail 
-details in the same configuration file, please check the \autoref{sec:mailnotification}. The analyticsgaptime should be given in seconds, by default is 3600 seconds (1 hour). 
-You'll receive a report after that period. After that period the statistical information is 
-flushed and then sent again once the gap notification time is expired and so on.
-In \autoref{fig:emailnotification} %in page \pageref{fig:emailnotification}, 
-you can see an email report notification in a Google gmail account.
+If these two values are uncommented, then you will be required to provide the
+mail details in the same configuration file, please check the
+\autoref{sec:mailnotification}. The analyticsgaptime should be given in
+seconds, by default is 3600 seconds (1 hour).  You'll receive a report after
+that period. After that period the statistical information is flushed and then
+sent again once the gap notification time is expired and so on.  In
+\autoref{fig:emailnotification} %in page \pageref{fig:emailnotification}, you
+can see an email report notification in a Google gmail account.
 
-\begin{figure}[hb]
+\begin{figure}[ht]
 %\centering
 \includegraphics[scale=0.50]{emailnotification.png}
 \caption{\logftailer{} email report notification}\label{fig:emailnotification}
 \end{figure}
-
 
 \subsection{Reports to a file}
 \logftailer{} can give you a report to a file if you want to. Just provide the
@@ -501,27 +541,34 @@ analyticsnotification in the configuration file pointing to the reporting file
 
 \section{Silent Mode}
 Silent mode, tails the logs in the background (daemonized tailer) and triggers
-the Mail notification, notifying if error, fatal or any target has been found in the logs. 
+the Mail notification, notifying if error, fatal or any target has been found
+in the logs. 
+
+The syntax to activate the silent mode is:
 \begin{cmd}
  ./log4tail -s -c [--config] configfile [-t [--targets] 'regex1,..,regexN'] fullPathToLogs
 \end{cmd}
-\logftailer{} will require a configuration file with your email details. Please take a look 
-at the \autoref{sec:mailnotification} where specifies the key parameters 
-that need to be specified. It is very important to note that the path to the logs must be the 
-full path, no relative. That's because when \logftailer{} enters in daemonized mode, it switches 
-to the root directory closing all buffers and detaching itself from the terminal, in other words, 
-it becomes a real daemon. As a consequence, it is not necessary to execute it with the nohup 
-Linux command line tool.
+
+\logftailer{} will require a configuration file with your email details. Please
+take a look at the \autoref{sec:mailnotification} where specifies the key
+parameters that need to be specified. It is very important to note that the
+path to the logs must be the full path, no relative. That's because when
+\logftailer{} enters in daemonized mode, it switches to the root directory
+closing all buffers and detaching itself from the terminal, in other words, it
+becomes a real daemon. As a consequence, it is not necessary to execute it with
+the nohup Linux command line tool.
 
 \subsection{Silent Mode when no access to email notification}
-\logftailer{} provides the no-mail-silence optional command line parameter, where it enters in 
-daemonized mode with no notification setup. It will be up to the user to setup some type of 
-notification by means of a configuration file. Actually, this option is thought to be used along 
-with the -config parameter where you can specify some notification. One of the scenarios would be 
-when you want automatic monitoring when the server you are running \logftailer{} has no ports available 
-for email notification. You could provide a config file with \emph{analyticsnotification} pointing to 
-a file where \logftailer{} would do a report of the logs status every \emph{analyticsgaptime} seconds 
-or one hour by default.
+\logftailer{} provides the no-mail-silence optional command line parameter,
+where it enters in daemonized mode with no notification setup. It will be up to
+the user to setup some type of notification by means of a configuration file.
+Actually, this option is thought to be used along with the -config parameter
+where you can specify some notification. One of the scenarios would be when you
+want automatic monitoring when the server you are running \logftailer{} has no
+ports available for email notification. You could provide a config file with
+\emph{analyticsnotification} pointing to a file where \logftailer{} would do a
+report of the logs status every \emph{analyticsgaptime} seconds or one hour by
+default.
 
 \begin{cmd}
  ./log4tail --no-mail-silence -c [--config] configfile fullPathToLogs
@@ -529,13 +576,15 @@ or one hour by default.
 
 
 \section{Coloring Standard Input}
-Log4tailer can colorize its standard input to the standard output. Main use would be when your application 
-does some output and finishes. In order to do that just type:
+Log4tailer can colorize its standard input to the standard output. Main use
+would be when your application does some output and finishes. In order to do
+that just type:
 \begin{cmd}
  yourapplication | log4tail -
  cat somelog.log | log4tail -
 \end{cmd}
-You can use the \emph{more} Linux/Unix application in order to page the output. Example:
+You can use the \emph{more} Linux/Unix application in order to page the output.
+Example:
 \begin{cmd}
  cat somelog.log | log4tail - | more
 \end{cmd}
@@ -545,13 +594,16 @@ You can tail last \emph{N} lines from the log with the \emph{-n} option. Just ty
 \begin{cmd}
  ./log4tail -n numberOfLines pathToLog
 \end{cmd}
-and it will output the last \emph{numberOfLines} from the log colorizing the corresponding levels.
+and it will output the last \emph{numberOfLines} from the log colorizing the
+corresponding levels.
 
 \section{SSH Tailing}
-SSH Tailing or remote tailing will allow you to tail multiple remote logs from different hosts. As of now, only 
-PrintAction is available, so you'll be able to tail multiple remote logs in a colorful way as specified in 
-section \ref{sec:PrintAction}. In order to tail remotely you'll need to pass as a parameter the -r option 
-along with some config file parameters:
+SSH Tailing or remote tailing will allow you to tail multiple remote logs from
+different hosts. As of now, only PrintAction is available, so you'll be able to
+tail multiple remote logs in a colorful way as specified in section
+\ref{sec:PrintAction}. In order to tail remotely you'll need to pass as a
+parameter the -r option along with some config file parameters:
+
 \begin{cmd}
  ./log4tail -r -t targets -c yourconfig.txt
 \end{cmd}
@@ -570,12 +622,16 @@ In your configfile you must provide the following parameters:
 Where:
 \begin{itemize}
 \item \textbf{sshhostnames} is a comma separated values of hostnames
-\item every \textbf{hostname} must be a parameter itself where first value should be its username and 
-then the logs you want to tail.
+\item every \textbf{hostname} must be a parameter itself where first 
+value should be its username and then the logs you want to tail.
 \end{itemize}
+
 By default log4tailer will try to authenticate by using your rsa key under your
 $\sim$/.ssh/id\_rsa key if it exists, otherwise it will use normal username, password
-authentication. If you want to use another rsa key other than the default
+authentication. \textbf{Please be aware that you need to be the same username
+in both client and server. So, if you are logging in as root the ssh key needs
+to be for the root user. Otherwise, it would request your password}.
+If you want to use another rsa key other than the default
 id\_rsa key then you can provide one in the config file by using the rsa\_key
 parameter. Example:
 
@@ -588,30 +644,36 @@ parameter. Example:
 \noindent
 rsa\_key value must be the full path to the rsa\_key.
 
-Some considerations are to be taking into account. As of now, remote tailing \textbf{only} provides 
-PrintAction along with targets, that means that you will be able to tail with colors and emphasize those log traces 
-that match the comma separated regexes provided with -t. Besides, you'll be able to use 
-pauseModes set up in the config file as explained in section \ref{sec:PauseModes}.
+Some considerations are to be taking into account. As of now, remote tailing
+\textbf{only} provides PrintAction along with targets, that means that you will
+be able to tail with colors and emphasize those log traces that match the comma
+separated regexes provided with -t. Besides, you'll be able to use pauseModes
+set up in the config file as explained in section \ref{sec:PauseModes}.
 
-To finish, just Ctrl-c and it will close all channels opened to communicate to the remote hosts. 
+To finish, just Ctrl-c and it will close all channels opened to communicate to
+the remote hosts. 
 
 \subsection{Dependencies for SSH tailing}
-It is very important to note that for remote tailing, you'll need to install the \textbf{paramiko module}, 
-available in major Linux distributions. In most of them is available under the name of python-paramiko. In 
-Debian systems, you'll need to type:
+It is very important to note that for remote tailing, you'll need to install
+the \textbf{paramiko module}, available in major Linux distributions. In most
+of them is available under the name of python-paramiko. In Debian systems,
+you'll need to type:
 \begin{cmd}
  sudo apt-get install python-paramiko
 \end{cmd}
 
 \section{Configuration file}
-Config file is provided fully documented for convenience; just uncomment those lines you are interested 
-to enable and modify them for your specific purposes. In order to enable those values in the config file, 
-you must notify that to \logftailer{} as a parameter in startup time.
+Config file is provided fully documented for convenience; just uncomment those
+lines you are interested to enable and modify them for your specific purposes.
+In order to enable those values in the config file, you must notify that to
+\logftailer{} as a parameter in startup time.
+
 \begin{cmd}
  ./log4tail -c yourconfig.txt logs
 \end{cmd}
-If you always use the same configuration file, you can copy it in your HOME directory as \emph{.log4tailer} and log4tail will read it next time you execute the program, even if you 
-don't provide the -c option.
+If you always use the same configuration file, you can copy it in your HOME
+directory as \emph{.log4tailer} and log4tail will read it next time you execute
+the program, even if you don't provide the -c option.
 
 The config file provided for convenience is called log4tailerconfig.txt and is quoted below:
 

@@ -24,7 +24,7 @@ class Message(object):
     '''the message to be actioned
     and showed being by email, stdout,...'''
 
-    def __init__(self,logcolor,target = None, properties = None):
+    def __init__(self, logcolor, target = None, properties = None):
         self.patarget = None
         self.isTarget = None
         self.currentLogPath = None

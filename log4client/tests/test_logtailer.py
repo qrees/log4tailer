@@ -196,7 +196,8 @@ class TestInit(unittest.TestCase):
                 'throttle' : False,
                 'silence' : False, 
                 'mail' : False,
-                'nomailsilence' : False}
+                'nomailsilence' : False,
+                'screenshot' : False}
         self.__options_mocker_generator(options_mock, params)
         self.mocker.replay()
         log4tailer.initialize(options_mock)
@@ -243,7 +244,8 @@ class TestInit(unittest.TestCase):
                 'mail' : False,
                 'inactivity' : False,
                 'nomailsilence' : False,
-                'post' : False}
+                'post' : False,
+                'screenshot' : False}
         self.__options_mocker_generator(options_mock, params)
         self.mocker.replay()
         log4tailer.initialize(options_mock)

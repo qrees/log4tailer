@@ -83,6 +83,9 @@ def initialize(options):
     if options.executable and properties:
         executor = notifications.Executor(properties)
         actions.append(executor)
+    if options.screenshot and properties:
+        printandshoot = notifications.PrintShot(properties)
+        actions[0] = printandshoot
 
 def monitor(options, args):
     if options.remote:

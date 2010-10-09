@@ -21,7 +21,7 @@ from Properties import Property
 from TermColorCodes import TermColorCodes
 import LogLevels
 
-class LogColors:
+class LogColors(object):
     '''Provides the colors that will
     be used when printing Log4J levels'''
 
@@ -52,3 +52,4 @@ class LogColors:
         level = level.lower()
         if level in LogLevels.logLevels:
             return getattr(self, level)
+

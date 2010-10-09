@@ -24,6 +24,7 @@ from log4tailer.Timer import Timer
 from smtplib import *
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
+from subprocess import PIPE
 import threading
 import httplib
 
@@ -61,6 +62,43 @@ class Print(object):
         pause = 0
         if colormsg:
             print colormsg
+
+class PrintShot(Print):
+    """Prints log trace and takes 
+    an screenshot whenever we find an alertable 
+    log trace.""" 
+
+    Pullers = ['ERROR', 'FATAL', 'CRITICAL']
+    
+    def __init__(self, properties):
+        self.screenshot = properties.getValue('screenshot')
+        self.winid = self.get_windowsid()
+        self.screenproc = ['import', '-window', self.winid, 
+                self.screenshot]
+
+    def notify(self, message, log):
+        Print.notify(self, message, log)
+        msg_level = message.messageLevel.upper()
+        if not message.isATarget() and msg_level not in self.Pullers:
+            return
+        try:
+            proc = subprocess.call(self.screenproc)
+        except Exception, err:
+            print err
+
+    def get_windowsid(self):
+        getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
+        try:
+            proc = subprocess.Popen(getId, shell = True, 
+                    stdout = PIPE, stderr = PIPE)
+        except Exception, err:
+            print err
+            return
+        res, err = proc.communicate()
+        if err:
+            return 
+        winid = (res.split('#'))[1].strip()
+        return winid
 
 class Inactivity(object):
     '''sends an email or print
@@ -262,7 +300,6 @@ class Filter(Print):
     the user, otherwise nothing will be notified. It 
     would be a mix of tail and grep
     """
-
     def __init__(self, pattern):
         self.pattern = pattern
     
@@ -459,8 +496,9 @@ class Poster(object):
         logtrace, logpath = message.getPlainMessage()
         log_info = self.registered_logs[log]
         log_id = log_info['id']
-        params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 'log': {
-            'id' : log_id, 'logpath' : log.path, 'logserver' : self.hostname}})
+        params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 
+            'log': { 'id' : log_id, 'logpath' : log.path, 
+                'logserver' : self.hostname}})
         response = self.send(self.service_uri, params)
         return response
     
@@ -486,10 +524,10 @@ class Poster(object):
         conn = httplib.HTTPConnection(self.url, self.port)
         try:
             conn.request('POST', uri, params, self.headers)
+            response = conn.getresponse()
         except Exception, err:
             print err
             return None
-        response = conn.getresponse()
         conn.close()
         return response
 

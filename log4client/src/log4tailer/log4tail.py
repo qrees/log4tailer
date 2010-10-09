@@ -64,6 +64,9 @@ def parse_command_line():
             dest="version", help="shows log4tailer version number and exists")
     parser.add_option("--post", action="store_true", dest="post", 
         help="sends http alert to a centralized web server")
+    parser.add_option("--screenshot", action="store_true", dest="screenshot", 
+        help="takes a terminal screenshot whenever it finds an alertable log "
+                "trace")
  
     return parser.parse_args()
 

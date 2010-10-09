@@ -4,7 +4,8 @@ xx/xx/xx release 2.9
 - minor refactoring
 - Poster notification to allow communication with 
 a centralized web app.
-
+- Fix issue 11
+- PrintShot notification
 
 ====================================
 24/06/10 release 2.8

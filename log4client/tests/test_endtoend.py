@@ -49,15 +49,26 @@ class Interruptor(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.pid = os.getpid()
+        self.fatallogtrace = None
+
+    def with_fatal_logtrace(self):
+        self.fatallogtrace = 'this is a fatal log trace'
 
     def run(self):
         onelogtrace = 'this is an info log trace'
         anotherlogtrace = 'this is a debug log trace'
         fh = open(self.log_name, 'a')
+        if self.fatallogtrace:
+            fh.write(self.fatallogtrace + '\n')
+        time.sleep(0.1)
         fh.write(onelogtrace + '\n')
+        time.sleep(0.1)
         fh.write(anotherlogtrace + '\n')
         fh.close()
-        time.sleep(0.002)
+        # seems to work fine sleeping 2 secs. 
+        # we need to await that much to leave 
+        # import to take an screenshot of terminal. 
+        time.sleep(2)
         os.kill(self.pid, signal.SIGINT)
 
 class TestEndToEnd(unittest.TestCase):
@@ -72,6 +83,7 @@ class TestEndToEnd(unittest.TestCase):
         fh.write(onelogtrace + '\n')
         fh.write(anotherlogtrace + '\n')
         fh.close()
+        self.apicture = 'apicture.png'
 
     def __finished_fine(self, out_container):
         finish_trace = re.compile(r'because colors are fun')
@@ -83,7 +95,6 @@ class TestEndToEnd(unittest.TestCase):
    
     def test_tailerfrommonitor(self):
         sys.stdout = Writer()
-
         class OptionsMock(object):
             def __init__(self):
                 pass
@@ -93,7 +104,6 @@ class TestEndToEnd(unittest.TestCase):
                 elif name == 'configfile':
                     return 'anythingyouwant'
                 return False
-
         options_mock = OptionsMock()
         log4tailer.initialize(options_mock)
         args_mock = [self.log_name]
@@ -115,7 +125,6 @@ class TestEndToEnd(unittest.TestCase):
         fh.write('info = green, on_blue\n')
         fh.write('debug = yellow\n')
         fh.close()
-
         class OptionsMockWithConfig(object):
             def __init__(self):
                 pass
@@ -123,7 +132,6 @@ class TestEndToEnd(unittest.TestCase):
                 if method == 'configfile':
                     return ACONFIG
                 return False
-
         optionsmock_withconfig = OptionsMockWithConfig()        
         log4tailer.initialize(optionsmock_withconfig)
         args_mock = [self.log_name]
@@ -138,6 +146,37 @@ class TestEndToEnd(unittest.TestCase):
                 found = True
         if not found:
             self.fail()
+
+    def test_options_with_screenshot(self):
+        sys.stdout = Writer()
+        fh  = open(ACONFIG, 'w')
+        fh.write('screenshot = ' + self.apicture + '\n')
+        fh.close()
+        class OptionWithScreenshot(object):
+            def __init__(self):
+                pass
+            def __getattr__(self, method):
+                if method == 'configfile':
+                    return ACONFIG
+                elif method == 'screenshot':
+                    return True
+                return False
+        options_mock = OptionWithScreenshot()
+        log4tailer.initialize(options_mock)
+        args_mock = [self.log_name]
+        interruptor = Interruptor()
+        interruptor.with_fatal_logtrace()
+        interruptor.start()
+        log4tailer.monitor(options_mock, args_mock)
+        interruptor.join()
+        finish_trace = re.compile(r'because colors are fun')
+        found = False
+        for num, line in enumerate(sys.stdout.captured):
+            if finish_trace.search(line):
+                found = True
+        if not found:
+            self.fail()
+        self.assertTrue(os.path.exists(self.apicture))
 
     def test_printversion_andexit(self):
         sys.stdout = Writer()
@@ -163,7 +202,8 @@ class TestEndToEnd(unittest.TestCase):
             os.remove(ACONFIG)
         if os.path.exists(self.log_name):
             os.remove(self.log_name)
-
+        if os.path.exists(self.apicture):
+            os.remove(self.apicture)
 
 class TestMonitor(unittest.TestCase):
     log_name = 'out.log'
@@ -180,7 +220,6 @@ class TestMonitor(unittest.TestCase):
         fh.write(onelogtrace + '\n')
         fh.write(anotherlogtrace + '\n')
         fh.close()
-
         class OptionsMockWithNlines(object):
             def __init__(self):
                 pass
@@ -188,7 +227,6 @@ class TestMonitor(unittest.TestCase):
                 if method == 'tailnlines':
                     return '50'
                 return False
-        
         options_mock_nlines = OptionsMockWithNlines()
         args = [self.log_name]
         log4tailer.initialize(options_mock_nlines)
