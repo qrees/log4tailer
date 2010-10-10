@@ -22,6 +22,7 @@ $(ENV24):
 runtests: $(TEST) 
 	$(COVERAGE) run $(TEST) -v --with-xunit 
 	$(COVERAGE) xml src/log4tailer/*.py
+	rm tests/*.pyc
 
 pylint: $(PYLINT)
 	$(PYLINT) -f parseable > report.txt
