@@ -21,7 +21,9 @@ import os
 import time
 from log4tailer import LogColors
 from log4tailer.Timer import Timer
-from smtplib import *
+from smtplib import (SMTP, 
+        SMTP_SSL, 
+        SMTPServerDisconnected)
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
 from subprocess import PIPE
