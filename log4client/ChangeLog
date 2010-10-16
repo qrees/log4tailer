@@ -1,10 +1,11 @@
 ====================================
-xx/xx/xx release 2.9
+16/10/10 release 2.9
 ====================================
 - minor refactoring
 - Poster notification to allow communication with 
 a centralized web app.
-- Fix issue 11
+- Fix issue 11 SSHTailing failed due to only accepts print 
+notification.
 - PrintShot notification
 
 ====================================
