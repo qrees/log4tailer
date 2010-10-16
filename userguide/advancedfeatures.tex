@@ -551,12 +551,18 @@ The syntax to activate the silent mode is:
 
 \logftailer{} will require a configuration file with your email details. Please
 take a look at the \autoref{sec:mailnotification} where specifies the key
-parameters that need to be specified. It is very important to note that the
+parameters that need to be specified. 
+
+\begin {bclogo}[logo =\bcinfo, barre = none,noborder = true]{Note}
+\begin {gbar}{yellow}
+It is very important to note that the
 path to the logs must be the full path, no relative. That's because when
 \logftailer{} enters in daemonized mode, it switches to the root directory
 closing all buffers and detaching itself from the terminal, in other words, it
 becomes a real daemon. As a consequence, it is not necessary to execute it with
 the nohup Linux command line tool.
+\end{gbar}
+\end{bclogo}
 
 \subsection{Silent Mode when no access to email notification}
 \logftailer{} provides the no-mail-silence optional command line parameter,
@@ -628,9 +634,15 @@ value should be its username and then the logs you want to tail.
 
 By default log4tailer will try to authenticate by using your rsa key under your
 $\sim$/.ssh/id\_rsa key if it exists, otherwise it will use normal username, password
-authentication. \textbf{Please be aware that you need to be the same username
+authentication. 
+
+\begin {bclogo}[logo =\bcinfo, barre = none,noborder = true]{Note}
+\begin {gbar}{yellow}
+Please be aware that you need to be the same username
 in both client and server. So, if you are logging in as root the ssh key needs
-to be for the root user. Otherwise, it would request your password}.
+to be for the root user. Otherwise, it would request your password.
+\end{gbar}
+\end{bclogo}
 If you want to use another rsa key other than the default
 id\_rsa key then you can provide one in the config file by using the rsa\_key
 parameter. Example:
@@ -760,6 +772,12 @@ The config file provided for convenience is called log4tailerconfig.txt and is q
 
 # inactivitynotification = mail
 
+# ===================================================================
+# PrintShot notification
+# ===================================================================
+
+# screenshot = fullpathtopicture.png
+
 # ====================================================================
 # Analytics notification. You can make log4tailer send you 
 # a report every analyticsgaptime seconds. By default it will be 
@@ -784,6 +802,7 @@ The config file provided for convenience is called log4tailerconfig.txt and is q
 # provide yours
 
 # rsa_key = fullpathToRsaKeyName 
+
 
 \end{verbatim}
 

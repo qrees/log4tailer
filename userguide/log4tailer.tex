@@ -14,7 +14,8 @@
 % for non-serified font
 %\renewcommand*\familydefault{\sfdefault}
 \usepackage[usenames, dvipsnames]{xcolor}
-\usepackage{tikz}
+\usepackage[tikz]{bclogo}
+\usepackage{framed}
 \usetikzlibrary[petri,arrows,decorations.pathmorphing,backgrounds,positioning,fit,shapes]
 \usepackage[hmargin=2.5cm,vmargin=2.5cm]{geometry}
 \usepackage{verbatim}
@@ -50,6 +51,15 @@
 \newenvironment{outlog}{\fontsize{9pt}{11}\color{red}\verbatim} {\endverbatim}
 \newenvironment{filec}{\fontsize{9pt}{11}\color{black}\verbatim} {\endverbatim}
 \newenvironment{test}{\begin{center}}{\end{center}}
+
+\definecolor{fbase}{gray}{0.95}
+\newenvironment{gbar}[1]{%
+\def\FrameCommand {{\color{#1}\vrule width 3 pt}\colorbox{fbase}}%
+\MakeFramed {\advance\hsize-\width \FrameRestore}}%
+{\endMakeFramed}
+
+
+
 \author{Jordi Carrillo}
 \title{User Guide to Log4Tailer}
 
@@ -138,7 +148,7 @@ Free Documentation License.
 \newpage
 \include{thebasics}
 \include{advancedfeatures}
-%\include{server}
+\include{server}
 \include{casestudies}
 %\include{development}
 
