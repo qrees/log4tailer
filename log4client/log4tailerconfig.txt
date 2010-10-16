@@ -79,6 +79,12 @@
 
 # inactivitynotification = mail
 
+# ===================================================================
+# PrintShot notification
+# ===================================================================
+
+# screenshot = fullpathtopicture.png
+
 # ====================================================================
 # Analytics notification. You can make log4tailer send you 
 # a report every analyticsgaptime seconds. By default it will be 
