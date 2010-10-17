@@ -119,15 +119,17 @@ class Message(object):
             if self.patarget:
                 self.isTarget = self.patarget.search(self.plainMessage)
             if self.patOwnTarget:
-                self.isOwnTarget = self.patOwnTarget.search(self.plainMessage)
-                # get the color associated with this target
-                if self.isOwnTarget:
-                    self.targetColor = self.log.targetColor(self.isOwnTarget
-                                                                .group(0))
-                    if self.targetColor:
-                        self.targetColor = self.color.getLogColor(self.targetColor)
-                    else:
-                        self.targetColor = self.color.backgroundemph
+                for target in self.patOwnTarget:
+                    self.isOwnTarget = target.search(self.plainMessage)
+                    if self.isOwnTarget:
+                        # get the color associated with this target
+                        self.targetColor = self.log.targetColor(target)
+                        if self.targetColor:
+                            self.targetColor = self.color.getLogColor(self.
+                                    targetColor)
+                        else:
+                            self.targetColor = self.color.backgroundemph
+                        break
             return
         # if we don't have anything in line
         # just set current Message to unknown
@@ -139,12 +141,9 @@ class Message(object):
         and check in what level we are in'''
         self.logOwnColor = log.ownOutputColor
         self.currentLogPath = log.path
-        ownTarget = log.patTarget 
         self.patOwnTarget = None
         self.log = log
-        if ownTarget:
-            self.patOwnTarget = ownTarget
+        if log.patTarget:
+            self.patOwnTarget = log.logTargetColor.keys()
         self.__parseSetOpts(line)                
-
-        
 

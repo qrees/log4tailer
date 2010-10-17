@@ -31,7 +31,7 @@ class Property:
         self.keys = []
         self.dictproperties = {}
         self.blankpat = re.compile(r'^(\s+|#.*|\/\/.*)$')
-        self.validsep = ["=",":"]
+        self.validsep = ["="]
         self.resep = "|".join(self.validsep)
     
     def parseProperties(self):

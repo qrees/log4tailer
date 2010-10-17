@@ -6,8 +6,7 @@
 # Log4Tailer is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
+# (at your option) any later version.  #
 # Log4Tailer is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -48,15 +47,9 @@ class Log(object):
             self.ownOutputColor = properties.getValue(path.lower())
             self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX + \
                                                 path.lower())
-            if self.ownTarget and '|' in self.ownTarget:
-                targetColors = [ k.strip() for k in self.ownTarget.split('|') ]
-                self.logTargetColor = dict(zip(*map(self.splitfields, 
-                                                    targetColors)))
-                self.patTarget = re.compile('|'.
-                                join(self.splitfields(targetColors[0])))
-            elif self.ownTarget:
-                self.patTarget = re.compile('|'.
-                                join(self.splitfields(self.ownTarget)))
+            if self.ownTarget:
+                self.logTargetColor = self.targets_colors()
+                self.patTarget = True
 
         if options and options.inactivity:
             self.inactivityTimer = Timer(float(options.inactivity))
@@ -161,5 +154,17 @@ class Log(object):
     def targetColor(self, target):
         return self.logTargetColor.get(target, '')
 
-        
+    def targets_colors(self):
+        """{ compiled regex : color) }
+        """ 
+        targetcolor = {}
+        fields = [ k.strip() for k in self.ownTarget.split(';') ]
+        for field in fields:
+            regcolor = [ k.strip() for k in field.split(':') ]
+            regex = re.compile(regcolor[0])
+            if len(regcolor) == 2:
+                targetcolor[regex] = regcolor[1]
+            else:
+                targetcolor[regex] =  None
+        return targetcolor
 

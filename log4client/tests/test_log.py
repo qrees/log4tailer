@@ -97,9 +97,8 @@ class TestLog(unittest.TestCase):
 
     def testshouldHaveitsOwnTargetSchemesIfProvidedInConfigFile(self):
         fh = open('config.txt','w')
-        regexesColors = "log$, ^2009-10-12 got something here$ | yellow, on_cyan"
-        regexes = [ k.strip() for k in regexesColors.split('|') ] 
-        allregex = re.compile('|'.join(regexes[0].split(',')))
+        regexesColors = ("log$ : yellow, on_cyan; ^2009-10-12 got something "
+            "here$ : black, on_cyan")
         targetsline = "targets /var/log/messages = "+regexesColors+"\n"
         fh.write(targetsline)
         fh.close()
@@ -108,8 +107,8 @@ class TestLog(unittest.TestCase):
         self.assertEqual(regexesColors, 
                          property.getValue('targets /var/log/messages'))
         log = Log('/var/log/messages', property)
-        logTargetsColors = {'log$' : 'yellow',
-                '^2009-10-12 got something here$' : 'on_cyan'}
+        logTargetsColors = {re.compile('log$'): 'yellow, on_cyan',
+            re.compile("^2009-10-12 got something here$") : 'black, on_cyan'}
         self.assertEqual(logTargetsColors, log.logTargetColor)
         os.remove('config.txt')
     
@@ -140,8 +139,7 @@ class TestLog(unittest.TestCase):
 
     def testTargetsNoColors(self):
         fh = open('config.txt','w')
-        regexes = "log$, ^2009-10-12 got something here$"
-        allregex = re.compile('|'.join(regexes.split(',')))
+        regexes = "log$; ^2009-10-12 got something here$"
         targetsline = "targets /var/log/messages = "+regexes+"\n"
         fh.write(targetsline)
         fh.close()
@@ -150,9 +148,8 @@ class TestLog(unittest.TestCase):
         self.assertEqual(regexes, 
                          property.getValue('targets /var/log/messages'))
         log = Log('/var/log/messages', property)
-        logTargetsColors = {}
-        self.assertEqual(logTargetsColors, log.logTargetColor)
-        self.assertTrue(log.patTarget)
+        color = log.logTargetColor.get(re.compile('log$'))
+        self.assertFalse(color)
         os.remove('config.txt')
 
     def tearDown(self):

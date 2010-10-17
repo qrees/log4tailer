@@ -34,7 +34,7 @@ MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/admin_media/'
 
 
-TEST_RUNNER = 'log4server.test.runner'
+#TEST_RUNNER = 'log4server.test.runner'
 
 # Don't share this with anybody.
 SECRET_KEY = '%$3a(6*a*#dh5h=nmrme9sdgb_+_q=9l6zmadq!3!!ynol9!o@'
@@ -51,7 +51,7 @@ ROOT_URLCONF = 'log4server.urls'
 
 INSTALLED_APPS = (
     'log4server.logs',
-    'test_extensions',
+    #'test_extensions',
 )
 
 TEMPLATE_LOADERS = (

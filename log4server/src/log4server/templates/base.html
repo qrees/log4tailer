@@ -1,17 +1,24 @@
-<html>
-    <h1>{% block title %}Log Status Page{% endblock %}</h1>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <title>Log4Server</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8"/> 
+        <link rel="stylesheet" type="text/css" href="/media/css/base.css" />
 
-	<body style="background-color: #D5E1DD; ">
+</head>
+<body>
+<h1>{% block title %}Log Status Page{% endblock %}</h1>
 
     {% block registeredlogs %}
-    <h3> Registered logs </h3>
-    <table border="1">
+    <h2> Registered logs </h2>
+    <table class="registered_logs">
         <tr>
             <th>Servers</th>
             <th>Logs</th>
         </tr>
     {% for log in logs %}
-        <tr bgcolor="#52B552">
+    <tr class="logs">
             <td>{{ log.logserver }}</td>
             <td>{{ log.logpath }}</td>
         </tr>
@@ -52,7 +59,7 @@
                 <a href="?page={{ logtraces.paginator.num_pages }}">Last</a>
             {% endif %}
             Page {{ logtraces.number }} of {{ logtraces.paginator.num_pages }}
-        <table border="1">
+        <table>
             <tr>
                 <th>LogTrace</th>
                 <th>Time triggered</th>

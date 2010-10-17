@@ -11,3 +11,4 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 
 DEBUG=True
 TEMPLATE_DEBUG=DEBUG
+

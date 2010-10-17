@@ -21,17 +21,20 @@ key, value optional parameters:
 
 \begin{config}
 \begin{verbatim}
-targets fullpathToLog0 = regex0, regex1,.., regexN | colorregex0,.., coloregexN
-targets fullpathToLog1 = regex0, regex1,.., regexN | colorregex0,.., coloregexN
+targets fullpathToLog0 = regex0 : color0; regex1 : color1;..; regexN : colorN
+targets fullpathToLog1 = regex0 : color0; regex1 : color1;..; regexN : colorN
 \end{verbatim}
 \end{config}
+
+Where color0, ... colorN are comma separated combinations of foreground,
+background colors. Please take a look at section \ref{sec:availablecolors}.
 
 An example of that could be:
 
 \begin{config}
 \begin{verbatim}
-targets /var/log/messages = iptables$, ^2009-08-07 user | blue, red
-targets /var/log/mail.log = incoming \d+, \d{1,3} something | on_cyan
+targets /var/log/messages = iptables$ : blue, on_red; ^2009-08-07 user : yellow
+targets /var/log/mail.log = incoming \d+ : on_cyan; \d{1,3} something 
 \end{verbatim}
 \end{config}
 
@@ -78,6 +81,7 @@ problem. Every color identify an specific level according to the log4j java
 framework.
 
 \subsubsection{Available colors}
+\label{sec:availablecolors}
 \logftailer{} provides the following foreground colors:
 
 \begin{center}
