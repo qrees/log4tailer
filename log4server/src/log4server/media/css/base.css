@@ -1,0 +1,54 @@
+body {
+    background-color: #D5E1DD; 
+}
+
+/*table.registered_logs {*/
+/*border-width: 1px;*/
+/*border-color: black;*/
+/*border-style: solid;*/
+/*border-collapse: collapse;*/
+/*}*/
+/**/
+/*table.logtraces {*/
+/*border: 1px; */
+/*border-width: 1px;*/
+/*border-color: black;*/
+/*border-style: solid;*/
+/*border-collapse: collapse;*/
+/*}*/
+
+.registered_logs td {
+    background-color: #52B552;
+    border-width: 1px;
+    border-color: gray;
+    border-collapse: collapse;
+    border-style: solid;
+}
+
+.registered_logs th {
+    background-color: #52B552;
+    border-width: 2px;
+    border-color: gray;
+    border-collapse: collapse;
+    border-style: solid;
+}
+
+.logtraces td {
+    /*background-color: #52B552;*/
+    border-width: 2px;
+    border-color: black;
+    border-style: solid;
+    border-collapse: collapse;
+}
+
+.logtraces th {
+    /*background-color: #52B552;*/
+    border-width: 2px;
+    border-color: black;
+    border-style: solid;
+    border-collapse: collapse;
+}
+
+
+
+

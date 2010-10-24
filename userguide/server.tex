@@ -19,14 +19,15 @@ A network diagram is showed in \autoref{fig:serverdiagram}.
 \end{figure}
 
 
-In the next section, we will describe the API that the log4server application implements and the 
-one being used by the log4tailer poster notification.
+In the next section, we will describe the API that the log4server application
+implements and the one being used by the log4tailer poster notification.
 
 \section{Log4Tailer compliant server}
-\logftailer{} client has the poster notification that allows the tailer to communicate 
-with a centralized web application, notifying it of possible problems from remote logs. 
-The poster notification will first register the tailer client to the server, and next 
-calls will be for alert notifications only.
+\logftailer{} client has the poster notification that allows the tailer to
+communicate with a centralized web application, notifying it of possible
+problems from remote logs.  The poster notification will first register the
+tailer client to the server, and next calls will be for alert notifications
+only.
 
 \subsection{Log4Tailer server API REST interface}
 
@@ -34,7 +35,8 @@ The compliant API interface is as follows:
 
 \subsubsection{Registration}
 
-Log4tailer client registers to the server on startup when poster notification is provided.
+Log4tailer client registers to the server on startup when poster notification
+is provided.
 
 \begin{flushleft}
  \begin{tabular}{|c|c|l|}
@@ -46,7 +48,8 @@ Log4tailer client registers to the server on startup when poster notification is
  \hline
 \end{tabular}
 \end{flushleft}
-The POST method will have in the body a JSON object with the following information:
+The POST method will have in the body a JSON object with the following
+information:
 
 \begin{itemize}
  \item logpath Full path of the log 
@@ -88,7 +91,8 @@ Log4tailer client unregisters from the server ones it is stopped.
  \hline
 \end{tabular}
 \end{flushleft}
-The POST method will have in the body a JSON object with the following information:
+The POST method will have in the body a JSON object with the following
+information:
 
 \begin{itemize}
  \item id log registration id 
@@ -123,7 +127,8 @@ HTTP/1.1 200 OK.
  \hline
 \end{tabular}
 \end{flushleft}
-The POST method will have in the body a JSON object with the following information:
+The POST method will have in the body a JSON object with the following
+information:
 
 \begin{itemize}
  \item logtrace logtrace that triggered the alert.
@@ -165,9 +170,9 @@ HTTP/1.1 201 CREATED.
  \hline
 \end{tabular}
 \end{flushleft}
-It returns all log traces triggered along with the log and server they belong to. The 
-date when it happened is reported as well. The results are paginated in reverse
-order, the newest first.
+It returns all log traces triggered along with the log and server they belong
+to. The date when it happened is reported as well. The results are paginated in
+reverse order, the newest first.
 
 \noindent
 Example:
@@ -183,8 +188,8 @@ HTTP/1.1 200 OK.
 
 
 \noindent
-If you go to /alerts/status in your web browser, you would see something as showed in  
-\autoref{fig:logstatus}.
+If you go to /alerts/status in your web browser, you would see something as
+showed in  \autoref{fig:logstatus}.
 
 \begin{figure}[ht]
 %\centering
@@ -256,7 +261,7 @@ and place a soft link to the previous created log4tailer.conf file:
 
 Log4Server needs a database in order to persist the alertable logtraces. 
 Sqlite3, Mysql or PostGres should be, by far, enough. Actually, with just an
-Sqlite3 would be just fine. Before starting starting the server, you should
+Sqlite3 would be just fine. Before starting the server, you should
 sync the database the first time or any time that the database does not exist
 already. In order to do that, execute the following command:
 
@@ -264,7 +269,6 @@ already. In order to do that, execute the following command:
    bin/log4server syncdb 
 \end{cmd}
 \emph{log4server} is just a wrapper for the \emph{manage.py} Django python
-script. Make sure you setup \todo[size=\footnotesize,color=yellow]{should we
-provide an etc settings.py? in buildout}.
+script. 
 
 \newpage

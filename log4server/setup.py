@@ -11,18 +11,8 @@ setup(name = "log4server",
       author_email = 'jordilin@gmail.com',
       packages = find_packages('src'),
       package_dir = {'': 'src'},
-      #entry_points = { 
-      #'console_scripts' : [ 
-          #'log4tail = log4tailer.log4tail:main',
-          #]
-      #},
-      #cmdclass = {"release":Release,
-              #"test":Test, 
-              #"clean":Clean,
-              #"dodoc":DoDoc,
-              #"stats":Stats},
       classifiers=[
-            'Development Status :: 5 - Production/Stable',
+            'Development Status :: 4 - Beta',
             'Environment :: Console',
             'Intended Audience :: Developers',
             'Intended Audience :: System Administrators',
@@ -30,6 +20,5 @@ setup(name = "log4server",
             'Operating System :: POSIX',
             'Programming Language :: Python',
             'Topic :: System :: Monitoring'
-            ])
-
+        ])
 

@@ -1,0 +1,6 @@
+include bin/log4server
+include buildout.cfg
+include bootstrap.py
+include ChangeLog
+include COPYING
+include Makefile
