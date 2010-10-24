@@ -216,12 +216,16 @@ that executes the bin/buildout command for convenience. It can take a while, so
 relax and take a cup of tea.}:
 
 \begin{cmd}
-    make
+    virtualenv --no-site-packages ENV
+    . ENV/bin/activate
+    python bootstrap.py
+    bin/buildout
 \end{cmd}
+
 If everything is fine\footnote{You need external internet connectivity, as it
 will download all dependencies such as Django web framework in the current
 directory.} you will see a directory called \emph{bin}. If you go
-into that directory you will see a file called log4tailer.wsgi. 
+into that directory you will see a file called log4server.wsgi. 
 
 \subsection{Apache configuration}
 In a Debian system such as Ubuntu, you'll need to install Apache and
@@ -256,7 +260,6 @@ and place a soft link to the previous created log4tailer.conf file:
     ln -s ../sites-available/log4tailer.conf
 \end{cmd}
 
-
 \subsection{Deciding on database}
 
 Log4Server needs a database in order to persist the alertable logtraces. 
@@ -270,5 +273,21 @@ already. In order to do that, execute the following command:
 \end{cmd}
 \emph{log4server} is just a wrapper for the \emph{manage.py} Django python
 script. 
+
+\subsection{Restarting Apache}
+Once you have placed the Apache configuration file pointing to the wsgi file, 
+you'll need to restart Apache. 
+
+\subsection{Main Web Frontend urls}
+Once Apache is running, open a web browser and go to the next url to see if it
+works:
+
+\begin{codeexample}
+http://hostname:port/alerts/status
+\end{codeexample}
+
+If you see a web page with the title \textbf{Logs Status Page} then it means
+it's working. Congratulations!!. 
+
 
 \newpage
