@@ -2,11 +2,20 @@ from setuptools import setup, find_packages
 
 __version__ = '0.1'
 
+long_description = """
+Log4server is a web backend application that receives notifications from
+log4tailer clients, notifying in a web front page about the status of the logs
+in several machines.  The clients will register first to the server and then
+notify it if any fatal, error, critical or target logtrace has been found.
+""" 
+
+
 setup(name = "log4server",
       version = __version__ ,
       url = "http://code.google.com/p/log4tailer/",
       license = "GNU GPL v3",
       description = "log4tailer's server side",
+      long_description = long_description,
       author = 'Jordi Carrillo',
       author_email = 'jordilin@gmail.com',
       packages = find_packages('src'),
