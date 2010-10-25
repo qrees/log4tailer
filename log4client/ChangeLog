@@ -1,4 +1,10 @@
 ====================================
+xx/xx/xx release 3.0
+====================================
+- Updated documentation for log4server
+- Fixed regexes properties in config file
+
+====================================
 16/10/10 release 2.9
 ====================================
 - minor refactoring
