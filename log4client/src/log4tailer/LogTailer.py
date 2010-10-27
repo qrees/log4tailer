@@ -25,8 +25,15 @@ from log4tailer.reporting import Resume
 from log4tailer import notifications
 from log4tailer.utils import setup_mail
 
+def get_term_lines():
+    termlines = os.popen("tput lines")
+    ttlines = termlines.readline()
+    termlines.close()
+    ttlines = int(ttlines)
+    return ttlines
+
 class LogTailer(object):
-    '''Tails the log provided by Log class'''
+    '''Tails the logs provided by Log class'''
     def __init__(self, defaults):
         self.arrayLog = []
         self.logcolors = defaults['logcolors']
@@ -51,10 +58,10 @@ class LogTailer(object):
             log.openLog()
             log.seekLogNearlyEnd()
 
-    def __initialize(self,message):
+    def __initialize(self, message):
         '''prints the last 10 
         lines for each log, one log 
-        at a time'''
+        at a time''' 
         printAction = notifications.Print()
         lenarray = len(self.arrayLog)
         cont = 0
@@ -71,7 +78,7 @@ class LogTailer(object):
             if cont < lenarray:
                 print
 
-    def hasRotated(self,log):
+    def hasRotated(self, log):
         """Returns True if log has rotated
         False otherwise"""
         if log.getcurrInode()!=log.inode or log.getcurrSize()<log.size: 
@@ -83,12 +90,7 @@ class LogTailer(object):
             return True
         return False
 
-    def getTermLines(self):
-        termlines = os.popen("tput lines")
-        ttlines = termlines.readline()
-        termlines.close()
-        ttlines = int(ttlines)
-        return ttlines
+
 
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
@@ -100,7 +102,7 @@ class LogTailer(object):
             pos = numlines-n
             count = 0
             buff = []
-            ttlines = self.getTermLines()
+            ttlines = get_term_lines()
             for curpos,line in enumerate(fd):
                 if curpos >= pos:
                     line = line.rstrip()
@@ -111,7 +113,7 @@ class LogTailer(object):
                     if count%ttlines == 0:
                         raw_input("continue\n")
                         count = 0
-                        ttlines = self.getTermLines()
+                        ttlines = get_term_lines()
             log.closeLog()
 
     def daemonize (self, stdin='/dev/null', stdout='/dev/null', 
