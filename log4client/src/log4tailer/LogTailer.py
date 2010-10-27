@@ -109,7 +109,7 @@ class LogTailer(object):
                     count += 1
                     buff.append(line)
                     if count%ttlines == 0:
-                        cont = raw_input("continue\n")
+                        raw_input("continue\n")
                         count = 0
                         ttlines = self.getTermLines()
             log.closeLog()
