@@ -4,3 +4,4 @@ include ChangeLog
 include COPYING
 include Makefile
 graft src/log4server/media
+graft src/log4server/templates
