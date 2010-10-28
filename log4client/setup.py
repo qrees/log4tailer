@@ -100,7 +100,7 @@ class DoDoc(Command):
         pdfexec = 'pdflatex'
         file = 'log4tailer.tex'
         destfile = pjoin(destdir,'UserGuide-'+__version__+'.pdf')
-        for i in range(2):
+        for i in range(4):
             # compile two times to fix cross references
             docproc = Popen([pdfexec,file],stdout=PIPE)
             out,err = docproc.communicate()
