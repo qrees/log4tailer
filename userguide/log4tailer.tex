@@ -8,7 +8,7 @@
 % no Back-Cover Texts.  A copy of the license is included in the
 % section entitled "GNU Free Documentation License".
 
-\documentclass[a4paper]{article}
+\documentclass[a4paper, twoside]{article}
 %\documentclass[letterpaper]{article}
 %\usepackage{lmodern}
 % for non-serified font
@@ -65,6 +65,9 @@
 
 \newcommand{\logftailer}{\textbf{\textcolor{black}{L}\textcolor{red}{o}%
 \textcolor{Violet}{g}4\textcolor{green}{T}\textcolor{magenta}{ail}\textcolor{red}{er}}}
+\newcommand{\alerta}{\textbf{\textcolor{black}{A}\textcolor{red}{l}%
+\textcolor{Violet}{e}\textcolor{green}{r}\textcolor{magenta}{t}\textcolor{red}{a}}}
+
 
 \newcommand{\emphlogtrace}[1]{\vspace{0.2cm}\newline\indent\colorbox{red}{\textbf{#1}}\newline\vspace{0.2cm}}
 
@@ -103,6 +106,36 @@ Contents\\\rule[1ex]{\textwidth}{1pt}}
    \colorbox{lowgreen}{\usebox{\@tempboxa}}\vspace{0.2cm}
 }\makeatother
 
+\newcommand{\logoheader}{\begin{tikzpicture}
+    \draw[fill=violet] (0,0) ellipse [x radius=0.5cm,y radius=0.4cm];
+    \draw (-0.5,0) -- (0.5,0);
+    \draw (0,-0.4) -- (0,0.4);
+    \draw[fill=red] (-0.06,0.05) circle (0.2cm);
+    \draw[fill=red, nearly opaque] (-0.06,0.05) circle (0.3cm);
+    \draw[fill=yellow] (-0.05,0.05) circle (0.05cm);
+\end{tikzpicture}}
+
+
+\newcommand{\logo}{\begin{tikzpicture}
+    \draw[fill=violet] (0,0) ellipse [x radius=1cm,y radius=0.8cm];
+    \draw (-1,0) -- (1,0);
+    \draw (0,-0.8) -- (0,0.8);
+    \draw[fill=red] (-0.12,0.1) circle (0.4cm);
+    \draw[fill=red, nearly opaque] (-0.12,0.1) circle (0.6cm);
+    \draw[fill=yellow] (-0.1,0.1) circle (0.1cm);
+\end{tikzpicture}}
+
+\usepackage{fancyhdr}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[RO,LE]{\alerta{} Project} % \logoheader}
+\fancyhead[LO,RE]{\nouppercase\leftmark} % \logoheader}
+\fancyfoot[C]{\thepage}
+%\rhead{\nouppercase{\leftmark}}
+%\lhead{\nouppercase{\leftmark}}
+
+%\renewcommand{\headrulewidth}{0.4pt}
+%\renewcommand{\footrulewidth}{0pt}
 
 \begin{document}
 
