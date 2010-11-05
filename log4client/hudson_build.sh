@@ -1,4 +1,4 @@
-cd $WORKSPACE/log4client
+cd $WORKSPACE/alerta
 CWD=`pwd`
 make env
 export PATH=$CWD/ENV/bin:$PATH
