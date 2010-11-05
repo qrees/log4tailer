@@ -1,4 +1,4 @@
-cd $WORKSPACE/alerta
+cd $WORKSPACE/log4tailer
 CWD=`pwd`
 make env
 export PATH=$CWD/ENV/bin:$PATH
