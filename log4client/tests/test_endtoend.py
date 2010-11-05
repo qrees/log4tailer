@@ -189,7 +189,7 @@ class TestEndToEnd(unittest.TestCase):
                 return False
         self.assertRaises(SystemExit, log4tailer.initialize, 
                 OptionsMock())
-        doc_version = re.search('\large Version (\d+\.?\d+)', 
+        doc_version = re.search('\large Version (\d+\.?\d+\.?\d+)', 
                 open('../userguide/log4tailer.tex').read()).group(1)
         self.assertEqual(doc_version, sys.stdout.captured[0])
    

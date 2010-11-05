@@ -54,7 +54,7 @@ screen. By providing colors, the human eye will discern and quickly identify
 specific levels or lines. 
 '''
 
-__version__= re.search('__version__ = (\d+\.?\d+)', 
+__version__= re.search('__version__ = (\w+)', 
         open("src/log4tailer/__init__.py").read()).group(1)
     
 class Test(Command):
