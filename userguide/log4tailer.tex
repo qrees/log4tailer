@@ -58,16 +58,13 @@
 \MakeFramed {\advance\hsize-\width \FrameRestore}}%
 {\endMakeFramed}
 
-
-
 \author{Jordi Carrillo}
 \title{User Guide to Log4Tailer}
 
-\newcommand{\logftailer}{\textbf{\textcolor{black}{L}\textcolor{red}{o}%
+\newcommand{\logftailertitle}{\textbf{\textcolor{black}{L}\textcolor{red}{o}%
 \textcolor{Violet}{g}4\textcolor{green}{T}\textcolor{magenta}{ail}\textcolor{red}{er}}}
-\newcommand{\alerta}{\textbf{\textcolor{black}{A}\textcolor{red}{l}%
+\newcommand{\logftailer}{\textbf{\textcolor{black}{A}\textcolor{red}{l}%
 \textcolor{Violet}{e}\textcolor{green}{r}\textcolor{magenta}{t}\textcolor{red}{a}}}
-
 
 \newcommand{\emphlogtrace}[1]{\vspace{0.2cm}\newline\indent\colorbox{red}{\textbf{#1}}\newline\vspace{0.2cm}}
 
@@ -86,7 +83,7 @@
 
 %FIXME needs some cleanup in here
 \newcommand{\contentsrule}[1]{{\color{blue}\sectionrule{3ex}{3pt}{-2ex}{1pt}{#1}}}
-\renewcommand{\contentsname}{{\color{cadetblue}\rule{\textwidth}{2pt}}\\\alerta{}'s %
+\renewcommand{\contentsname}{{\color{cadetblue}\rule{\textwidth}{2pt}}\\\logftailer{}'s %
 Contents\\\rule[1ex]{\textwidth}{1pt}}
 
 
@@ -128,7 +125,7 @@ Contents\\\rule[1ex]{\textwidth}{1pt}}
 \usepackage{fancyhdr}
 \fancyhead{}
 \fancyfoot{}
-\fancyhead[RO,LE]{\alerta{} Project} % \logoheader}
+\fancyhead[RO,LE]{\logftailer{} Project} % \logoheader}
 \fancyhead[LO,RE]{\nouppercase\leftmark} % \logoheader}
 \fancyfoot[C]{\thepage}
 %\rhead{\nouppercase{\leftmark}}
@@ -167,7 +164,7 @@ Free Documentation License.
 \newpage
 
 
-\title{{\bfseries \alerta{} User's Guide}\\[1mm]
+\title{{\bfseries \logftailer{} User's Guide}\\[1mm]
   \large Version 3.0.1\\[1mm]
 \large\href{http://code.google.com/p/log4tailer}{\texttt{http://code.google.com/p/log4tailer}}}
 \author{Jordi Carrillo}
