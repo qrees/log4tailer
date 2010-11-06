@@ -90,8 +90,6 @@ class LogTailer(object):
             return True
         return False
 
-
-
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
         message = Message(self.logcolors)
