@@ -41,6 +41,9 @@ $(BUILDOUT): bootstrap.py
 release: $(EXE)
 	$(PYTHON) setup.py release
 
+coberturasource: 
+	$(PYTHON) cobpathfix.py
+
 # sdist and tag into subversion
 releasetag: $(EXE)
 	$(PYTHON) setup.py release --rtag
