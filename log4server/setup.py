@@ -12,7 +12,7 @@ notify it if any fatal, error, critical or target logtrace has been found.
 
 setup(name = "log4server",
       version = __version__ ,
-      url = "http://code.google.com/p/log4tailer/",
+      url = "http://bitbucket.org/jordilin/alerta",
       license = "GNU GPL v3",
       description = "log4tailer's server side",
       long_description = long_description,
