@@ -21,9 +21,7 @@ import os
 import time
 from log4tailer import LogColors
 from log4tailer.Timer import Timer
-from smtplib import (SMTP, 
-        SMTP_SSL, 
-        SMTPServerDisconnected)
+from smtplib import SMTP, SMTPServerDisconnected
 from log4tailer.TermColorCodes import TermColorCodes
 import subprocess
 from subprocess import PIPE
@@ -43,6 +41,11 @@ try:
     import queue
 except ImportError:
     import Queue as queue
+
+try:
+    import SMTP_SSL
+except ImportError:
+    pass
 
 class Print(object):
     '''PrintAction: prints to stdout the 
