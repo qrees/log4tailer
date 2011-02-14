@@ -22,7 +22,7 @@ defaults  = {'pause' : 1,
     'alt_config': os.path.expanduser('~/.log4tailer'),
     'post' : False}
 
-def parseConfig(configfile):
+def parse_config(configfile):
     properties = Properties.Property(configfile)
     properties.parse_properties()
     return properties
@@ -36,8 +36,8 @@ def initialize(options):
         sys.exit(0)
     if os.path.exists(config):
         logger.info("Configuration file [%s] found" % config)
-        defaults['properties'] = parseConfig(config)
-        logcolors.parseConfig(defaults['properties'])
+        defaults['properties'] = parse_config(config)
+        logcolors.parse_config(defaults['properties'])
     properties = defaults['properties']
     if options.pause:
         defaults['pause'] = int(options.pause)

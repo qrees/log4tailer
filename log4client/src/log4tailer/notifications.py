@@ -123,7 +123,7 @@ class Inactivity(object):
         if properties:
             notification = properties.get_value(
                     Inactivity.InactivityActionNotification)
-            self.logColors.parseConfig(properties)
+            self.logColors.parse_config(properties)
         self.notification = notification or 'print'
         self.alerted = False
         self.alerting_msg = 'Inactivity action detected'

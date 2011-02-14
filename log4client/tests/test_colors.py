@@ -132,7 +132,7 @@ class TestColors(unittest.TestCase):
     
     def testLogColorsParseConfig(self):
         logcolors = LogColors()
-        logcolors.parseConfig(PropertiesMock())
+        logcolors.parse_config(PropertiesMock())
         self.assertFalse(hasattr(logcolors,'one'))
         self.assertFalse(hasattr(logcolors,'two'))
 
@@ -165,7 +165,7 @@ class TestColors(unittest.TestCase):
         level = 'FATAL'
         sys.stdout = Writer()
         logcolors = LogColors()
-        logcolors.parseConfig(PropertiesBackGround())
+        logcolors.parse_config(PropertiesBackGround())
         termcolors = TermColorCodes()
         message = Message(logcolors)
         notifier = notifications.Print()
@@ -181,7 +181,7 @@ class TestColors(unittest.TestCase):
         sys.stdout = Writer()
         logcolors = LogColors()
         termcolors = TermColorCodes()
-        logcolors.parseConfig(PropertiesBackGround())
+        logcolors.parse_config(PropertiesBackGround())
         message = Message(logcolors)
         notifier = notifications.Print()
         anylog = Log('out.log')

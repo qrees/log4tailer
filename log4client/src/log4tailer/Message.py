@@ -48,7 +48,7 @@ class Message(object):
         self.isOwnTarget = None
         self.isTarget = None
         if properties:
-            self.pauseMode.parseConfig(properties)
+            self.pauseMode.parse_config(properties)
    
     def isATarget(self):
         if self.isTarget or self.isOwnTarget:
