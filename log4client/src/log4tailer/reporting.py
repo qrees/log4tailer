@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from time import time, localtime, strftime
-import TermColorCodes, Timer
+from log4tailer import TermColorCodes, Timer
 import datetime
 
 MAIL = 'mail'
@@ -69,9 +69,9 @@ class Resume(object):
     def __get_now(self):
         return strftime("%d %b %Y %H:%M:%S", localtime())
 
-    def update(self,message,log):
+    def update(self, message, log):
         messageLevel = message.messageLevel
-        plainmessage,logpath = message.getPlainMessage()
+        plainmessage, _ = message.getPlainMessage()
         isTarget = message.isATarget()
         logPath = log.path
         logKey = self.logsReport[logPath]
