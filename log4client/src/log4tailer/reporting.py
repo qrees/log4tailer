@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-from time import time, localtime, strftime
+from time import time
+from log4tailer import utils
 from log4tailer import TermColorCodes, Timer
 import datetime
 
@@ -54,20 +55,18 @@ class Resume(object):
         self.is_daemonized = False
         self.timer = Timer.Timer(self.gapTime)
         self.timer.startTimer()
+        self.report_file = None
 
     def add_notifier(self, notifier):
         self.notifiers.append(notifier)
 
     def flushReport(self):
-        for log,dictlog in self.logsReport.iteritems():
-            for key,val in dictlog.iteritems():
+        for _, dictlog in self.logsReport.iteritems():
+            for key, _ in dictlog.iteritems():
                 if key in ['ERROR', 'FATAL', 'CRITICAL', 'OTHERS']:
                     dictlog[key] = []
                 else:
                     dictlog[key] = 0
-
-    def __get_now(self):
-        return strftime("%d %b %Y %H:%M:%S", localtime())
 
     def update(self, message, log):
         messageLevel = message.messageLevel
@@ -83,11 +82,11 @@ class Resume(object):
             if messageLevel in self.nonTimeStamped:
                 logKey[messageLevel] += 1
             else:
-                res = self.__get_now()
+                res = utils.get_now()
                 logKey[messageLevel].append(res +'=>> '+plainmessage)
         for notifier in self.notifiers:
             if notifier.alerted:
-                res = self.__get_now()
+                res = utils.get_now()
                 logKey['OTHERS'].append(res + '=>> '+ notifier.alerting_msg)
         self.report_now()
 

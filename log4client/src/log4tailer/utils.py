@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-
+from time import localtime, strftime
 import getpass
 from log4tailer import notifications
 
@@ -32,5 +32,10 @@ def setup_mail(properties):
             password, port, ssl) 
     mailAction.connectSMTP()
     return mailAction
+
+def get_now():
+    return strftime("%d %b %Y %H:%M:%S", localtime())
+
+
 
 
