@@ -36,6 +36,13 @@ def setup_mail(properties):
 def get_now():
     return strftime("%d %b %Y %H:%M:%S", localtime())
 
+def hours_mins_format(secs):
+    years, secs = divmod(secs, 31556926)
+    mins, secs = divmod(secs, 60)
+    hours, mins = divmod(mins, 60)
+    days, hours = divmod(hours, 24)
+    return (str(years) + " years " + str(days) + " days " + str(hours) +
+            " hours " + str(mins) + " mins " + str(secs) + " secs ")
 
 
 

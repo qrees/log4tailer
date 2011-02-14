@@ -112,19 +112,11 @@ class Resume(object):
             getattr(self, report_method)(body)
             self.flushReport()
             self.timer.reset()
-
-    def __hoursMinsFormat(self,secs):
-        years, secs = divmod(secs, 31556926)
-        mins, secs = divmod(secs, 60)
-        hours, mins = divmod(mins, 60)
-        days, hours = divmod(hours, 24)
-        return (str(years) + " years " + str(days) + " days " + str(hours) +
-                " hours " + str(mins) + " mins " + str(secs) + " secs ")
-            
+           
     def __execTime(self):
         finish = time()
         ellapsed = finish - self.initTime
-        return self.__hoursMinsFormat(ellapsed)
+        return utils.hours_mins_format(ellapsed)
 
     def colorize(self,line,colors):
         return colors.backgroundemph + line + colors.reset
