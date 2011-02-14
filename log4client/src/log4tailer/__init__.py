@@ -10,7 +10,6 @@ __version__ = "3.0.1"
 logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
-
 defaults  = {'pause' : 1, 
     'silence' : False,
     'throttle' : 0,

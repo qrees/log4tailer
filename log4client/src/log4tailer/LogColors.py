@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-from TermColorCodes import TermColorCodes
-import LogLevels
+from log4tailer.TermColorCodes import TermColorCodes
+from log4tailer import LogLevels
 
 class LogColors(object):
     '''Provides the colors that will

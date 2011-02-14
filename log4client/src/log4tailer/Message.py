@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from log4tailer.ColorParser import ColorParser
-import modes
+from log4tailer import modes
 import re
 
 class Message(object):
@@ -41,6 +41,7 @@ class Message(object):
         self.oldMessageLevel = ''
         self.oldLevelColor = None
         self.pauseMode = modes.PauseMode()
+        self.targetColor = None
         self.logOwnColor = False
         self.oldLogPath = None
         self.log = None

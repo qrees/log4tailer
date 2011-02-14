@@ -1,7 +1,12 @@
-import os,sys,logging,getpass,time,select
-from Log import Log
-from Message import Message
-from TermColorCodes import TermColorCodes
+import os
+import sys
+import logging
+import getpass
+import time
+import select
+from log4tailer.Log import Log
+from log4tailer.Message import Message
+from log4tailer.TermColorCodes import TermColorCodes
 from subprocess import Popen, PIPE
 import notifications
 
@@ -14,7 +19,7 @@ except:
 SSH_DIR = os.path.join(os.path.expanduser('~'),'.ssh')
 SSH_KEY = os.path.join(SSH_DIR, 'id_rsa')
 
-class SSHLogTailer:
+class SSHLogTailer(object):
     
     HOSTNAME_PROPERTY_PREFIX = "hostname "
     TAIL_COMMAND_PREFIX = "tail -F "
