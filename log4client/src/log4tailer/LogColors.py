@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from Properties import Property
 from TermColorCodes import TermColorCodes
 import LogLevels
 
@@ -38,17 +36,17 @@ class LogColors(object):
         self.reset = self.color.reset
         self.backgroundemph = self.color.backgroundemph
 
-    def parseConfig(self,properties):
+    def parseConfig(self, properties):
         for key in properties.get_keys():
             code = self.color.getCode(properties.get_value(key))
             if not code:
                 continue
             setattr(self, key, code)
             
-    def getLogColor(self,color):
+    def getLogColor(self, color):
         return self.color.getCode(color)
     
-    def getLevelColor(self,level):
+    def getLevelColor(self, level):
         level = level.lower()
         if level in LogLevels.logLevels:
             return getattr(self, level)
