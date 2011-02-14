@@ -24,7 +24,7 @@ defaults  = {'pause' : 1,
 
 def parseConfig(configfile):
     properties = Properties.Property(configfile)
-    properties.parseProperties()
+    properties.parse_properties()
     return properties
 
 def initialize(options):

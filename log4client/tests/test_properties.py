@@ -35,10 +35,10 @@ class TestProperties(unittest.TestCase):
         self.configfh.close()
         self.configKeys = colorconfigs.keys().sort()
 
-    def testparseProperties(self):
+    def testparse_properties(self):
         property = Property(self.configfile)
-        property.parseProperties()
-        configPropertyKeys = property.getKeys().sort()
+        property.parse_properties()
+        configPropertyKeys = property.get_keys().sort()
         # my colorconfigs keys are already in lowercase
         self.assertEqual(self.configKeys,configPropertyKeys)
     
@@ -50,15 +50,15 @@ class TestProperties(unittest.TestCase):
         self.configfh.write(targetline)
         self.configfh.close()
         property = Property('anotherconfig.txt')
-        property.parseProperties()
-        self.assertEqual(value,property.getValue(key))
+        property.parse_properties()
+        self.assertEqual(value,property.get_value(key))
         os.remove('anotherconfig.txt')
 
     def testshouldReturnNoneifKeyNotFound(self):
         property = Property(self.configfile)
-        property.parseProperties()
+        property.parse_properties()
         key = 'hi'
-        self.assertFalse(property.getValue(key))
+        self.assertFalse(property.get_value(key))
     
     def __createDuplicateKeysConfig(self):
         os.remove(self.configfile)
@@ -73,7 +73,7 @@ class TestProperties(unittest.TestCase):
     def testKeyAlreadyExistsException(self):                                    
         self.__createDuplicateKeysConfig()
         property = Property(self.configfile)
-        self.assertRaises(KeyAlreadyExistsException,property.parseProperties)
+        self.assertRaises(KeyAlreadyExistsException,property.parse_properties)
 
     def tearDown(self):
         os.remove(self.configfile)

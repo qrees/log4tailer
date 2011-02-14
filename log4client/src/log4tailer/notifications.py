@@ -76,7 +76,7 @@ class PrintShot(Print):
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
     
     def __init__(self, properties):
-        self.screenshot = properties.getValue('screenshot')
+        self.screenshot = properties.get_value('screenshot')
         self.winid = self.get_windowsid()
         self.screenproc = ['import', '-window', self.winid, 
                 self.screenshot]
@@ -121,7 +121,7 @@ class Inactivity(object):
         self.mailAction = None
         notification = None
         if properties:
-            notification = properties.getValue(
+            notification = properties.get_value(
                     Inactivity.InactivityActionNotification)
             self.logColors.parseConfig(properties)
         self.notification = notification or 'print'
@@ -423,7 +423,7 @@ class Executor(object):
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
     def __init__(self, properties):
-        executable = properties.getValue('executor')
+        executable = properties.get_value('executor')
         if not executable:
             raise Exception("need to provide executor option")
         self.executable = executable.split(' ')
@@ -480,11 +480,11 @@ class Poster(object):
             uri, register and unregister uri will need to be provided in a
             configuration file.
         """ 
-        self.url = properties.getValue('server_url')
-        self.port = properties.getValue('server_port')
-        self.service_uri = properties.getValue('server_service_uri')
-        self.register_uri = properties.getValue('server_service_register_uri')
-        self.unregister_uri = properties.getValue('server_service_unregister_uri')
+        self.url = properties.get_value('server_url')
+        self.port = properties.get_value('server_port')
+        self.service_uri = properties.get_value('server_service_uri')
+        self.register_uri = properties.get_value('server_service_register_uri')
+        self.unregister_uri = properties.get_value('server_service_unregister_uri')
         self.headers = {'Content-type' : 'application/json'}
         self.registered_logs = {}
         from socket import gethostname

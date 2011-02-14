@@ -58,7 +58,7 @@ class TestExecutor(unittest.TestCase):
         fh.write('executor = ls -l\n')
         fh.close()
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         self.assertEquals(['ls', '-l'], executor.executable)
         executor.stop()
@@ -68,7 +68,7 @@ class TestExecutor(unittest.TestCase):
         fh.write('anything = ls -l\n')
         fh.close()
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         self.assertRaises(Exception, notifications.Executor, properties)
 
     def testShouldProvideNotifyMethod(self):
@@ -76,7 +76,7 @@ class TestExecutor(unittest.TestCase):
         fh.write('executor = ls -l\n')
         fh.close()
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         self.assertTrue(hasattr(executor, 'notify'))
 
@@ -85,7 +85,7 @@ class TestExecutor(unittest.TestCase):
         fh.write('executor = ls -l %s %s\n')
         fh.close()
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         self.assertEqual(True, executor.full_trigger_active)
         executor.stop()
@@ -95,7 +95,7 @@ class TestExecutor(unittest.TestCase):
         fh.write('executor = ls -l\n')
         fh.close()
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         self.assertEqual(False, executor.full_trigger_active)
         executor.stop()
@@ -110,7 +110,7 @@ class TestExecutor(unittest.TestCase):
         trace = "this is a FATAL log trace"
         trigger = ['ls', '-l', trace, log.path ]
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         os_mock = self.mocker.replace('subprocess')
         os_mock.call(' '.join(trigger), shell = True)
         self.mocker.result(True)
@@ -133,7 +133,7 @@ class TestExecutor(unittest.TestCase):
         fh.close()
         trace = "this is a fatal log trace"
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         trigger = executor._build_trigger(trace, logpath)
@@ -150,7 +150,7 @@ class TestExecutor(unittest.TestCase):
         fh.close()
         trace = "this is a critical log trace"
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
@@ -166,7 +166,7 @@ class TestExecutor(unittest.TestCase):
         fh.close()
         trace = "this is an error log trace"
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         start = time.time()
@@ -187,7 +187,7 @@ class TestExecutor(unittest.TestCase):
         fh.close()
         trace = "this is an info log trace"
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
@@ -205,7 +205,7 @@ class TestExecutor(unittest.TestCase):
         trace = "this is an info log trace"
         trigger = ['echo', trace, logfile]
         properties = Property(CONFIG)
-        properties.parseProperties()
+        properties.parse_properties()
         message = Message(logcolor, target = 'trace')
         executor_mock = self.mocker.mock()
         executor_mock._build_trigger(trace, logfile)

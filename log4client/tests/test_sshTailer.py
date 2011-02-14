@@ -54,8 +54,8 @@ class TestSSHTailer(unittest.TestCase):
     def testShouldHaveUsernameandAtLeastOneHostnameSetUp(self):
         self.__setUpConfigFile()
         properties = Property(self.configfile)        
-        properties.parseProperties()
-        logging.debug(properties.getKeys())
+        properties.parse_properties()
+        logging.debug(properties.get_keys())
         defaults = self.__getDefaults()
         defaults['properties'] = properties
         logtailer = SSHLogTailer(defaults)
@@ -66,7 +66,7 @@ class TestSSHTailer(unittest.TestCase):
         fh.write('anything = anything\n')
         fh.close()
         properties = Property('wrongconfigfile')
-        properties.parseProperties()
+        properties.parse_properties()
         defaults = self.__getDefaults()
         defaults['properties'] = properties
         logtailer = SSHLogTailer(defaults)
@@ -75,8 +75,8 @@ class TestSSHTailer(unittest.TestCase):
     def testItShouldhaveBuildADictWithAllParamsIfAllParametersOk(self):
         self.__setUpConfigFile()
         properties = Property(self.configfile)        
-        properties.parseProperties()
-        logging.debug(properties.getKeys())
+        properties.parse_properties()
+        logging.debug(properties.get_keys())
         defaults = self.__getDefaults()
         defaults['properties'] = properties
         logtailer = SSHLogTailer(defaults)
@@ -87,8 +87,8 @@ class TestSSHTailer(unittest.TestCase):
     def testshouldBuildCommandTailBasedOnHostnamesDict(self):
         self.__setUpConfigFile()
         properties = Property(self.configfile)        
-        properties.parseProperties()
-        logging.debug(properties.getKeys())
+        properties.parse_properties()
+        logging.debug(properties.get_keys())
         defaults = self.__getDefaults()
         defaults['properties'] = properties
         logtailer = SSHLogTailer(defaults)

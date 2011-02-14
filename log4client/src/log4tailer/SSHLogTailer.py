@@ -37,7 +37,7 @@ class SSHLogTailer:
         self.rsa_key = SSH_KEY
 
     def sanityCheck(self):
-        hostnamescsv = self.properties.getValue('sshhostnames')
+        hostnamescsv = self.properties.get_value('sshhostnames')
         if not hostnamescsv:
             self.logger.error("sshhostnames should be provided "
                               "in configfile for ssh tailing")
@@ -45,10 +45,10 @@ class SSHLogTailer:
         hostnames = [hostname.strip() for hostname in hostnamescsv.split(',')]
         for hostname in hostnames:
             self.logger.debug("hostname [%s] found in config file" % hostname)
-            hostnameValues = self.properties.getValue(hostname)
+            hostnameValues = self.properties.get_value(hostname)
             if not hostnameValues:
                 self.logger.debug("values for hostname [%s] are [%s]" % (
-                    hostname,self.properties.getValue(hostname)))
+                    hostname,self.properties.get_value(hostname)))
                 self.logger.error("missing username and logs for [%s]" % (
                                   hostname))
                 return False
@@ -67,7 +67,7 @@ class SSHLogTailer:
                 hostnameDict['logs'].append(log.strip())
             self.logger.debug("logs for hostname [%s] are [%s]" % (hostname, 
                               hostnameDict['logs']))
-        rsa_key = self.properties.getValue('rsa_key')
+        rsa_key = self.properties.get_value('rsa_key')
         if rsa_key:
             print "rsa key provided: "+rsa_key
             self.rsa_key = rsa_key

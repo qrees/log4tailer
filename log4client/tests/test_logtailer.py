@@ -62,7 +62,7 @@ class TestResume(unittest.TestCase):
     def testshouldReturnFalseMailNotSetup(self):
         self.__setupAConfig()
         properties = Property('aconfig')
-        properties.parseProperties()
+        properties.parse_properties()
         defaults = getDefaults()
         defaults['properties'] = properties
         logtailer = LogTailer(defaults)
@@ -87,7 +87,7 @@ class TestResume(unittest.TestCase):
         fh.write('analyticsnotification = ' + reportfile + '\n')
         fh.close()
         properties = Property(configfile)
-        properties.parseProperties()
+        properties.parse_properties()
         defaults = getDefaults()
         defaults['properties'] = properties
         logtailer = LogTailer(defaults)
@@ -209,9 +209,9 @@ class TestInit(unittest.TestCase):
 
     def test_monitor_inactivity_withmail(self):
         properties_mock = self.mocker.mock()
-        properties_mock.getValue('inactivitynotification')
+        properties_mock.get_value('inactivitynotification')
         self.mocker.result('mail')
-        properties_mock.getKeys()
+        properties_mock.get_keys()
         self.mocker.result([])
         defaults = getDefaults()
         defaults['properties'] = properties_mock

@@ -109,7 +109,7 @@ class TestResume(unittest.TestCase):
         fh.write("targets "+logfile+" = should\n")
         fh.close()
         properties = Property(configfile)
-        properties.parseProperties()
+        properties.parse_properties()
         mylog = Log(logfile, properties)
         optional_params = (None, True, logfile)
         self.assertEqual(optional_params, (mylog.ownOutputColor,
@@ -138,16 +138,16 @@ class TestResume(unittest.TestCase):
         fh.write('analyticsgaptime = 3600\n')
         fh.close()
         properties = Property('aconfig')
-        properties.parseProperties()
-        self.assertTrue(properties.isKey('analyticsnotification'))
+        properties.parse_properties()
+        self.assertTrue(properties.is_key('analyticsnotification'))
         arrayLog = [Log('out.log')]
         resume = reporting.Resume(arrayLog)
         mailactionmocker = mox.Mox()
         mailaction = mailactionmocker.CreateMock(notifications.Mail)
-        if properties.getValue('analyticsnotification') == 'mail':
+        if properties.get_value('analyticsnotification') == 'mail':
             resume.setMailNotification(mailaction)
             self.assertEquals('mail',resume.getNotificationType())
-            gaptime = properties.getValue('analyticsgaptime')
+            gaptime = properties.get_value('analyticsgaptime')
             if gaptime:
                 resume.setAnalyticsGapNotification(gaptime)
                 self.assertEquals(3600,int(resume.getGapNotificationTime()))
@@ -160,8 +160,8 @@ class TestResume(unittest.TestCase):
         fh.write('analyticsgaptime = 0.1\n')
         fh.close()
         properties = Property('aconfig')
-        properties.parseProperties()
-        self.assertTrue(properties.isKey('analyticsnotification'))
+        properties.parse_properties()
+        self.assertTrue(properties.is_key('analyticsnotification'))
         log = Log('out.log')
         arrayLog = [log]
         resume = reporting.Resume(arrayLog)

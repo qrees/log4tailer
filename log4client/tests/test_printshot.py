@@ -31,7 +31,7 @@ class PrintShotTest(unittest.TestCase):
     def test_instantiatesprintshot(self):
         output = 'picture.png'
         propertiesmock = self.mocker.mock()
-        propertiesmock.getValue('screenshot')
+        propertiesmock.get_value('screenshot')
         self.mocker.result(output)
         self.mocker.replay()
         printshot = notifications.PrintShot(propertiesmock)
@@ -50,7 +50,7 @@ class PrintShotTest(unittest.TestCase):
         self.mocker.result(procins)
         output = 'picture.png'
         propertiesmock = self.mocker.mock()
-        propertiesmock.getValue('screenshot')
+        propertiesmock.get_value('screenshot')
         self.mocker.result(output)
         self.mocker.replay()
         printshot = notifications.PrintShot(propertiesmock)
@@ -64,7 +64,7 @@ class PrintShotTest(unittest.TestCase):
         logcolors = LogColors()
         output = 'picture.png'
         propertiesmock = self.mocker.mock()
-        propertiesmock.getValue('screenshot')
+        propertiesmock.get_value('screenshot')
         self.mocker.result(output)
         self.mocker.replay()
         printandshoot = notifications.PrintShot(propertiesmock)

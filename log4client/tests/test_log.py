@@ -88,7 +88,7 @@ class TestLog(unittest.TestCase):
         fh.write(self.logname+'='+'green\n')
         fh.close()
         properties = Property('config')
-        properties.parseProperties()
+        properties.parse_properties()
         log = Log(self.logname,properties)
         log.openLog()
         self.assertTrue(log.ownOutputColor)
@@ -103,9 +103,9 @@ class TestLog(unittest.TestCase):
         fh.write(targetsline)
         fh.close()
         property = Property('config.txt')
-        property.parseProperties()
+        property.parse_properties()
         self.assertEqual(regexesColors, 
-                         property.getValue('targets /var/log/messages'))
+                         property.get_value('targets /var/log/messages'))
         log = Log('/var/log/messages', property)
         logTargetsColors = {re.compile('log$'): 'yellow, on_cyan',
             re.compile("^2009-10-12 got something here$") : 'black, on_cyan'}
@@ -121,7 +121,7 @@ class TestLog(unittest.TestCase):
         fh.write("/var/log/messages = green\n")
         fh.close()
         property = Property('config.txt')
-        property.parseProperties()
+        property.parse_properties()
         return property
 
     def testshouldGetTupleOfOptionalParameters(self):
@@ -144,9 +144,9 @@ class TestLog(unittest.TestCase):
         fh.write(targetsline)
         fh.close()
         property = Property('config.txt')
-        property.parseProperties()
+        property.parse_properties()
         self.assertEqual(regexes, 
-                         property.getValue('targets /var/log/messages'))
+                         property.get_value('targets /var/log/messages'))
         log = Log('/var/log/messages', property)
         color = log.logTargetColor.get(re.compile('log$'))
         self.assertFalse(color)

@@ -44,8 +44,8 @@ class Log(object):
         self.wasTarget = False
         self.emphcolor = None
         if properties:
-            self.ownOutputColor = properties.getValue(path.lower())
-            self.ownTarget = properties.getValue(Log.TARGET_PROPERTY_PREFIX + \
+            self.ownOutputColor = properties.get_value(path.lower())
+            self.ownTarget = properties.get_value(Log.TARGET_PROPERTY_PREFIX + \
                                                 path.lower())
             if self.ownTarget:
                 self.logTargetColor = self.targets_colors()

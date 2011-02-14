@@ -21,11 +21,11 @@ import sys
 from log4Exceptions import *
 import re
 
-class Property:
+class Property(object):
     '''class to read a user provided key=value config 
     file. Comments supported are # or //'''
 
-    def __init__(self,propertyfile):
+    def __init__(self, propertyfile):
         self.propertyfile = propertyfile
         self.lines = []
         self.keys = []
@@ -34,7 +34,7 @@ class Property:
         self.validsep = ["="]
         self.resep = "|".join(self.validsep)
     
-    def parseProperties(self):
+    def parse_properties(self):
         # is that a huge config file?
         try:
             fd = open(self.propertyfile,'r')
@@ -55,15 +55,15 @@ class Property:
         fd.close()
         self.keys = self.dictproperties.keys()
 
-    def getValue(self,key):
+    def get_value(self, key):
         if key in self.dictproperties:
             return self.dictproperties[key]
         return None
     
-    def getKeys(self):
+    def get_keys(self):
         return self.keys
 
-    def isKey(self,key):
+    def is_key(self,key):
         if key in self.dictproperties:
             return True
         else:

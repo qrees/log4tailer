@@ -29,7 +29,7 @@ class TestPauseMode(unittest.TestCase):
     def testgetOverridePauseModeLevels(self):
         pauseMode = modes.PauseMode()
         properties = Property(self.configfile)
-        properties.parseProperties()
+        properties.parse_properties()
         pauseMode.parseConfig(properties)
         for key,value in self.overridenLevelPauses.iteritems():
             key = key.split('pause')[1]

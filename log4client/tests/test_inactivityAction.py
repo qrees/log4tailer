@@ -110,7 +110,7 @@ class TestInactivityAction(unittest.TestCase):
         fh.write('inactivitynotification = mail\n')
         fh.close()
         property = Property('config.txt')
-        property.parseProperties()
+        property.parse_properties()
         notifier = notifications.Inactivity(1,property)
         self.assertEqual('mail',notifier.getNotificationType())
         os.remove('config.txt')
@@ -126,7 +126,7 @@ class TestInactivityAction(unittest.TestCase):
         fh.write('inactivitynotification = mail\n')
         fh.close()
         property = Property('config.txt')
-        property.parseProperties()
+        property.parse_properties()
         notifier = notifications.Inactivity(1,property)
         if notifier.getNotificationType() == 'mail':
             notifier.setMailNotification(mail)

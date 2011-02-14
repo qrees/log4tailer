@@ -39,7 +39,7 @@ class PauseMode:
         for pauseKey in pauseKeys:
             try:
                 level = pauseKey.split('pause')[1]
-                pauseLevel = float(properties.getValue(pauseKey))
+                pauseLevel = float(properties.get_value(pauseKey))
                 self.defaultLevelPauses[level] = pauseLevel
             except:
                 pass

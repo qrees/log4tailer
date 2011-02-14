@@ -41,10 +41,10 @@ class PropertiesMock(object):
     def __init__(self):
         pass
 
-    def getKeys(self):
+    def get_keys(self):
         return ['one', 'two']
 
-    def getValue(self, key):
+    def get_value(self, key):
         if key == 'one':
             return 'john'
         else:
@@ -52,10 +52,10 @@ class PropertiesMock(object):
 
 class PropertiesBackGround(PropertiesMock):
     """docstring for PropertiesBackGround"""
-    def getKeys(self):
+    def get_keys(self):
         return ['fatal']
 
-    def getValue(self, key):
+    def get_value(self, key):
         return "yellow, on_cyan"
         
 

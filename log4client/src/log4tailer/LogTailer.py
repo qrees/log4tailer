@@ -170,7 +170,7 @@ class LogTailer(object):
             self.mailAction = action
             return True
         if properties:
-            if properties.getValue('inactivitynotification') == 'mail':
+            if properties.get_value('inactivitynotification') == 'mail':
                 # check if there is any inactivity action actually setup
                 inactivityaction = self.__getAction(notifications.Inactivity)
                 if inactivityaction:
@@ -183,8 +183,8 @@ class LogTailer(object):
         notify_defaults = ('mail', 'print')
         properties = self.properties
         if properties:
-            notification_type = properties.getValue('analyticsnotification')
-            analyticsgap = properties.getValue('analyticsgaptime')
+            notification_type = properties.get_value('analyticsnotification')
+            analyticsgap = properties.get_value('analyticsgaptime')
             if notification_type and notification_type not in notify_defaults:
                 resume.notification_type(notification_type)
             elif notification_type == 'mail':
