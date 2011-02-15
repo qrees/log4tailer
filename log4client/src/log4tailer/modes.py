@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class PauseMode:
+class PauseMode(object):
     '''In PrintAction if an specific
     level is found, it will pause so we will
     not miss a level'''
@@ -43,3 +43,4 @@ class PauseMode:
                 self.defaultLevelPauses[level] = pauseLevel
             except:
                 pass
+
