@@ -108,7 +108,7 @@ class LogTailer(object):
                     action.notify(message, log)
                     count += 1
                     buff.append(line)
-                    if count%ttlines == 0:
+                    if (count % ttlines) == 0:
                         raw_input("continue\n")
                         count = 0
                         ttlines = get_term_lines()
