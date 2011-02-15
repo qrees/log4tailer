@@ -26,6 +26,9 @@ class LogColors(object):
     def __init__(self):
         self.color = TermColorCodes()
         # defaults
+        # color instance has dinamically assigned attributes 
+        # so pylint complaints.
+        # pylint: disable-msg=E1101
         self.warning = self.color.yellow
         self.warn = self.color.yellow
         self.error = self.color.magenta

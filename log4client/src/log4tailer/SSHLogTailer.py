@@ -135,8 +135,11 @@ class SSHLogTailer(object):
         lenhost = len(hostname)
         fancyWidth = (int(numCols)-lenhost-2)/2
         fancyheader = '*' * fancyWidth
-        hostnameHeader = self.color.green+fancyheader+' '+hostname+' '+ \
-                         fancyheader+self.color.reset
+        hostnameHeader = (self.color.green +  # pylint: disable-msg=E1101
+                fancyheader + ' ' + 
+                hostname + ' ' + 
+                fancyheader + 
+                self.color.reset) 
         print hostnameHeader
 
     def tailer(self):
