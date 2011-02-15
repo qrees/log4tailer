@@ -137,7 +137,7 @@ class Log(object):
 
     def numLines(self):
         count = -1
-        for count,lines in enumerate(open(self.path,'rU')):
+        for count, _ in enumerate(open(self.path,'rU')):
             pass
         count += 1
         return count
@@ -147,9 +147,6 @@ class Log(object):
             self.inactivityAccTime = 0
             return
         self.inactivityAccTime += acctime
-
-    def splitfields(self, field):
-        return [ k.strip() for k in field.split(',') ]
 
     def targetColor(self, target):
         return self.logTargetColor.get(target, '')
