@@ -229,7 +229,6 @@ class LogTailer(object):
                 found = 0
                 time.sleep(self.throttleTime)
                 for log in self.arrayLog:
-                    changed = 0
                     curpath = log.path
                     if self.hasRotated(log):
                         found = 0
