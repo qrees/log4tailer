@@ -85,7 +85,6 @@ class SSHLogTailer(object):
             self.hostnames[hostname]['command'] = command
             self.logger.debug("hostname information [%s]" % (
                               self.hostnames[hostname]))
-    
 
     def getChannelTransport(self, sshclient, hostname):
         transport = sshclient.get_transport()
