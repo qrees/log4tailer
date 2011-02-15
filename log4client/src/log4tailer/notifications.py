@@ -87,7 +87,7 @@ class PrintShot(Print):
         if not message.isATarget() and msg_level not in self.Pullers:
             return
         try:
-            proc = subprocess.call(self.screenproc)
+            subprocess.call(self.screenproc)
         except Exception, err:
             print err
 
@@ -201,7 +201,7 @@ class Mail(object):
         Return the current date and time formatted for a MIME header.
         Needed for Python 1.5.2 (no email package available)
         """
-        year, month, day, hh, mm, ss, wd, y, z = time.gmtime(time.time())
+        year, month, day, hh, mm, ss, wd, _, _ = time.gmtime(time.time())
         s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (
                 self.weekdayname[wd],
                 day, self.monthname[month], year,
@@ -295,10 +295,6 @@ class Mail(object):
         except:
             print "failed to quit SMTP connection"
             sys.exit()
-    
-    def emailSendMail(self,to,fro,contents):
-        #send email using SendMail
-        return
 
 class Filter(Print):
     """ When a pattern is found, it will notify 
@@ -498,7 +494,7 @@ class Poster(object):
         msg_level = message.messageLevel.upper()
         if not message.isATarget() and msg_level not in self.Pullers:
             return
-        logtrace, logpath = message.getPlainMessage()
+        logtrace, _ = message.getPlainMessage()
         log_info = self.registered_logs[log]
         log_id = log_info['id']
         params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 
