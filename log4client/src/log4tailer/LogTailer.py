@@ -36,6 +36,18 @@ def get_term_lines():
 def _printHeaderLog(path):
     print "==> "+path+" <=="
 
+def hasRotated(log):
+    """Returns True if log has rotated
+    False otherwise"""
+    if log.getcurrInode()!=log.inode or log.getcurrSize() < log.size: 
+        print "Log "+log.path+" has rotated"
+        # close the log and open it again 
+        log.closeLog()
+        log.openLog()
+        log.seekLogEnd()
+        return True
+    return False
+
 class LogTailer(object):
     '''Tails the logs provided by Log class'''
     def __init__(self, defaults):
@@ -49,10 +61,8 @@ class LogTailer(object):
         self.properties = defaults['properties']
         self.mailAction = None
 
-    def addLog(self,log):
+    def addLog(self, log):
         self.arrayLog.append(log)
-    
-
 
     def posEnd(self):
         '''Open the logs and position the cursor
@@ -81,17 +91,7 @@ class LogTailer(object):
             if cont < lenarray:
                 print
 
-    def hasRotated(self, log):
-        """Returns True if log has rotated
-        False otherwise"""
-        if log.getcurrInode()!=log.inode or log.getcurrSize()<log.size: 
-            print "Log "+log.path+" has rotated"
-            # close the log and open it again 
-            log.closeLog()
-            log.openLog()
-            log.seekLogEnd()
-            return True
-        return False
+
 
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
@@ -203,7 +203,7 @@ class LogTailer(object):
                 time.sleep(self.throttleTime)
                 for log in self.arrayLog:
                     curpath = log.path
-                    if self.hasRotated(log):
+                    if hasRotated(log):
                         found = 0
                     lines = getattr(log, get_log_lines)()
                     if not lines:
