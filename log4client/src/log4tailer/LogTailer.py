@@ -33,6 +33,9 @@ def get_term_lines():
     ttlines = int(ttlines)
     return ttlines
 
+def _printHeaderLog(path):
+    print "==> "+path+" <=="
+
 class LogTailer(object):
     '''Tails the logs provided by Log class'''
     def __init__(self, defaults):
@@ -49,8 +52,7 @@ class LogTailer(object):
     def addLog(self,log):
         self.arrayLog.append(log)
     
-    def __printHeaderLog(self,path):
-        print "==> "+path+" <=="
+
 
     def posEnd(self):
         '''Open the logs and position the cursor
@@ -68,7 +70,7 @@ class LogTailer(object):
         cont = 0
         for log in self.arrayLog:
             cont += 1
-            self.__printHeaderLog(log.path)
+            _printHeaderLog(log.path)
             line = log.readLine()
             while line != '':
                 line = line.rstrip()
@@ -218,7 +220,7 @@ class LogTailer(object):
                         # to emulate the tail command
                         if curpath != lastLogPathChanged:
                             print
-                            self.__printHeaderLog(log.path)
+                            _printHeaderLog(log.path)
                         lastLogPathChanged = log.path
                         message.parse(line, log)
                         resume.update(message, log)
