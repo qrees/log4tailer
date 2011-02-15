@@ -91,8 +91,6 @@ class LogTailer(object):
             if cont < lenarray:
                 print
 
-
-
     def printLastNLines(self,n):
         '''tail -n numberoflines method in pager mode'''
         message = Message(self.logcolors)
