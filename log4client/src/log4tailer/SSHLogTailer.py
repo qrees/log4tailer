@@ -156,7 +156,7 @@ class SSHLogTailer(object):
             while True:
                 for hostname in self.hostnames.keys():
                     sshChannel = self.hostnameChannels[hostname]['channel']
-                    rr,wr,xr = select.select([sshChannel],[],[],0.0)
+                    rr, _, _ = select.select([sshChannel],[],[],0.0)
                     if len(rr)>0:
                         lines = sshChannel.recv(4096).split('\n')
                         if hostname != lasthostnameChanged:
