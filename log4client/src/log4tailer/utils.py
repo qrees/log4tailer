@@ -19,6 +19,8 @@
 from time import localtime, strftime
 import getpass
 from log4tailer import notifications
+import os
+import sys
 
 def setup_mail(properties):
     username = properties.get_value("mail_username")
@@ -44,5 +46,34 @@ def hours_mins_format(secs):
     return (str(years) + " years " + str(days) + " days " + str(hours) +
             " hours " + str(mins) + " mins " + str(secs) + " secs ")
 
+def daemonize (stdin='/dev/null', stdout='/dev/null', 
+        stderr='/dev/null'):
+    try:
+        pid = os.fork( )
+        if pid > 0:
+            sys.exit(0) 
+    except OSError, e:
+        sys.stderr.write("first fork failed: (%d) %s\n" % (e.errno, 
+            e.strerror))
+        sys.exit(1)
+    os.chdir("/")
+    os.umask(0)
+    os.setsid( )
+    try:
+        pid = os.fork( )
+        if pid > 0:
+            sys.exit(0)
+    except OSError, e:
+        sys.stderr.write("second fork failed: (%d) %s\n" % (e.errno, 
+            e.strerror))
+        sys.exit(1)
+    print "daemonized"
+    for f in sys.stdout, sys.stderr: f.flush()
+    si = file(stdin, 'r')
+    so = file(stdout, 'a+')
+    se = file(stderr, 'a+', 0)
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
 
 

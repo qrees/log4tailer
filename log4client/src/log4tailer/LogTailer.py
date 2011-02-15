@@ -23,7 +23,8 @@ from log4tailer.Message import Message
 from log4tailer.Log import Log
 from log4tailer.reporting import Resume
 from log4tailer import notifications
-from log4tailer.utils import setup_mail
+from log4tailer.utils import setup_mail, daemonize
+
 
 def get_term_lines():
     termlines = os.popen("tput lines")
@@ -113,36 +114,6 @@ class LogTailer(object):
                         count = 0
                         ttlines = get_term_lines()
             log.closeLog()
-
-    def daemonize (self, stdin='/dev/null', stdout='/dev/null', 
-            stderr='/dev/null'):
-        try:
-            pid = os.fork( )
-            if pid > 0:
-                sys.exit(0) 
-        except OSError, e:
-            sys.stderr.write("first fork failed: (%d) %s\n" % (e.errno, 
-                e.strerror))
-            sys.exit(1)
-        os.chdir("/")
-        os.umask(0)
-        os.setsid( )
-        try:
-            pid = os.fork( )
-            if pid > 0:
-                sys.exit(0)
-        except OSError, e:
-            sys.stderr.write("second fork failed: (%d) %s\n" % (e.errno, 
-                e.strerror))
-            sys.exit(1)
-        print "daemonized"
-        for f in sys.stdout, sys.stderr: f.flush()
-        si = file(stdin, 'r')
-        so = file(stdout, 'a+')
-        se = file(stderr, 'a+', 0)
-        os.dup2(si.fileno(), sys.stdin.fileno())
-        os.dup2(so.fileno(), sys.stdout.fileno())
-        os.dup2(se.fileno(), sys.stderr.fileno())
     
     def pipeOut(self):
         """Reads from standard input 
@@ -220,7 +191,7 @@ class LogTailer(object):
         if self.throttleTime:
             get_log_lines = "readLine"
         if self.silence:
-            self.daemonize()
+            daemonize()
         try:
             self.__initialize(message)
             lastLogPathChanged = ""

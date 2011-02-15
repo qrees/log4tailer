@@ -134,12 +134,12 @@ class TestDemon(unittest.TestCase):
         args = [self.log_name]
         log4tailer.initialize(options_mock)
         interruptor = Interruptor()
-        interruptor.start()
         os.fork = fork
         os.chdir = chdir
         os.setsid = setsid
         os.dup2 = dup2
         os.umask = umask
+        interruptor.start()
         log4tailer.monitor(options_mock, args)
         interruptor.join()
 
