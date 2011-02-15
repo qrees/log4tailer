@@ -25,6 +25,9 @@ MAIL = 'mail'
 PRINT = 'print'
 FILE = 'file'
 
+def colorize(line, colors):
+    return colors.backgroundemph + line + colors.reset
+
 class Resume(object):
     '''Will report of number of debug, info and warn 
     events. For Error and Fatal will provide the timestamp 
@@ -118,9 +121,6 @@ class Resume(object):
         ellapsed = finish - self.initTime
         return utils.hours_mins_format(ellapsed)
 
-    def colorize(self,line,colors):
-        return colors.backgroundemph + line + colors.reset
-
     def notification_type(self, notification_method):
         """If notification_method is not mail or print, it will be the full
         path to the file where we will report.
@@ -159,7 +159,7 @@ class Resume(object):
         print "Uptime: "
         print self.__execTime()
         for log in self.arrayLog:
-            titleLog = self.colorize("Report for Log " + log.path, 
+            titleLog = colorize("Report for Log " + log.path, 
                     colors)
             print titleLog
             print "Levels Report: "
