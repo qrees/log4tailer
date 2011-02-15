@@ -168,6 +168,10 @@ class TestEndToEnd(unittest.TestCase):
         interruptor.with_fatal_logtrace()
         interruptor.start()
         log4tailer.monitor(options_mock, args_mock)
+        #FIXME when executed first time ever this test normally fails, but not
+        #next times. This is due to it needs to shell out the import linux
+        #command line tool.
+        time.sleep(0.2)
         interruptor.join()
         finish_trace = re.compile(r'because colors are fun')
         found = False
