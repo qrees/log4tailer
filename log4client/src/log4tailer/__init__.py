@@ -6,7 +6,7 @@ from log4tailer.utils import setup_mail
 import re
 import logging
 
-__version__ = "3.0.1"
+__version__ = "3.1"
 logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
