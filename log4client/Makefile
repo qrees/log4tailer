@@ -56,6 +56,7 @@ clean:
 	rm -f `find src -name "*.pyc"`
 	rm -f `find tests -name "*.pyc"`
 	rm -rf cover .coverage
+	rm -rf htmlcov
 
 distclean:
 	@echo "distclean ..."
@@ -64,5 +65,8 @@ distclean:
 	rm -f `find src -name "*.pyc"`
 	rm -f `find tests -name "*.pyc"`
 	rm -rf cover .coverage
+	rm -rf develop-eggs
+	rm -rf parts
+	rm -rf .installed.cfg
 
 
