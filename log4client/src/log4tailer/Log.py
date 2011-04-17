@@ -45,12 +45,11 @@ class Log(object):
         self.emphcolor = None
         if properties:
             self.ownOutputColor = properties.get_value(path.lower())
-            self.ownTarget = properties.get_value(Log.TARGET_PROPERTY_PREFIX + \
-                                                path.lower())
+            self.ownTarget = properties.get_value(Log.TARGET_PROPERTY_PREFIX + 
+                    path.lower())
             if self.ownTarget:
                 self.logTargetColor = self.targets_colors()
                 self.patTarget = True
-
         if options and options.inactivity:
             self.inactivityTimer = Timer(float(options.inactivity))
             self.inactivityTimer.startTimer()
