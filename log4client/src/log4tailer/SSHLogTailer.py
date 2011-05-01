@@ -105,7 +105,8 @@ class SSHLogTailer(object):
             sshclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             hostusername = self.hostnames[hostname]['username']
             try:
-                sshclient.connect(hostname, key_filename = self.rsa_key)
+                sshclient.connect(hostname, username=hostusername, 
+                        key_filename=self.rsa_key)
                 self.getChannelTransport(sshclient, hostname)
                 continue
             except Exception, err:
