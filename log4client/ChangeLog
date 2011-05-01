@@ -1,6 +1,8 @@
 ====================================
 xx/xx/xx release 3.1
 ====================================
+- Fixes the username was not being passed to the ssh connect call. Bug number 3
+in bitbucket.
 - Minor cleanups
 
 ====================================
