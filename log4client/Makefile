@@ -5,7 +5,9 @@ TEST = bin/py.test
 PYLINT = bin/pylint
 COVERAGE = bin/coverage
 ENV = ENV 
+BIN = ENV/bin
 ENV24 = ENV24
+PATH := $(BIN):${PATH}
 
 all: $(BUILDOUT)
 
@@ -33,7 +35,7 @@ coverage: $(TEST)
 $(EXE): $(BUILDOUT) 
 	$(BUILDOUT) install log4tail
 
-$(BUILDOUT): bootstrap.py
+$(BUILDOUT): env bootstrap.py
 	$(PYTHON) bootstrap.py
 	$(BUILDOUT)
 
