@@ -20,6 +20,7 @@ import sys
 import os
 import time
 from log4tailer import LogColors
+from log4tailer.Properties import evalvalue
 from log4tailer.Timer import Timer
 from smtplib import SMTP, SMTPServerDisconnected
 from log4tailer.TermColorCodes import TermColorCodes
@@ -51,15 +52,25 @@ class Print(object):
     '''PrintAction: prints to stdout the 
     colorized log traces'''
 
-    def __init__(self):
-        pass
+    def __init__(self, properties=None):
+        # we can append extra information to lines regarding 
+        # hostname we are in
+        self.hostname = False
+        if properties:
+            printhostname = properties.get_value('print_hostname')
+            if evalvalue(printhostname):
+                from socket import gethostname
+                self.hostname = gethostname()
     
     def notify(self, message, log):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
         (pause, colormsg) = message.getColorizedMessage()
         if colormsg:
-            print colormsg
+            if self.hostname:
+                print self.hostname + ': ' + colormsg
+            else:
+                print colormsg
             time.sleep(pause)
 
     def printInit(self, message):
@@ -67,6 +78,7 @@ class Print(object):
         pause = 0
         if colormsg:
             print colormsg
+
 
 class PrintShot(Print):
     """Prints log trace and takes 
@@ -76,6 +88,7 @@ class PrintShot(Print):
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
     
     def __init__(self, properties):
+        super(PrintShot, self).__init__(properties)
         self.screenshot = properties.get_value('screenshot')
         self.winid = self.get_windowsid()
         self.screenproc = ['import', '-window', self.winid, 
@@ -302,6 +315,7 @@ class Filter(Print):
     would be a mix of tail and grep
     """
     def __init__(self, pattern):
+        super(Filter, self).__init__()
         self.pattern = pattern
     
     def notify(self, message, log):

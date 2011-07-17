@@ -34,7 +34,7 @@ def getDefaults():
     return {'pause' : 0, 
         'silence' : False,
         'throttle' : 0,
-        'actions' : [notifications.Print()],
+        'actions' : [],
         'nlines' : False,
         'target': None, 
         'logcolors' : LogColors(),
@@ -75,7 +75,9 @@ class TestResume(unittest.TestCase):
     def testPipeOutShouldSendMessageParseThreeParams(self):
         sys.stdin = ['error > one error', 'warning > one warning']
         sys.stdout = Writer()
-        logtailer = LogTailer(getDefaults())
+        defaults = getDefaults()
+        defaults['actions'].append(notifications.Print())
+        logtailer = LogTailer(defaults)
         logtailer.pipeOut()
         self.assertTrue('error > one error' in sys.stdout.captured[0])
 
@@ -211,6 +213,8 @@ class TestInit(unittest.TestCase):
         properties_mock = self.mocker.mock()
         properties_mock.get_value('inactivitynotification')
         self.mocker.result('mail')
+        properties_mock.get_value('print_hostname')
+        self.mocker.result('false')
         properties_mock.get_keys()
         self.mocker.result([])
         defaults = getDefaults()

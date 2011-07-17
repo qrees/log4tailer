@@ -13,7 +13,7 @@ logger = logging.getLogger('log4tail')
 defaults  = {'pause' : 1, 
     'silence' : False,
     'throttle' : 0,
-    'actions' : [notifications.Print()],
+    'actions' : [],
     'nlines' : False,
     'target': None, 
     'logcolors' : LogColors.LogColors(),
@@ -21,10 +21,12 @@ defaults  = {'pause' : 1,
     'alt_config': os.path.expanduser('~/.log4tailer'),
     'post' : False}
 
+
 def parse_config(configfile):
     properties = Properties.Property(configfile)
     properties.parse_properties()
     return properties
+
 
 def initialize(options):
     logcolors = defaults['logcolors']
@@ -38,6 +40,7 @@ def initialize(options):
         defaults['properties'] = parse_config(config)
         logcolors.parse_config(defaults['properties'])
     properties = defaults['properties']
+    actions.append(notifications.Print(properties))
     if options.pause:
         defaults['pause'] = int(options.pause)
     if options.throttle:
@@ -86,6 +89,7 @@ def initialize(options):
         printandshoot = notifications.PrintShot(properties)
         actions[0] = printandshoot
 
+
 def monitor(options, args):
     if options.remote:
         from log4tailer import SSHLogTailer
@@ -123,3 +127,4 @@ def monitor(options, args):
 def main(options, args):
     initialize(options)
     monitor(options, args)
+

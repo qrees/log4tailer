@@ -1,4 +1,10 @@
 ====================================
+xx/xx/xx release 3.0.3
+====================================
+- New config parameter print_hostname. If you have multiple consoles tailing
+and the log traces do not provide the hostname, then it can come in handy.
+
+====================================
 07/05/11 release 3.0.2
 ====================================
 - Fixes the username was not being passed to the ssh connect call. Bug number 3

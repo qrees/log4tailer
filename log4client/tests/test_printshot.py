@@ -3,6 +3,7 @@
 import unittest
 from log4tailer import notifications
 import mocker
+from mocker import ANY
 from subprocess import PIPE
 from log4tailer.Message import Message
 from log4tailer.LogColors import LogColors
@@ -33,6 +34,8 @@ class PrintShotTest(unittest.TestCase):
         propertiesmock = self.mocker.mock()
         propertiesmock.get_value('screenshot')
         self.mocker.result(output)
+        propertiesmock.get_value(ANY)
+        self.mocker.result(False)
         self.mocker.replay()
         printshot = notifications.PrintShot(propertiesmock)
         self.assertTrue(isinstance(printshot, notifications.PrintShot))
@@ -52,6 +55,8 @@ class PrintShotTest(unittest.TestCase):
         propertiesmock = self.mocker.mock()
         propertiesmock.get_value('screenshot')
         self.mocker.result(output)
+        propertiesmock.get_value(ANY)
+        self.mocker.result(False)
         self.mocker.replay()
         printshot = notifications.PrintShot(propertiesmock)
         self.assertTrue(0x3a00004, printshot.winid)
@@ -66,6 +71,8 @@ class PrintShotTest(unittest.TestCase):
         propertiesmock = self.mocker.mock()
         propertiesmock.get_value('screenshot')
         self.mocker.result(output)
+        propertiesmock.get_value(ANY)
+        self.mocker.result(False)
         self.mocker.replay()
         printandshoot = notifications.PrintShot(propertiesmock)
         message = Message(logcolors)

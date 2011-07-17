@@ -69,3 +69,12 @@ class Property(object):
         else:
             return False
 
+def evalvalue(value):
+    try:
+        val_lcase = value.lower()
+    except:
+        return False
+    if val_lcase == 'true':
+        return True
+    return False
+
