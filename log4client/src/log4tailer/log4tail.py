@@ -54,6 +54,8 @@ def parse_command_line():
             help="remote tailing over ssh")
     parser.add_option("-f", "--filter", dest="filter",
             help="filters log traces, tail and grep")
+    parser.add_option("--ignore", dest="ignore",
+            help="ignores log traces, they will not be notified")
     parser.add_option("--cornermark", dest="cornermark",
             help="displays a mark in bottom right corner of terminal")
     parser.add_option("--no-mail-silence", action="store_true", 

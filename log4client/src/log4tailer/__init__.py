@@ -61,6 +61,9 @@ def initialize(options):
     if options.filter:
         # overrides Print notifier
         actions[0] = notifications.Filter(re.compile(options.filter))
+    if options.ignore:
+        # overrides Print notifier
+        actions[0] = notifications.IgnoreAction(re.compile(options.ignore))
     if options.tailnlines:
         defaults['nlines'] = int(options.tailnlines)
     if options.target:

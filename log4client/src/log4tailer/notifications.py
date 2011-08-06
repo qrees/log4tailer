@@ -317,13 +317,25 @@ class Filter(Print):
     def __init__(self, pattern):
         super(Filter, self).__init__()
         self.pattern = pattern
-    
-    def notify(self, message, log):
+
+    def _get_plainmsg(self, message):
         plainMessage = message.plainMessage
         if not plainMessage:
-            return
+            return ""
+        return plainMessage
+    
+    def notify(self, message, log):
+        plainMessage = self._get_plainmsg(message)
         if self.pattern.search(plainMessage):
             Print.notify(self, message, log)
+
+class IgnoreAction(Filter):
+
+    def notify(self, message, log):
+        plainMessage = self._get_plainmsg(message)
+        if not self.pattern.search(plainMessage):
+            Print.notify(self, message, log)
+
 
 class CornerMark(object):
     """Displays a 5 char colored empty string 
