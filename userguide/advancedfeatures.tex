@@ -53,9 +53,26 @@ of seconds can be a floating point number.
 \begin{cmd}
  ./log4tail --throttle 0.5 pathToLogs
 \end{cmd}
-That would tail the logs showing the information every half a second one line at 
+That would tail the logs showing the information every half a second one line at
 a time.
 
+\section{Hostname appending}
+In the case that log traces do not specify the hostname of the server they are
+being written, you can tell \logftailer{} to include it at the very beginning
+of each log trace. In order to enable that you must provide the following in a
+configuration file:
+
+\begin{config}
+\begin{verbatim}
+print_hostname = true
+\end{verbatim}
+\end{config}
+
+Example:\\
+\emphlogtrace{stageserver: INFO trace in here}
+
+where \emph{stageserver} would be the hostname where \logftailer{} is tailing
+at. 
 
 \section{Notifications}
 \logftailer{} uses \emph{Notifications} to identify what kind of action needs to
@@ -64,6 +81,7 @@ provided as of version v05 are:
 \begin{itemize}
  \item Print (see \autoref{sec:PrintAction})
  \item Filter (see \autoref{sec:filter})
+ \item Ignore (see \autoref{sec:ignore})
  \item CornerMark (see \autoref{sec:cornermark})
  \item Mail (see \autoref{sec:mailnotification})
  \item Inactivity (see \autoref{sec:inactivitysection})
@@ -213,14 +231,25 @@ The example in \autoref{fig:multiple_colors} will clarify that.
 
 \subsection{Filter Notification}
 \label{sec:filter}
-With filter you can filter out information you don't want to be printed out 
-in the standard output. It would be a mix of tail and grep. You tail the log 
+It implements the tail and grep. You tail the log 
 and grep for the information you are interested in. In order to enable that 
 feature you need to execute \logftailer{} with the -f option:
 
 \begin{cmd}
-  ./log4tail -f[--filter] tracetofilter pathToLogs
+  ./log4tail -f[--filter] regularexpression pathToLogs
 \end{cmd}
+
+\subsection{Ignore Notification} % (fold)
+\label{sec:ignore}
+The contrary of Filter Notification\label{sec:filter}. It allows you to not
+notify all those log traces that match an specific regular expression.
+Basically, it would be like tail and grep -v. In order to enable \emph{ignore}
+just pass the --ignore option in the command line as follows:
+
+\begin{cmd}
+  ./log4tail [--ignore] regularexpression pathToLogs
+\end{cmd}
+
 
 \subsection{CornerMark Notification}
 \label{sec:cornermark}
