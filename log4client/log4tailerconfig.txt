@@ -110,4 +110,10 @@
 
 # rsa_key = fullpathToRsaKeyName 
 
+# ==============================
+# Print hostname 
+# ==============================
+#
+# print_hostname = true
+
 
