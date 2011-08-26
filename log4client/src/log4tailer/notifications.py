@@ -555,6 +555,5 @@ class Poster(object):
         except Exception, err:
             print err
             return None
-        conn.close()
         return response
 
