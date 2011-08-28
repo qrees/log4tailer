@@ -1,4 +1,9 @@
 ====================================
+xx/08/11 release 3.0.4
+===================================
+- Bug fix posting notifications to web server. Fixes issue #7.
+
+====================================
 13/08/11 release 3.0.3
 ====================================
 - New config parameter print_hostname. If you have multiple consoles tailing
