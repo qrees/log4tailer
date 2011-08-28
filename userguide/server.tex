@@ -234,17 +234,25 @@ libapache2-mod-wsgi. Once installed, proceed as follows:
 \begin{cmd}
     cd /etc/apache2/sites-available
 \end{cmd}
-and place a file called log4tailer.conf with the following contents:
+and place a file called log4tailer.conf with the following
+contents\footnote{this Apache2 configuration has been tested on an Ubuntu
+Maverick 10.10 Server}:
 
 \begin{config}
 \begin{verbatim}
 
 Listen 127.0.0.1:8000
+
+Alias /media/ /path\_to\_log4server-version/src/log4server/media/
+
 <VirtualHost *:8000>
     WSGIDaemonProcess log4server processes=1 threads=5 display-name=%{GROUP}
     WSGIProcessGroup log4server
     WSGIScriptAlias / /path\_to\_thewsgi/log4server/bin/log4server.wsgi
 </VirtualHost>
+
+WSGISocketPrefix     run/wsgi
+WSGIRestrictStdout   off
 
 \end{verbatim}
 \end{config}
