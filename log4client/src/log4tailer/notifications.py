@@ -526,26 +526,25 @@ class Poster(object):
         params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 
             'log': { 'id' : log_id, 'logpath' : log.path, 
                 'logserver' : self.hostname}})
-        response = self.send(self.service_uri, params)
-        return response
+        body = self.send(self.service_uri, params)
+        return body
     
     def register(self, log):
         params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
-        response = self.send(self.register_uri, params)
-        if not response:
+        body = self.send(self.register_uri, params)
+        if not body:
             return
-        log_id = response.read()
+        log_id = body
         self.registered_logs[log] = {'id' : log_id, 'logserver' :
                 self.hostname}
-        return response
 
     def unregister(self, log):
         if log in self.registered_logs:
             log_info = self.registered_logs[log]
             log_id = log_info['id']
             params = {'id' : log_id}
-            response = self.send(self.unregister_uri, json.dumps(params))
-            return response
+            body = self.send(self.unregister_uri, json.dumps(params))
+            return body
 
     def send(self, uri, params):
         conn = httplib.HTTPConnection(self.url, self.port)
@@ -555,5 +554,7 @@ class Poster(object):
         except Exception, err:
             print err
             return None
-        return response
+        body = response.read()
+        conn.close()
+        return body
 

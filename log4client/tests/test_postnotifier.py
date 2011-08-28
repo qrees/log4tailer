@@ -39,6 +39,7 @@ if not version_info[:2] == version2_4:
             SERVER = ServerT()
             SERVER.start()
 
+
     class TestPost(unittest.TestCase):
         def setUp(self):
             self.mocker = mocker.Mocker()
@@ -95,8 +96,8 @@ if not version_info[:2] == version2_4:
             self.mocker.replay()
             poster = notifications.Poster(properties)
             require_server()
-            response = poster.notify(message, log)
-            self.assertEqual(response.status, 200)
+            body = poster.notify(message, log)
+            self.assertTrue(body)
 
         def test_execute_if_targetMessage(self):
             properties = self.mocker.mock()
@@ -118,8 +119,8 @@ if not version_info[:2] == version2_4:
             self.mocker.replay()
             poster = notifications.Poster(properties)
             require_server()
-            response = poster.notify(message, log)
-            self.assertEqual(response.status, 200)
+            body = poster.notify(message, log)
+            self.assertTrue(body)
 
         def test_not_execute_if_not_alertable_Level(self):
             properties = self.mocker.mock()
@@ -141,8 +142,8 @@ if not version_info[:2] == version2_4:
             self.mocker.replay()
             poster = notifications.Poster(properties)
             poster.registered_logs[log] = True
-            response = poster.notify(message, log)
-            self.assertFalse(response)
+            body = poster.notify(message, log)
+            self.assertFalse(body)
 
         def test_register_to_server_first_time(self):
             properties = self.mocker.mock()
@@ -161,8 +162,8 @@ if not version_info[:2] == version2_4:
             self.mocker.replay()
             require_server()
             poster = notifications.Poster(properties)
-            response = poster.register(log)
-            self.assertEqual(response.status, 200)
+            body = poster.register(log)
+            self.assertFalse(body)
 
         def test_unregister_method_for_shutdown(self):
             properties = self.mocker.mock()
@@ -182,8 +183,8 @@ if not version_info[:2] == version2_4:
             require_server()
             poster = notifications.Poster(properties)
             poster.registered_logs[log] = {'id' : 5, 'logserver' : 'anyserver'}
-            response = poster.unregister(log)
-            self.assertEqual(response.status, 200)
+            body = poster.unregister(log)
+            self.assertTrue(body)
 
         def tearDown(self):
             self.mocker.restore()
