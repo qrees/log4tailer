@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-__version__ = '0.1'
+__version__ = '0.1.2'
 
 long_description = """
 Log4server is a web backend application that receives notifications from
