@@ -49,11 +49,11 @@ except ImportError:
     pass
 
 class Print(object):
-    '''PrintAction: prints to stdout the 
+    '''PrintAction: prints to stdout the
     colorized log traces'''
 
     def __init__(self, properties=None):
-        # we can append extra information to lines regarding 
+        # we can append extra information to lines regarding
         # hostname we are in
         self.hostname = False
         if properties:
@@ -61,7 +61,7 @@ class Print(object):
             if evalvalue(printhostname):
                 from socket import gethostname
                 self.hostname = gethostname()
-    
+
     def notify(self, message, log):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
@@ -81,17 +81,17 @@ class Print(object):
 
 
 class PrintShot(Print):
-    """Prints log trace and takes 
-    an screenshot whenever we find an alertable 
-    log trace.""" 
+    """Prints log trace and takes
+    an screenshot whenever we find an alertable
+    log trace."""
 
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
-    
+
     def __init__(self, properties):
         super(PrintShot, self).__init__(properties)
         self.screenshot = properties.get_value('screenshot')
         self.winid = self.get_windowsid()
-        self.screenproc = ['import', '-window', self.winid, 
+        self.screenproc = ['import', '-window', self.winid,
                 self.screenshot]
 
     def notify(self, message, log):
@@ -107,14 +107,14 @@ class PrintShot(Print):
     def get_windowsid(self):
         getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
         try:
-            proc = subprocess.Popen(getId, shell = True, 
+            proc = subprocess.Popen(getId, shell = True,
                     stdout = PIPE, stderr = PIPE)
         except Exception, err:
             print err
             return
         res, err = proc.communicate()
         if err:
-            return 
+            return
         winid = (res.split('#'))[1].strip()
         return winid
 
@@ -122,7 +122,7 @@ class Inactivity(object):
     '''sends an email or print
     alert in case too much inactivity
     in the log.
-    This action must be triggered everytime 
+    This action must be triggered everytime
     we scan in the log.'''
 
     InactivityActionNotification = 'inactivitynotification'
@@ -162,7 +162,7 @@ class Inactivity(object):
                     self.mailAction.triggerAction(message,log)
                     self.mailAction.setBodyMailAction(None)
                 timer.reset()
-        # else if we got sth in message then, means we got 
+        # else if we got sth in message then, means we got
         # some kind of activity, so do nothing
         else:
             #start the timer again
@@ -185,7 +185,7 @@ class Inactivity(object):
 class Mail(object):
     """Common actions to be taken
     by the Tailer"""
-    
+
     mailLevels = ['CRITICAL', 'ERROR', 'FATAL']
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     monthname = [None,
@@ -210,7 +210,7 @@ class Mail(object):
     def date_time(self):
         """
         Taken from logging.handlers SMTP python distribution
-        
+
         Return the current date and time formatted for a MIME header.
         Needed for Python 1.5.2 (no email package available)
         """
@@ -220,20 +220,20 @@ class Mail(object):
                 day, self.monthname[month], year,
                 hh, mm, ss)
         return s
-        
+
     def getNow(self):
         try:
             from email.utils import formatdate
         except ImportError:
             formatdate = self.date_time
         return formatdate()
-        
+
     def notify(self,message,log):
         '''msg to print, send by email, whatever...'''
-        
+
         body = self.bodyMailAction
         if not body:
-            if (message.messageLevel not in Mail.mailLevels 
+            if (message.messageLevel not in Mail.mailLevels
                     and not message.isATarget()):
                 return
             message, logpath = message.getPlainMessage()
@@ -245,7 +245,7 @@ class Mail(object):
             body += message+"\n"
 
         now = self.getNow()
-        
+
         msg = ("Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: "
                 "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
         timer = log.mailTimer
@@ -257,7 +257,7 @@ class Mail(object):
         except SMTPServerDisconnected:
             # server could have disconnected
             # after a long inactivity. Connect
-            # again and send the corresponding 
+            # again and send the corresponding
             # alert
             self.connectSMTP()
             self.conn.sendmail(self.fro,self.to,msg)
@@ -268,7 +268,7 @@ class Mail(object):
 
     def setBodyMailAction(self,body):
         self.bodyMailAction = body
-    
+
     def sendNotificationMail(self,body):
         '''Sends a notification mail'''
         now = self.getNow()
@@ -283,7 +283,7 @@ class Mail(object):
     def _connect_smtp(self):
         conn = SMTP(self.hostname, self.port)
         return conn
-    
+
     def _connect_smtp_ssl(self):
         print "using ssl connection"
         conn = SMTP_SSL(self.hostname, self.port)
@@ -310,8 +310,8 @@ class Mail(object):
             sys.exit()
 
 class Filter(Print):
-    """ When a pattern is found, it will notify 
-    the user, otherwise nothing will be notified. It 
+    """ When a pattern is found, it will notify
+    the user, otherwise nothing will be notified. It
     would be a mix of tail and grep
     """
     def __init__(self, pattern):
@@ -323,7 +323,7 @@ class Filter(Print):
         if not plainMessage:
             return ""
         return plainMessage
-    
+
     def notify(self, message, log):
         plainMessage = self._get_plainmsg(message)
         if self.pattern.search(plainMessage):
@@ -338,14 +338,14 @@ class IgnoreAction(Filter):
 
 
 class CornerMark(object):
-    """Displays a 5 char colored empty string 
+    """Displays a 5 char colored empty string
     at the bottom right corner of terminal in case an error, fatal or warning
     is found."""
-    
+
     MARK = 5 * " "
-    markable = {'FATAL' : 'backgroundemph', 
-            'ERROR' : 'backgroundemph', 
-            'WARN' : 'onyellowemph', 
+    markable = {'FATAL' : 'backgroundemph',
+            'ERROR' : 'backgroundemph',
+            'WARN' : 'onyellowemph',
             'WARNING' : 'onyellowemph',
             'TARGET' : 'oncyanemph'}
 
@@ -362,11 +362,11 @@ class CornerMark(object):
         return self.corner_time
 
     def __term_num_cols(self):
-        """Returns the number columns in the current terminal using the Linux 
+        """Returns the number columns in the current terminal using the Linux
         tputs command line tool.
 
         :return: The number of columns currently in the terminal.
-        """ 
+        """
         termcols = os.popen("tput cols")
         ttcols = termcols.readline()
         termcols.close()
@@ -380,10 +380,10 @@ class CornerMark(object):
         specified in self.corner_time and a colored string will be displayed
         for that number of seconds. The timer will not be restarted during that
         time.
-        
+
         :param message: the message object wrapping the current log trace
         :param log: the log associated with the current message
-        """ 
+        """
         level = message.messageLevel.upper()
         isTarget = message.isATarget()
         # target has priority over markable levels
@@ -406,10 +406,10 @@ class CornerMark(object):
                 self.timer.stopTimer()
                 self.count = 0
                 self.flagged = False
-                
-                
+
+
 class TriggerExecutor(threading.Thread):
-    """Triggers the trigger command, one 
+    """Triggers the trigger command, one
     trigger_command at a time, in its own thread.
     """
 
@@ -419,9 +419,9 @@ class TriggerExecutor(threading.Thread):
         self.go = True
 
     def landing(self, trigger_command):
-        """One command to be triggered. Enqueued 
+        """One command to be triggered. Enqueued
         to be executed when ready.
-        
+
         :param trigger_command: command to be triggered.
         """
         self.queue.put(trigger_command)
@@ -438,7 +438,7 @@ class TriggerExecutor(threading.Thread):
 
     def stop(self):
         self.go = False
-            
+
 class Executor(object):
     """Will execute a program if a certain condition is given"""
     PlaceHolders = '%s'
@@ -461,7 +461,7 @@ class Executor(object):
             trigger = []
             for param in self.executable:
                 if param == self.PlaceHolders:
-                    param = params.pop(0) 
+                    param = params.pop(0)
                 trigger.append(param)
             return trigger
         return self.executable
@@ -476,32 +476,32 @@ class Executor(object):
             self.started = True
             self.trigger_executor.start()
         self.trigger_executor.landing(trigger)
-    
+
     def stop(self):
         if self.started:
             self.trigger_executor.stop()
             # unblock the queue
             self.trigger_executor.landing("stop")
             self.trigger_executor.join()
-            
+
 
 class Poster(object):
-    """This is basically a REST client that 
-    will notify a log4tailer centralized server. 
-    It will register first to the server and will 
-    notify it anytime an undesirable trace has been found. 
+    """This is basically a REST client that
+    will notify a log4tailer centralized server.
+    It will register first to the server and will
+    notify it anytime an undesirable trace has been found.
     Fatals, criticals, errors and targets will be notified.
-    """ 
+    """
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
     def __init__(self, properties):
         """Instantiates a REST notifier.
-        
+
         :param properties: a Property instance holding the necessary parameters
             to connect to the centralized server. The base_url, port, service
             uri, register and unregister uri will need to be provided in a
             configuration file.
-        """ 
+        """
         self.url = properties.get_value('server_url')
         self.port = properties.get_value('server_port')
         self.service_uri = properties.get_value('server_service_uri')
@@ -523,12 +523,12 @@ class Poster(object):
         logtrace, _ = message.getPlainMessage()
         log_info = self.registered_logs[log]
         log_id = log_info['id']
-        params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level, 
-            'log': { 'id' : log_id, 'logpath' : log.path, 
+        params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level,
+            'log': { 'id' : log_id, 'logpath' : log.path,
                 'logserver' : self.hostname}})
         body = self.send(self.service_uri, params)
         return body
-    
+
     def register(self, log):
         params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
         body = self.send(self.register_uri, params)

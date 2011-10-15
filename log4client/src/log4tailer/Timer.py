@@ -29,11 +29,11 @@ class Timer:
 
     def startTimer(self):
         """sets the start time in epoch seconds"""
-        self.start = time.time()  
-                        
+        self.start = time.time()
+
     def ellapsed(self):
         """return the number of seconds ellapsed"""
-        # the count is to avoid not sending 
+        # the count is to avoid not sending
         # an alert when is the first time you call
         # ellapsed and is below the gap notification time
 
@@ -62,8 +62,8 @@ class Timer:
     def awaitSend(self,triggeredNotSent):
         """return True if we have timed out
         False otherwise"""
-        # triggered not sent; when it is being 
-        # triggered but we are in an awaiting 
+        # triggered not sent; when it is being
+        # triggered but we are in an awaiting
         # gap period
         if triggeredNotSent:
             if self.beyondGap(self.inactivityEllapsed()):
@@ -72,14 +72,14 @@ class Timer:
             return True
         ellapsed = self.ellapsed()
         if ellapsed <= self.gapNotification and self.count == 0:
-            self.count += 1 
+            self.count += 1
             return False
         elif self.beyondGap(ellapsed):
             return False
         return True
 
     def reset(self):
-        '''actually the same 
+        '''actually the same
         as start timer method'''
         self.start = time.time()
 

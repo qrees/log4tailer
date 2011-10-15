@@ -23,7 +23,7 @@ from log4tailer.Timer import Timer
 class Log(object):
     '''Class that defines a common
     structure in a log'''
-    
+
     TARGET_PROPERTY_PREFIX = "targets "
 
     def __init__(self, path, properties=None, options=None):
@@ -34,7 +34,7 @@ class Log(object):
         self.loglevel = None
         self.properties = properties
         self.ownOutputColor = None
-        self.ownTarget = None    
+        self.ownTarget = None
         self.patTarget = None
         self.inactivityTimer = None
         self.inactivityAccTime = 0
@@ -45,7 +45,7 @@ class Log(object):
         self.emphcolor = None
         if properties:
             self.ownOutputColor = properties.get_value(path.lower())
-            self.ownTarget = properties.get_value(Log.TARGET_PROPERTY_PREFIX + 
+            self.ownTarget = properties.get_value(Log.TARGET_PROPERTY_PREFIX +
                     path.lower())
             if self.ownTarget:
                 self.logTargetColor = self.targets_colors()
@@ -54,7 +54,7 @@ class Log(object):
             self.inactivityTimer = Timer(float(options.inactivity))
             self.inactivityTimer.startTimer()
         self.triggeredNotSent = False
-        
+
     def getcurrInode(self):
         try:
             inode = os.stat(self.path)[ST_INO]
@@ -66,7 +66,7 @@ class Log(object):
     def getcurrSize(self):
         size = os.stat(self.path)[ST_SIZE]
         return size
-    
+
     def openLog(self):
         try:
             self.size = os.stat(self.path)[ST_SIZE]
@@ -81,7 +81,7 @@ class Log(object):
         except IOError:
             print "Could not open file "+self.path
             raise IOError
-    
+
     def readLine(self):
         return self.fh.readline()
 
@@ -92,14 +92,14 @@ class Log(object):
         self.fh.close()
 
     def seekLogEnd(self):
-        # should be 2 for versions 
+        # should be 2 for versions
         # older than 2.5 SEEK_END = 2
         self.fh.seek(0,2)
-    
+
     def seekLogNearlyEnd(self):
         currpos = self.__getLast10Lines()
         self.fh.seek(currpos,0)
-    
+
     def __getLast10Lines(self):
         linesep = '\n'
         self.seekLogEnd()
@@ -125,11 +125,11 @@ class Log(object):
             try:
                 self.fh.seek(-blockReadSize*blockCount,2)
             except IOError:
-                # already reached beginning 
+                # already reached beginning
                 # of file
                 currpos = self.fh.tell()-posactual
                 return currpos
-        # add 2, to get rid of the last seek -1 
+        # add 2, to get rid of the last seek -1
         # and the following \n
         currpos = self.fh.tell()+2
         return currpos
@@ -152,7 +152,7 @@ class Log(object):
 
     def targets_colors(self):
         """{ compiled regex : color) }
-        """ 
+        """
         targetcolor = {}
         fields = [ k.strip() for k in self.ownTarget.split(';') ]
         for field in fields:

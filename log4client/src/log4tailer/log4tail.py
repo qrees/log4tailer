@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 # Log4Tailer: A multicolored python tailer for log4J logs
 # Copyright (C) 2008 Jordi Carrillo Bosch
@@ -27,7 +27,7 @@ def startupNotice():
         This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
             This is free software, and you are welcome to redistribute it
                 under certain conditions; type `show c' for details."""
-    print notice           
+    print notice
 
 def parse_command_line():
     if len(sys.argv[1:]) == 0:
@@ -36,7 +36,7 @@ def parse_command_line():
     parser = OptionParser()
     parser.add_option("-c", "--config", dest="configfile",
             help="config file with colors")
-    parser.add_option("-p", "--pause", dest="pause", 
+    parser.add_option("-p", "--pause", dest="pause",
             help="pause between tails")
     parser.add_option("--throttle", dest="throttle",
             help="throttle output, slowsdown")
@@ -58,18 +58,18 @@ def parse_command_line():
             help="ignores log traces, they will not be notified")
     parser.add_option("--cornermark", dest="cornermark",
             help="displays a mark in bottom right corner of terminal")
-    parser.add_option("--no-mail-silence", action="store_true", 
+    parser.add_option("--no-mail-silence", action="store_true",
             dest="nomailsilence", help="silent mode but no specific notification")
-    parser.add_option("--executable", action="store_true", 
+    parser.add_option("--executable", action="store_true",
             dest="executable", help="executes a program")
-    parser.add_option("--version", action="store_true", 
+    parser.add_option("--version", action="store_true",
             dest="version", help="shows log4tailer version number and exists")
-    parser.add_option("--post", action="store_true", dest="post", 
+    parser.add_option("--post", action="store_true", dest="post",
         help="sends http alert to a centralized web server")
-    parser.add_option("--screenshot", action="store_true", dest="screenshot", 
+    parser.add_option("--screenshot", action="store_true", dest="screenshot",
         help="takes a terminal screenshot whenever it finds an alertable log "
                 "trace")
- 
+
     return parser.parse_args()
 
 def main():

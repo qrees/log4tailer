@@ -33,20 +33,23 @@ def get_term_lines():
     ttlines = int(ttlines)
     return ttlines
 
+
 def _printHeaderLog(path):
-    print "==> "+path+" <=="
+    print "==> " + path + " <=="
+
 
 def hasRotated(log):
     """Returns True if log has rotated
     False otherwise"""
-    if log.getcurrInode()!=log.inode or log.getcurrSize() < log.size: 
-        print "Log "+log.path+" has rotated"
-        # close the log and open it again 
+    if log.getcurrInode() != log.inode or log.getcurrSize() < log.size:
+        print "Log " + log.path + " has rotated"
+        # close the log and open it again
         log.closeLog()
         log.openLog()
         log.seekLogEnd()
         return True
     return False
+
 
 class LogTailer(object):
     '''Tails the logs provided by Log class'''
@@ -72,9 +75,9 @@ class LogTailer(object):
             log.seekLogNearlyEnd()
 
     def __initialize(self, message):
-        '''prints the last 10 
-        lines for each log, one log 
-        at a time''' 
+        '''prints the last 10
+        lines for each log, one log
+        at a time'''
         printAction = notifications.Print()
         lenarray = len(self.arrayLog)
         cont = 0
@@ -91,18 +94,18 @@ class LogTailer(object):
             if cont < lenarray:
                 print
 
-    def printLastNLines(self,n):
+    def printLastNLines(self, n):
         '''tail -n numberoflines method in pager mode'''
         message = Message(self.logcolors)
         action = notifications.Print()
         for log in self.arrayLog:
             fd = log.openLog()
             numlines = log.numLines()
-            pos = numlines-n
+            pos = numlines - n
             count = 0
             buff = []
             ttlines = get_term_lines()
-            for curpos,line in enumerate(fd):
+            for curpos, line in enumerate(fd):
                 if curpos >= pos:
                     line = line.rstrip()
                     message.parse(line, log)
@@ -114,9 +117,9 @@ class LogTailer(object):
                         count = 0
                         ttlines = get_term_lines()
             log.closeLog()
-    
+
     def pipeOut(self):
-        """Reads from standard input 
+        """Reads from standard input
         and prints to standard output"""
         message = Message(self.logcolors, self.target, self.properties)
         stdin = sys.stdin
@@ -125,8 +128,8 @@ class LogTailer(object):
             message.parse(line, anylog)
             for action in self.actions:
                 action.notify(message, anylog)
-    
-    def __getAction(self,module):
+
+    def __getAction(self, module):
         for action in self.actions:
             if isinstance(action, module):
                 return action
@@ -148,7 +151,7 @@ class LogTailer(object):
                     self.mailAction = inactivityaction.getMailAction()
                     return True
         return False
-    
+
     def resumeBuilder(self):
         resume = Resume(self.arrayLog)
         notify_defaults = ('mail', 'print')
@@ -167,24 +170,24 @@ class LogTailer(object):
             if analyticsgap:
                 resume.setAnalyticsGapNotification(analyticsgap)
         if self.silence:
-            # if no notify has been setup and we are in daemonized mode 
+            # if no notify has been setup and we are in daemonized mode
             # we need to flush the reporting to avoid filling up memory.
             resume.is_daemonized = True
-        # check if inactivity action on the self.actions and set the inactivity 
+        # check if inactivity action on the self.actions and set the inactivity
         # on the resume object. If inactivity is flagged, will be then
         # reported.
         inactivity_action = self.__getAction(notifications.Inactivity)
         if inactivity_action:
             resume.add_notifier(inactivity_action)
         return resume
-    
+
     def notifyActions(self, message, log):
         for action in self.actions:
             action.notify(message, log)
 
     def tailer(self):
         '''Stdout multicolor tailer'''
-        message = Message(self.logcolors,self.target,self.properties)
+        message = Message(self.logcolors, self.target, self.properties)
         resume = self.resumeBuilder()
         self.posEnd()
         get_log_lines = "readLines"
@@ -243,4 +246,3 @@ class LogTailer(object):
             print "\n"
             resume.report()
             print "Ended log4tailer, because colors are fun"
-
