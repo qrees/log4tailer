@@ -18,8 +18,5 @@ if [ $? -ne 0 ]; then
 fi
 $COVERAGE xml 
 make pylint > /dev/null 2>&1
-# cleanup *.pyc
-make clean
-make release
 make coberturasource
 
