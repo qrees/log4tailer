@@ -87,11 +87,11 @@ class PrintShot(Print):
 
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
-    def __init__(self, properties):
+    def __init__(self, properties, shot_process="import"):
         super(PrintShot, self).__init__(properties)
         self.screenshot = properties.get_value('screenshot')
         self.winid = self.get_windowsid()
-        self.screenproc = ['import', '-window', self.winid,
+        self.screenproc = [shot_process, '-window', self.winid,
                 self.screenshot]
 
     def notify(self, message, log):

@@ -28,7 +28,8 @@ import copy
 from nose.tools import raises
 from log4tailer.Log import Log
 import log4tailer
-from tests import LOG4TAILER_DEFAULTS
+from tests import LOG4TAILER_DEFAULTS, TESTS_DIR
+from os.path import join as pjoin
 
 SYSOUT = sys.stdout
 ACONFIG = 'aconfig.cfg'
@@ -45,7 +46,7 @@ class Writer(object):
 
 class Interruptor(threading.Thread):
     log_name = 'out.log'
-    
+
     def __init__(self):
         threading.Thread.__init__(self)
         self.pid = os.getpid()
@@ -65,10 +66,10 @@ class Interruptor(threading.Thread):
         time.sleep(0.1)
         fh.write(anotherlogtrace + '\n')
         fh.close()
-        # seems to work fine sleeping 2 secs. 
-        # we need to await that much to leave 
-        # import to take an screenshot of terminal. 
-        time.sleep(2)
+        # seems to work fine sleeping 2 secs.
+        # we need to await that much to leave
+        # import to take an screenshot of terminal.
+        time.sleep(1)
         os.kill(self.pid, signal.SIGINT)
 
 class TestEndToEnd(unittest.TestCase):
@@ -83,7 +84,7 @@ class TestEndToEnd(unittest.TestCase):
         fh.write(onelogtrace + '\n')
         fh.write(anotherlogtrace + '\n')
         fh.close()
-        self.apicture = 'apicture.png'
+        self.apicture = pjoin(TESTS_DIR, 'apicture.png')
 
     def __finished_fine(self, out_container):
         finish_trace = re.compile(r'because colors are fun')
@@ -92,7 +93,7 @@ class TestEndToEnd(unittest.TestCase):
             if finish_trace.search(line):
                 found = True
         return found
-   
+
     def test_tailerfrommonitor(self):
         sys.stdout = Writer()
         class OptionsMock(object):
@@ -132,7 +133,7 @@ class TestEndToEnd(unittest.TestCase):
                 if method == 'configfile':
                     return ACONFIG
                 return False
-        optionsmock_withconfig = OptionsMockWithConfig()        
+        optionsmock_withconfig = OptionsMockWithConfig()
         log4tailer.initialize(optionsmock_withconfig)
         args_mock = [self.log_name]
         interruptor = Interruptor()
@@ -162,16 +163,14 @@ class TestEndToEnd(unittest.TestCase):
                     return True
                 return False
         options_mock = OptionWithScreenshot()
+        shot_process = pjoin(TESTS_DIR, 'printashot.sh')
         log4tailer.initialize(options_mock)
+        log4tailer.defaults['actions'][0].screenproc = shot_process
         args_mock = [self.log_name]
         interruptor = Interruptor()
         interruptor.with_fatal_logtrace()
         interruptor.start()
         log4tailer.monitor(options_mock, args_mock)
-        #FIXME when executed first time ever this test normally fails, but not
-        #next times. This is due to it needs to shell out the import linux
-        #command line tool.
-        time.sleep(0.2)
         interruptor.join()
         finish_trace = re.compile(r'because colors are fun')
         found = False
@@ -191,12 +190,12 @@ class TestEndToEnd(unittest.TestCase):
                 if method == 'version':
                     return True
                 return False
-        self.assertRaises(SystemExit, log4tailer.initialize, 
+        self.assertRaises(SystemExit, log4tailer.initialize,
                 OptionsMock())
-        doc_version = re.search('\large Version (\d+\.?\d+\.?\d*)', 
+        doc_version = re.search('\large Version (\d+\.?\d+\.?\d*)',
                 open('../userguide/log4tailer.tex').read()).group(1)
         self.assertEqual(doc_version, sys.stdout.captured[0])
-   
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()

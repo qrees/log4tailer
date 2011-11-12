@@ -2,6 +2,7 @@
 
 import unittest
 from log4tailer import notifications
+from tests import TESTS_DIR
 import mocker
 from mocker import ANY
 from subprocess import PIPE
@@ -10,6 +11,8 @@ from log4tailer.LogColors import LogColors
 from log4tailer.Log import Log
 import sys
 import os
+from os.path import join as pjoin
+from tests import TESTS_DIR
 
 CONFIG = 'printshot.cfg'
 
@@ -27,8 +30,8 @@ class PrintShotTest(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
         self.sysout = sys.stdout
-        self.output = 'picture.png'
-    
+        self.output = pjoin(TESTS_DIR, 'apicture.png')
+
     def test_instantiatesprintshot(self):
         output = 'picture.png'
         propertiesmock = self.mocker.mock()
@@ -63,7 +66,7 @@ class PrintShotTest(unittest.TestCase):
 
     def test_printandshoot(self):
         sys.stdout = Writer()
-        log_traces = ['this is an info log trace', 
+        log_traces = ['this is an info log trace',
                 'this is a fatal log trace']
         log = Log('anylog')
         logcolors = LogColors()
@@ -74,7 +77,8 @@ class PrintShotTest(unittest.TestCase):
         propertiesmock.get_value(ANY)
         self.mocker.result(False)
         self.mocker.replay()
-        printandshoot = notifications.PrintShot(propertiesmock)
+        printandshoot = notifications.PrintShot(propertiesmock,
+                shot_process=pjoin(TESTS_DIR,"printashot.sh"))
         message = Message(logcolors)
         for trace in log_traces:
             message.parse(trace, log)
