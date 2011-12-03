@@ -44,7 +44,9 @@ except ImportError:
     import Queue as queue
 
 try:
-    import SMTP_SSL
+    # this needs more thought... Should be activated only if required 
+    # from command line.
+    from smtplib import SMTP_SSL
 except ImportError:
     pass
 

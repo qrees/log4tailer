@@ -1,6 +1,12 @@
 ====================================
+03/12/11 release 3.0.5
+====================================
+- Bug fixes import SMTP_SSL Fixes issue #8.
+
+
+====================================
 28/08/11 release 3.0.4
-===================================
+====================================
 - Bug fix posting notifications to web server. Fixes issue #7.
 - Updated documentation for log4server.
 
