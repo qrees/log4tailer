@@ -20,7 +20,7 @@ import sys
 import os
 import time
 from log4tailer import LogColors
-from log4tailer.Properties import evalvalue
+from log4tailer.configuration import evalvalue
 from log4tailer.timing import Timer
 from smtplib import SMTP, SMTPServerDisconnected
 from log4tailer.termcolorcodes import TermColorCodes

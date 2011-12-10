@@ -19,8 +19,8 @@
 
 import unittest
 import os
-from log4tailer import Properties
-from log4tailer.Properties import Property
+from log4tailer import configuration
+from log4tailer.configuration import Property
 from log4tailer.log4Exceptions import KeyAlreadyExistsException
 
 class TestProperties(unittest.TestCase):
@@ -85,11 +85,11 @@ class TestEvalTrue(unittest.TestCase):
         pass
     
     def test_strtrueistrue(self):
-        self.assertTrue(Properties.evalvalue('True'))
-        self.assertTrue(Properties.evalvalue('trUe'))
-        self.assertTrue(Properties.evalvalue('TRue'))
-        self.assertFalse(Properties.evalvalue(None))
-        self.assertFalse(Properties.evalvalue(True))
+        self.assertTrue(configuration.evalvalue('True'))
+        self.assertTrue(configuration.evalvalue('trUe'))
+        self.assertTrue(configuration.evalvalue('TRue'))
+        self.assertFalse(configuration.evalvalue(None))
+        self.assertFalse(configuration.evalvalue(True))
 
     def tearDown(self):
         pass

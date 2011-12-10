@@ -22,7 +22,7 @@ import mocker
 import time
 import os
 from log4tailer import notifications
-from log4tailer.Properties import Property
+from log4tailer.configuration import Property
 from log4tailer.message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.logfile import Log

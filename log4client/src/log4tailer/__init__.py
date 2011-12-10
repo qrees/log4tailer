@@ -1,6 +1,6 @@
 import os
 import sys
-from log4tailer import LogTailer, LogColors, logfile, Properties
+from log4tailer import LogTailer, LogColors, logfile, configuration
 from log4tailer import notifications
 from log4tailer.utils import setup_mail
 import re
@@ -10,12 +10,12 @@ __version__ = "3.0.5"
 logging.basicConfig(level = logging.WARNING)
 logger = logging.getLogger('log4tail')
 
-defaults  = {'pause' : 1, 
+defaults  = {'pause' : 1,
     'silence' : False,
     'throttle' : 0,
     'actions' : [],
     'nlines' : False,
-    'target': None, 
+    'target': None,
     'logcolors' : LogColors.LogColors(),
     'properties' : None,
     'alt_config': os.path.expanduser('~/.log4tailer'),
@@ -23,7 +23,7 @@ defaults  = {'pause' : 1,
 
 
 def parse_config(configfile):
-    properties = Properties.Property(configfile)
+    properties = configuration.Property(configfile)
     properties.parse_properties()
     return properties
 
@@ -52,8 +52,8 @@ def initialize(options):
         defaults['silence'] = True
     if options.nomailsilence:
         # silence option with no mail
-        # up to user to provide notification by mail 
-        # or do some kind of reporting 
+        # up to user to provide notification by mail
+        # or do some kind of reporting
         defaults['silence'] = True
     if options.mail and properties:
         mailAction = setup_mail(properties)
@@ -69,7 +69,7 @@ def initialize(options):
     if options.target:
         defaults['target'] = options.target
     if options.inactivity:
-        inactivityAction = notifications.Inactivity(options.inactivity, 
+        inactivityAction = notifications.Inactivity(options.inactivity,
                 properties)
         if inactivityAction.getNotificationType() == 'mail':
             if options.mail or options.silence:
