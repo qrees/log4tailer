@@ -17,7 +17,7 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 from log4tailer.termcolorcodes import TermColorCodes
-from log4tailer import LogLevels
+from log4tailer import loglevels
 
 class LogColors(object):
     '''Provides the colors that will
@@ -51,6 +51,6 @@ class LogColors(object):
     
     def getLevelColor(self, level):
         level = level.lower()
-        if level in LogLevels.logLevels:
+        if level in loglevels.logLevels:
             return getattr(self, level)
 
