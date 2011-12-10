@@ -1,6 +1,6 @@
 import os
 import sys
-from log4tailer import LogTailer, logcolors, logfile, configuration
+from log4tailer import logtailer, logcolors, logfile, configuration
 from log4tailer import notifications
 from log4tailer.utils import setup_mail
 import re
@@ -109,7 +109,7 @@ def monitor(options, args):
             sys.exit()
         tailer.tailer()
         sys.exit()
-    tailer = LogTailer.LogTailer(defaults)
+    tailer = logtailer.LogTailer(defaults)
 
     if args[0] == '-':
         tailer.pipeOut()
