@@ -3,7 +3,7 @@
 import unittest
 import mocker
 from log4tailer import notifications
-from log4tailer.LogColors import LogColors
+from log4tailer.logcolors import LogColors
 from log4tailer.message import Message
 from log4tailer.logfile import Log
 import json

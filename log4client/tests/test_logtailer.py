@@ -10,7 +10,7 @@ from mocker import ANY
 import copy
 from log4tailer import reporting
 from log4tailer.LogTailer import LogTailer
-from log4tailer.LogColors import LogColors
+from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 from log4tailer.logfile import Log
 from log4tailer.configuration import Property

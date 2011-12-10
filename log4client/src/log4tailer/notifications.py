@@ -19,7 +19,7 @@
 import sys
 import os
 import time
-from log4tailer import LogColors
+from log4tailer import logcolors
 from log4tailer.configuration import evalvalue
 from log4tailer.timing import Timer
 from smtplib import SMTP, SMTPServerDisconnected
@@ -131,7 +131,7 @@ class Inactivity(object):
 
     def __init__(self, inactivityTime, properties=None):
         self.inactivityTime = inactivityTime
-        self.logColors = LogColors.LogColors()
+        self.logColors = logcolors.LogColors()
         self.acumulativeTime = 0
         self.mailAction = None
         notification = None

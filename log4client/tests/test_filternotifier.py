@@ -21,7 +21,7 @@ import sys
 import re
 from log4tailer import notifications
 from log4tailer.message import Message
-from log4tailer.LogColors import LogColors
+from log4tailer.logcolors import LogColors
 from log4tailer.logfile import Log
 from log4tailer.termcolorcodes import TermColorCodes
 

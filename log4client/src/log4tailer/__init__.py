@@ -1,6 +1,6 @@
 import os
 import sys
-from log4tailer import LogTailer, LogColors, logfile, configuration
+from log4tailer import LogTailer, logcolors, logfile, configuration
 from log4tailer import notifications
 from log4tailer.utils import setup_mail
 import re
@@ -16,7 +16,7 @@ defaults  = {'pause' : 1,
     'actions' : [],
     'nlines' : False,
     'target': None,
-    'logcolors' : LogColors.LogColors(),
+    'logcolors' : logcolors.LogColors(),
     'properties' : None,
     'alt_config': os.path.expanduser('~/.log4tailer'),
     'post' : False}
