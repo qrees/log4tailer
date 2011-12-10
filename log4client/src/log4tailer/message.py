@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-from log4tailer.ColorParser import ColorParser
+from log4tailer.colorparser import ColorParser
 from log4tailer import modes
 import re
 
