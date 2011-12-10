@@ -26,7 +26,7 @@ import re
 import threading
 import copy
 from nose.tools import raises
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 import log4tailer
 from tests import LOG4TAILER_DEFAULTS, TESTS_DIR
 from os.path import join as pjoin

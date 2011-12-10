@@ -23,7 +23,7 @@ from log4tailer import LogColors
 from log4tailer.Properties import evalvalue
 from log4tailer.timing import Timer
 from smtplib import SMTP, SMTPServerDisconnected
-from log4tailer.TermColorCodes import TermColorCodes
+from log4tailer.termcolorcodes import TermColorCodes
 import subprocess
 from subprocess import PIPE
 import threading

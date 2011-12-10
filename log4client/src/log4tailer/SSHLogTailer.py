@@ -6,7 +6,7 @@ import time
 import select
 from log4tailer.logfile import Log
 from log4tailer.message import Message
-from log4tailer.TermColorCodes import TermColorCodes
+from log4tailer.termcolorcodes import TermColorCodes
 from subprocess import Popen, PIPE
 import notifications
 

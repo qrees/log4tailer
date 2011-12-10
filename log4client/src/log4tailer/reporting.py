@@ -18,7 +18,7 @@
 
 from time import time
 from log4tailer import utils
-from log4tailer import TermColorCodes, timing
+from log4tailer import termcolorcodes, timing
 import datetime
 
 MAIL = 'mail'
@@ -156,7 +156,7 @@ class Resume(object):
         return self.notificationType
 
     def report(self):
-        colors = TermColorCodes.TermColorCodes()
+        colors = termcolorcodes.TermColorCodes()
         print "Analytics: "
         print "Uptime: "
         print self.__execTime()
