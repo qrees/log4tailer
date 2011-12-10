@@ -6,7 +6,7 @@ from tests import TESTS_DIR
 import mocker
 from mocker import ANY
 from subprocess import PIPE
-from log4tailer.Message import Message
+from log4tailer.message import Message
 from log4tailer.LogColors import LogColors
 from log4tailer.Log import Log
 import sys

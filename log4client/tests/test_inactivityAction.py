@@ -24,7 +24,7 @@ import time
 import mocker
 import mox
 from log4tailer import notifications
-from log4tailer.Message import Message
+from log4tailer.message import Message
 from log4tailer.Properties import Property
 from log4tailer.Log import Log
 
@@ -138,7 +138,7 @@ class TestInactivityAction(unittest.TestCase):
         options = Options()
         options.inactivity =  0.05
         log = Log('out.log', None, options)
-        message_mock = self.mocker.replace('log4tailer.Message.Message')
+        message_mock = self.mocker.replace('log4tailer.message.Message')
         message_mock.getPlainMessage()
         self.mocker.count(1, None)
         self.mocker.result(('', 'logpath'))

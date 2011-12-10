@@ -19,7 +19,7 @@
 import os
 import time
 import sys
-from log4tailer.Message import Message
+from log4tailer.message import Message
 from log4tailer.Log import Log
 from log4tailer.reporting import Resume
 from log4tailer import notifications
