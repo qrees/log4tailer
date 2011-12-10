@@ -95,8 +95,8 @@ def initialize(options):
 
 def monitor(options, args):
     if options.remote:
-        from log4tailer import SSHLogTailer
-        tailer = SSHLogTailer.SSHLogTailer(defaults)
+        from log4tailer import sshlogtailer
+        tailer = sshlogtailer.SSHLogTailer(defaults)
         if not tailer.sanityCheck():
             print "missing config file parameters"
             sys.exit()
