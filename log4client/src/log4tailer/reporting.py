@@ -18,19 +18,21 @@
 
 from time import time
 from log4tailer import utils
-from log4tailer import TermColorCodes, Timer
+from log4tailer import TermColorCodes, timing
 import datetime
 
 MAIL = 'mail'
 PRINT = 'print'
 FILE = 'file'
 
+
 def colorize(line, colors):
     return colors.backgroundemph + line + colors.reset
 
+
 class Resume(object):
-    '''Will report of number of debug, info and warn 
-    events. For Error and Fatal will provide the timestamp 
+    '''Will report of number of debug, info and warn
+    events. For Error and Fatal will provide the timestamp
     if there was any event of that level'''
     DEFAULT_METHODS = [MAIL, PRINT]
 
@@ -39,14 +41,14 @@ class Resume(object):
         self.initTime = time()
         self.logsReport = {}
         for log in arrayLog:
-            self.logsReport[log.path] = {'TARGET':0,
-                                                 'DEBUG':0,
-                                                 'INFO':0,
-                                                 'WARN':0,
-                                                 'OTHERS':[],
-                                                 'ERROR':[],
-                                                 'FATAL':[],
-                                                 'CRITICAL':[]}
+            self.logsReport[log.path] = {'TARGET': 0,
+                                         'DEBUG': 0,
+                                         'INFO': 0,
+                                         'WARN': 0,
+                                         'OTHERS': [],
+                                         'ERROR': [],
+                                         'FATAL': [],
+                                         'CRITICAL': []}
 
         self.nonTimeStamped = ['DEBUG', 'INFO', 'WARN', 'TARGET']
         self.orderReport = ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'INFO',
@@ -56,7 +58,7 @@ class Resume(object):
         self.gapTime = 3600
         self.notifiers = []
         self.is_daemonized = False
-        self.timer = Timer.Timer(self.gapTime)
+        self.timer = timing.Timer(self.gapTime)
         self.timer.startTimer()
         self.report_file = None
 
@@ -81,16 +83,16 @@ class Resume(object):
         if isTarget:
             logKey['TARGET'] += 1
             return
-        if logKey.has_key(messageLevel):
+        if messageLevel in logKey:
             if messageLevel in self.nonTimeStamped:
                 logKey[messageLevel] += 1
             else:
                 res = utils.get_now()
-                logKey[messageLevel].append(res +'=>> '+plainmessage)
+                logKey[messageLevel].append(res + '=>> ' + plainmessage)
         for notifier in self.notifiers:
             if notifier.alerted:
                 res = utils.get_now()
-                logKey['OTHERS'].append(res + '=>> '+ notifier.alerting_msg)
+                logKey['OTHERS'].append(res + '=>> ' + notifier.alerting_msg)
         self.report_now()
 
     def report_now_print(self, body):
@@ -105,7 +107,7 @@ class Resume(object):
         fh.write("Report at " + datetime.datetime.now().isoformat(' ') + '\n')
         fh.write(body)
         fh.close()
-    
+
     def report_now(self):
         if self.notificationType == PRINT and not self.is_daemonized:
             return
@@ -115,7 +117,7 @@ class Resume(object):
             getattr(self, report_method)(body)
             self.flushReport()
             self.timer.reset()
-           
+
     def __execTime(self):
         finish = time()
         ellapsed = finish - self.initTime
@@ -124,27 +126,27 @@ class Resume(object):
     def notification_type(self, notification_method):
         """If notification_method is not mail or print, it will be the full
         path to the file where we will report.
-        
-        :param notification_method: notification type being mail, file or 
+
+        :param notification_method: notification type being mail, file or
             print
-        """ 
+        """
         if notification_method not in self.DEFAULT_METHODS:
             self.notificationType = FILE
             self.report_file = notification_method
         else:
             self.notificationType = notification_method
-        self.timer = Timer.Timer(self.gapTime)
+        self.timer = timing.Timer(self.gapTime)
         self.timer.startTimer()
-    
+
     def setMailNotification(self, mailAction):
         self.mailAction = mailAction
         self.notificationType = 'mail'
-        self.timer = Timer.Timer(self.gapTime)
+        self.timer = timing.Timer(self.gapTime)
         self.timer.startTimer()
-    
-    def setAnalyticsGapNotification(self,gapTime):
+
+    def setAnalyticsGapNotification(self, gapTime):
         self.gapTime = float(gapTime)
-        self.timer = Timer.Timer(self.gapTime)
+        self.timer = timing.Timer(self.gapTime)
         self.timer.startTimer()
 
     def getGapNotificationTime(self):
@@ -152,44 +154,43 @@ class Resume(object):
 
     def getNotificationType(self):
         return self.notificationType
-    
+
     def report(self):
         colors = TermColorCodes.TermColorCodes()
         print "Analytics: "
         print "Uptime: "
         print self.__execTime()
         for log in self.arrayLog:
-            titleLog = colorize("Report for Log " + log.path, 
+            titleLog = colorize("Report for Log " + log.path,
                     colors)
             print titleLog
             print "Levels Report: "
-            logKey = self.logsReport[log.path]  
+            logKey = self.logsReport[log.path]
             for level in self.orderReport:
-                print level+":"
+                print level + ":"
                 if level in self.nonTimeStamped:
                     print logKey[level]
                 else:
                     for timestamp in logKey[level]:
                         print timestamp
-    
+
     def reportBody(self):
         body = "Analytics: \n"
         body += "Uptime: \n"
-        body += self.__execTime()+"\n"
+        body += self.__execTime() + "\n"
         for log in self.arrayLog:
-            titleLog = "Report for Log "+log.path
+            titleLog = "Report for Log " + log.path
             fancyheader = len(titleLog) * '='
-            body += fancyheader+"\n"
-            body += titleLog+"\n"
-            body += fancyheader+"\n"
+            body += fancyheader + "\n"
+            body += titleLog + "\n"
+            body += fancyheader + "\n"
             body += "Levels Report: \n"
-            logKey = self.logsReport[log.path]  
+            logKey = self.logsReport[log.path]
             for level in self.orderReport:
-                body += level+":\n"
+                body += level + ":\n"
                 if level in self.nonTimeStamped:
-                    body += str(logKey[level])+"\n"
+                    body += str(logKey[level]) + "\n"
                 else:
                     for timestamp in logKey[level]:
-                        body += timestamp+"\n"
+                        body += timestamp + "\n"
         return body
-

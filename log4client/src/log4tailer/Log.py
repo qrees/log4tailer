@@ -18,7 +18,8 @@
 import os
 import re
 from stat import ST_INO, ST_SIZE
-from log4tailer.Timer import Timer
+from log4tailer.timing import Timer
+
 
 class Log(object):
     '''Class that defines a common
@@ -72,14 +73,14 @@ class Log(object):
             self.size = os.stat(self.path)[ST_SIZE]
             self.inode = os.stat(self.path)[ST_INO]
         except OSError:
-            print "file "+self.path+" does not exist"
+            print "file " + self.path + " does not exist"
             raise OSError
         try:
-            fd = open(self.path,'r')
+            fd = open(self.path, 'r')
             self.fh = fd
             return fd
         except IOError:
-            print "Could not open file "+self.path
+            print "Could not open file " + self.path
             raise IOError
 
     def readLine(self):
@@ -94,11 +95,11 @@ class Log(object):
     def seekLogEnd(self):
         # should be 2 for versions
         # older than 2.5 SEEK_END = 2
-        self.fh.seek(0,2)
+        self.fh.seek(0, 2)
 
     def seekLogNearlyEnd(self):
         currpos = self.__getLast10Lines()
-        self.fh.seek(currpos,0)
+        self.fh.seek(currpos, 0)
 
     def __getLast10Lines(self):
         linesep = '\n'
@@ -111,7 +112,7 @@ class Log(object):
         blockReadSize = 1
         blockCount = 1
         try:
-            self.fh.seek(-blockReadSize,2)
+            self.fh.seek(-blockReadSize, 2)
         except:
             # file is empty, so return
             # with position beginning of file
@@ -123,20 +124,20 @@ class Log(object):
             if charRead == linesep:
                 numLines += 1
             try:
-                self.fh.seek(-blockReadSize*blockCount,2)
+                self.fh.seek(-blockReadSize * blockCount, 2)
             except IOError:
                 # already reached beginning
                 # of file
-                currpos = self.fh.tell()-posactual
+                currpos = self.fh.tell() - posactual
                 return currpos
         # add 2, to get rid of the last seek -1
         # and the following \n
-        currpos = self.fh.tell()+2
+        currpos = self.fh.tell() + 2
         return currpos
 
     def numLines(self):
         count = -1
-        for count, _ in enumerate(open(self.path,'rU')):
+        for count, _ in enumerate(open(self.path, 'rU')):
             pass
         count += 1
         return count
@@ -154,13 +155,12 @@ class Log(object):
         """{ compiled regex : color) }
         """
         targetcolor = {}
-        fields = [ k.strip() for k in self.ownTarget.split(';') ]
+        fields = [k.strip() for k in self.ownTarget.split(';')]
         for field in fields:
-            regcolor = [ k.strip() for k in field.split(':') ]
+            regcolor = [k.strip() for k in field.split(':')]
             regex = re.compile(regcolor[0])
             if len(regcolor) == 2:
                 targetcolor[regex] = regcolor[1]
             else:
-                targetcolor[regex] =  None
+                targetcolor[regex] = None
         return targetcolor
-
