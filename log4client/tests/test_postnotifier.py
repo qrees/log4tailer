@@ -5,7 +5,7 @@ import mocker
 from log4tailer import notifications
 from log4tailer.LogColors import LogColors
 from log4tailer.message import Message
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 import json
 
 def mock_server(mocker_obj):

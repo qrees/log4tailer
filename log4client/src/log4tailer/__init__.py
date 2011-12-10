@@ -1,6 +1,6 @@
 import os
 import sys
-from log4tailer import LogTailer, LogColors, Log, Properties
+from log4tailer import LogTailer, LogColors, logfile, Properties
 from log4tailer import notifications
 from log4tailer.utils import setup_mail
 import re
@@ -115,7 +115,7 @@ def monitor(options, args):
         tailer.pipeOut()
         sys.exit()
     for i in args:
-        log = Log.Log(i,defaults['properties'],options)
+        log = logfile.Log(i,defaults['properties'],options)
         tailer.addLog(log)
     if defaults.get('nlines', None):
         try:

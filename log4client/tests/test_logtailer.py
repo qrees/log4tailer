@@ -12,7 +12,7 @@ from log4tailer import reporting
 from log4tailer.LogTailer import LogTailer
 from log4tailer.LogColors import LogColors
 from log4tailer import notifications
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 from log4tailer.Properties import Property
 import log4tailer
 from tests import LOG4TAILER_DEFAULTS

@@ -20,7 +20,7 @@
 import unittest
 import os
 import re
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 from log4tailer.Properties import Property
 
 class TestLog(unittest.TestCase):

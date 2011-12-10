@@ -20,7 +20,7 @@ import os
 import time
 import sys
 from log4tailer.message import Message
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 from log4tailer.reporting import Resume
 from log4tailer import notifications
 from log4tailer.utils import setup_mail, daemonize

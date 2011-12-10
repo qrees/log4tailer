@@ -22,7 +22,7 @@ import re
 from log4tailer import notifications
 from log4tailer.message import Message
 from log4tailer.LogColors import LogColors
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 from log4tailer.TermColorCodes import TermColorCodes
 
 SYSOUT = sys.stdout

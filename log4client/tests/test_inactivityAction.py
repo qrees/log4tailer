@@ -26,7 +26,7 @@ import mox
 from log4tailer import notifications
 from log4tailer.message import Message
 from log4tailer.Properties import Property
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 
 SYSOUT = sys.stdout
 

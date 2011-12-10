@@ -8,7 +8,7 @@ from mocker import ANY
 from subprocess import PIPE
 from log4tailer.message import Message
 from log4tailer.LogColors import LogColors
-from log4tailer.Log import Log
+from log4tailer.logfile import Log
 import sys
 import os
 from os.path import join as pjoin
