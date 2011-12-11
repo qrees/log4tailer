@@ -18,11 +18,19 @@
 
 
 import sys
-from log4Exceptions import *
 import re
 
+
+class KeyAlreadyExistsException(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
 class Property(object):
-    '''class to read a user provided key=value config 
+    '''class to read a user provided key=value config
     file. Comments supported are # or //'''
 
     def __init__(self, propertyfile):
@@ -33,23 +41,23 @@ class Property(object):
         self.blankpat = re.compile(r'^(\s+|#.*|\/\/.*)$')
         self.validsep = ["="]
         self.resep = "|".join(self.validsep)
-    
+
     def parse_properties(self):
         # is that a huge config file?
         try:
-            fd = open(self.propertyfile,'r')
+            fd = open(self.propertyfile, 'r')
         except:
             print "could not open property file"
             sys.exit()
         # Generator expression, so does not matter if huge or not actually.
         lines = (k.rstrip() for k in fd if not self.blankpat.search(k))
         for i in lines:
-            vals = re.split(self.resep,i)
+            vals = re.split(self.resep, i)
             # we make it case insensitive.
             key = vals[0].strip().lower()
             value = vals[1].strip()
-            if self.dictproperties.has_key(key):
-                raise KeyAlreadyExistsException(key+" is duplicated")
+            if key in self.dictproperties:
+                raise KeyAlreadyExistsException(key + " is duplicated")
             else:
                 self.dictproperties[key] = value
         fd.close()
@@ -59,15 +67,16 @@ class Property(object):
         if key in self.dictproperties:
             return self.dictproperties[key]
         return None
-    
+
     def get_keys(self):
         return self.keys
 
-    def is_key(self,key):
+    def is_key(self, key):
         if key in self.dictproperties:
             return True
         else:
             return False
+
 
 def evalvalue(value):
     try:
@@ -77,4 +86,3 @@ def evalvalue(value):
     if val_lcase == 'true':
         return True
     return False
-

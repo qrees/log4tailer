@@ -21,18 +21,19 @@ import unittest
 import os
 from log4tailer import configuration
 from log4tailer.configuration import Property
-from log4tailer.log4Exceptions import KeyAlreadyExistsException
+from log4tailer.configuration import KeyAlreadyExistsException
+
 
 class TestProperties(unittest.TestCase):
-    
+
     def setUp(self):
         self.configfile = 'config.txt'
-        self.configfh = open(self.configfile,'w')
-        colorconfigs = {'warn':'yellow','fatal':'red',
-                        'error':'red'}
-        for key,value in colorconfigs.iteritems():
-            self.configfh.write(key +'='+value+'\n')
-
+        self.configfh = open(self.configfile, 'w')
+        colorconfigs = {'warn': 'yellow',
+                'fatal': 'red',
+                'error': 'red'}
+        for key, value in colorconfigs.iteritems():
+            self.configfh.write(key + '=' + value + '\n')
         self.configfh.close()
         self.configKeys = colorconfigs.keys().sort()
 
@@ -41,18 +42,18 @@ class TestProperties(unittest.TestCase):
         property.parse_properties()
         configPropertyKeys = property.get_keys().sort()
         # my colorconfigs keys are already in lowercase
-        self.assertEqual(self.configKeys,configPropertyKeys)
-    
+        self.assertEqual(self.configKeys, configPropertyKeys)
+
     def testcontainsOwnTargetLog(self):
-        self.configfh = open('anotherconfig.txt','w')
-        key = "targets /var/log/messages" 
+        self.configfh = open('anotherconfig.txt', 'w')
+        key = "targets /var/log/messages"
         value = "$2009-08-09 anything, ^regex2"
-        targetline = key+"="+value+"\n"
+        targetline = key + "=" + value + "\n"
         self.configfh.write(targetline)
         self.configfh.close()
         property = Property('anotherconfig.txt')
         property.parse_properties()
-        self.assertEqual(value,property.get_value(key))
+        self.assertEqual(value, property.get_value(key))
         os.remove('anotherconfig.txt')
 
     def testshouldReturnNoneifKeyNotFound(self):
@@ -60,21 +61,24 @@ class TestProperties(unittest.TestCase):
         property.parse_properties()
         key = 'hi'
         self.assertFalse(property.get_value(key))
-    
-    def __createDuplicateKeysConfig(self):
+
+    def _createDuplicateKeysConfig(self):
         os.remove(self.configfile)
-        configfh = open(self.configfile,'w')
-        colorconfigs = {'warn':'yellow','fatal':'red','error':'red'}
-        for key,value in colorconfigs.iteritems():
-            configfh.write(key +'='+value+'\n')
+        configfh = open(self.configfile, 'w')
+        colorconfigs = {'warn': 'yellow',
+                'fatal': 'red',
+                'error': 'red'}
+        for key, value in colorconfigs.iteritems():
+            configfh.write(key + '=' + value + '\n')
         # making a duplicate level
-        configfh.write('warn'+'='+'red'+'\n')
+        configfh.write('warn' + '=' + 'red' + '\n')
         configfh.close()
 
-    def testKeyAlreadyExistsException(self):                                    
-        self.__createDuplicateKeysConfig()
+    def testKeyAlreadyExistsException(self):
+        self._createDuplicateKeysConfig()
         property = Property(self.configfile)
-        self.assertRaises(KeyAlreadyExistsException,property.parse_properties)
+        self.assertRaises(KeyAlreadyExistsException,
+                property.parse_properties)
 
     def tearDown(self):
         os.remove(self.configfile)
@@ -83,7 +87,7 @@ class TestProperties(unittest.TestCase):
 class TestEvalTrue(unittest.TestCase):
     def setUp(self):
         pass
-    
+
     def test_strtrueistrue(self):
         self.assertTrue(configuration.evalvalue('True'))
         self.assertTrue(configuration.evalvalue('trUe'))
@@ -93,12 +97,3 @@ class TestEvalTrue(unittest.TestCase):
 
     def tearDown(self):
         pass
-
-
-if __name__=='__main__':
-    unittest.main()
-
-
-
-
-
