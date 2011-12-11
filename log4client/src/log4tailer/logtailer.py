@@ -19,11 +19,11 @@
 import os
 import time
 import sys
-from log4tailer.message import Message
-from log4tailer.logfile import Log
-from log4tailer.reporting import Resume
-from log4tailer import notifications
-from log4tailer.utils import setup_mail, daemonize
+from .message import Message
+from .logfile import Log
+from .reporting import Resume
+from .utils import setup_mail, daemonize
+from . import notifications
 
 
 def get_term_lines():
@@ -74,7 +74,7 @@ class LogTailer(object):
             log.openLog()
             log.seekLogNearlyEnd()
 
-    def __initialize(self, message):
+    def _initialize(self, message):
         '''prints the last 10
         lines for each log, one log
         at a time'''
@@ -129,7 +129,7 @@ class LogTailer(object):
             for action in self.actions:
                 action.notify(message, anylog)
 
-    def __getAction(self, module):
+    def _get_action(self, module):
         for action in self.actions:
             if isinstance(action, module):
                 return action
@@ -139,14 +139,14 @@ class LogTailer(object):
         '''check if mail properties
         already been setup'''
         properties = self.properties
-        action = self.__getAction(notifications.Mail)
+        action = self._get_action(notifications.Mail)
         if action:
             self.mailAction = action
             return True
         if properties:
             if properties.get_value('inactivitynotification') == 'mail':
                 # check if there is any inactivity action actually setup
-                inactivityaction = self.__getAction(notifications.Inactivity)
+                inactivityaction = self._get_action(notifications.Inactivity)
                 if inactivityaction:
                     self.mailAction = inactivityaction.getMailAction()
                     return True
@@ -176,7 +176,7 @@ class LogTailer(object):
         # check if inactivity action on the self.actions and set the inactivity
         # on the resume object. If inactivity is flagged, will be then
         # reported.
-        inactivity_action = self.__getAction(notifications.Inactivity)
+        inactivity_action = self._get_action(notifications.Inactivity)
         if inactivity_action:
             resume.add_notifier(inactivity_action)
         return resume
@@ -196,7 +196,7 @@ class LogTailer(object):
         if self.silence:
             daemonize()
         try:
-            self.__initialize(message)
+            self._initialize(message)
             lastLogPathChanged = ""
             curpath = ""
             while True:
