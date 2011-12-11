@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import sys
 import re
 
 
@@ -43,12 +41,8 @@ class Property(object):
         self.resep = "|".join(self.validsep)
 
     def parse_properties(self):
+        fd = open(self.propertyfile, 'r')
         # is that a huge config file?
-        try:
-            fd = open(self.propertyfile, 'r')
-        except:
-            print "could not open property file"
-            sys.exit()
         # Generator expression, so does not matter if huge or not actually.
         lines = (k.rstrip() for k in fd if not self.blankpat.search(k))
         for i in lines:
