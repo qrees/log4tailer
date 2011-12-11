@@ -1,25 +1,25 @@
 import os
 import sys
-from log4tailer import logtailer, logcolors, logfile, configuration
-from log4tailer import notifications
-from log4tailer.utils import setup_mail
 import re
 import logging
+from . import logtailer, logcolors, logfile, configuration
+from . import notifications
+from .utils import setup_mail
 
 __version__ = "3.0.5"
-logging.basicConfig(level = logging.WARNING)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger('log4tail')
 
-defaults  = {'pause' : 1,
-    'silence' : False,
-    'throttle' : 0,
-    'actions' : [],
-    'nlines' : False,
+defaults = {'pause': 1,
+    'silence': False,
+    'throttle': 0,
+    'actions': [],
+    'nlines': False,
     'target': None,
-    'logcolors' : logcolors.LogColors(),
-    'properties' : None,
+    'logcolors': logcolors.LogColors(),
+    'properties': None,
     'alt_config': os.path.expanduser('~/.log4tailer'),
-    'post' : False}
+    'post': False}
 
 
 def parse_config(configfile):
@@ -29,7 +29,7 @@ def parse_config(configfile):
 
 
 def initialize(options):
-    logcolors = defaults['logcolors']
+    colors = defaults['logcolors']
     actions = defaults['actions']
     config = options.configfile or defaults['alt_config']
     if options.version:
@@ -38,7 +38,7 @@ def initialize(options):
     if os.path.exists(config):
         logger.info("Configuration file [%s] found" % config)
         defaults['properties'] = parse_config(config)
-        logcolors.parse_config(defaults['properties'])
+        colors.parse_config(defaults['properties'])
     properties = defaults['properties']
     actions.append(notifications.Print(properties))
     if options.pause:
@@ -73,7 +73,7 @@ def initialize(options):
                 properties)
         if inactivityAction.getNotificationType() == 'mail':
             if options.mail or options.silence:
-                inactivityAction.setMailNotification(actions[len(actions)-1])
+                inactivityAction.setMailNotification(actions[len(actions) - 1])
             else:
                 mailAction = setup_mail(properties)
                 inactivityAction.setMailNotification(mailAction)
@@ -95,7 +95,7 @@ def initialize(options):
 
 def monitor(options, args):
     if options.remote:
-        from log4tailer import sshlogtailer
+        from . import sshlogtailer
         tailer = sshlogtailer.SSHLogTailer(defaults)
         if not tailer.sanityCheck():
             print "missing config file parameters"
@@ -103,7 +103,7 @@ def monitor(options, args):
         tailer.createCommands()
         try:
             tailer.createChannels()
-        except Exception,e:
+        except Exception, e:
             print "Could not connect"
             print "Trace [%s]" % e
             sys.exit()
@@ -115,7 +115,7 @@ def monitor(options, args):
         tailer.pipeOut()
         sys.exit()
     for i in args:
-        log = logfile.Log(i,defaults['properties'],options)
+        log = logfile.Log(i, defaults['properties'], options)
         tailer.addLog(log)
     if defaults.get('nlines', None):
         try:
@@ -127,7 +127,7 @@ def monitor(options, args):
             sys.exit()
     tailer.tailer()
 
+
 def main(options, args):
     initialize(options)
     monitor(options, args)
-
