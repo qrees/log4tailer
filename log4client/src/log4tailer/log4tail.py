@@ -31,8 +31,8 @@ def startupNotice():
     print notice
 
 
-def log4tail_cli(parser, args):
-    if len(args) == 0:
+def log4tail_cli(parser, argv):
+    if len(argv) == 0:
         print "Provide at least one log"
         sys.exit()
     parser.add_option("-c", "--config", dest="configfile",
@@ -71,12 +71,11 @@ def log4tail_cli(parser, args):
     parser.add_option("--screenshot", action="store_true", dest="screenshot",
         help="takes a terminal screenshot whenever it finds an alertable log "
                 "trace")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main():
-    options, args = log4tail_cli(OptionParser(), sys.argv)
-    log4tailer.main(options, args)
+    log4tailer.main(*log4tail_cli(OptionParser(), sys.argv[1:]))
 
 if __name__ == '__main__':
     main()
