@@ -1,7 +1,7 @@
 import unittest
 import os
 from log4tailer import modes
-from log4tailer.configuration import Property
+from log4tailer.propertyparser import Property
 
 class TestPauseMode(unittest.TestCase):
     

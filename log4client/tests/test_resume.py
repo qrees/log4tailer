@@ -25,7 +25,7 @@ import mox
 import mocker
 from log4tailer import reporting
 from log4tailer.logfile import Log
-from log4tailer.configuration import Property
+from log4tailer.propertyparser import Property
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer import notifications

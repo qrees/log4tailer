@@ -13,7 +13,7 @@ from log4tailer.logtailer import LogTailer
 from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 from log4tailer.logfile import Log
-from log4tailer.configuration import Property
+from log4tailer.propertyparser import Property
 import log4tailer
 from tests import LOG4TAILER_DEFAULTS
 

@@ -2,7 +2,7 @@ import os
 import sys
 import re
 import logging
-from . import logtailer, logcolors, logfile, configuration
+from . import logtailer, logcolors, logfile, propertyparser
 from . import notifications
 from .utils import setup_mail
 
@@ -23,7 +23,7 @@ defaults = {'pause': 1,
 
 
 def parse_config(configfile):
-    properties = configuration.Property(configfile)
+    properties = propertyparser.Property(configfile)
     properties.parse_properties()
     return properties
 
