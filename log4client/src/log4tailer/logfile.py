@@ -83,10 +83,21 @@ class Log(object):
             print "Could not open file " + self.path
             raise IOError
 
+    def _set_cur_pos(self):
+        """Needs to be called for MacOS to work. Issue #11.
+        Works fine as well for Linux. The only thing it does is just set the
+        current position on the log. In Linux though, this is not really
+        necessary to call, but does not harm either. It might be due to
+        different implementations on readline/readlines.
+        """ 
+        self.fh.seek(self.fh.tell()) 
+
     def readLine(self):
+        self._set_cur_pos()
         return self.fh.readline()
 
     def readLines(self):
+        self._set_cur_pos()
         return self.fh.readlines()
 
     def closeLog(self):
