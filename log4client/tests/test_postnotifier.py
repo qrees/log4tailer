@@ -102,7 +102,7 @@ class TestPost(unittest.TestCase):
         logcolors = LogColors()
         logtrace = 'this is a target log trace'
         log = Log('anylog')
-        message = Message(logcolors, target = 'trace')
+        message = Message(logcolors, target='trace')
         message.parse(logtrace, log)
         mock_server(self.mocker)
         self.mocker.replay()
@@ -177,4 +177,3 @@ class TestPost(unittest.TestCase):
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
-

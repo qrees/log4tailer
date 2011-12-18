@@ -18,19 +18,18 @@
 
 import unittest
 import sys
-import time
 import os
-import signal
-import threading
-import copy
 from log4tailer.logfile import Log
+from log4tailer.configuration import DefaultConfig
 import log4tailer
-from tests import LOG4TAILER_DEFAULTS
+from hamcrest import assert_that
+from hamcrest import is_in
 
 SYSOUT = sys.stdout
 SYSIN = sys.stdin
 SYSERR = sys.stderr
 ACONFIG = 'aconfig.cfg'
+
 
 class Writer:
     def __init__(self):
@@ -44,9 +43,10 @@ class Writer:
 
     def fileno(self):
         return True
-    
+
     def flush(self):
         pass
+
 
 class Reader(object):
     """docstring for Reader"""
@@ -55,30 +55,14 @@ class Reader(object):
 
     def fileno(self):
         return True
- 
+
     def __getattr__(self, method):
         pass
 
-class Interruptor(threading.Thread):
-    log_name = 'out.log'
-    
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.pid = os.getpid()
-
-    def run(self):
-        onelogtrace = 'this is an info log trace'
-        anotherlogtrace = 'this is a debug log trace'
-        fh = open(self.log_name, 'a')
-        fh.write(onelogtrace + '\n')
-        fh.write(anotherlogtrace + '\n')
-        fh.close()
-        time.sleep(0.002)
-        os.kill(self.pid, signal.SIGINT)
 
 class TestDemon(unittest.TestCase):
     log_name = 'out.log'
-    
+
     def setUp(self):
         self.utils_back = log4tailer.setup_mail
         self.os_fork = os.fork
@@ -93,7 +77,8 @@ class TestDemon(unittest.TestCase):
         fh.write(onelogtrace + '\n')
         fh.write(anotherlogtrace + '\n')
         fh.close()
-   
+        self.raise_count = 0
+
     def test_demonizedoptionsilence(self):
         sys.stdout = Writer()
         sys.stderr = Writer()
@@ -102,46 +87,75 @@ class TestDemon(unittest.TestCase):
         fh.write('info = green, on_blue\n')
         fh.write('debug = yellow\n')
         fh.close()
+
         class OptionsMock2(object):
             def __init__(self):
                 pass
+
             def __getattr__(self, method):
                 if method == 'silence':
                     return True
                 if method == 'configfile':
                     return ACONFIG
                 return False
+
         class ActionMock(object):
             def __init__(self):
                 pass
+
             def notify(self, message, log):
                 pass
+
         def setup_mail(properties):
             return ActionMock()
 
+        def wait_for(secs):
+            if self.raise_count == 0:
+                write_log()
+                return
+            raise KeyboardInterrupt
+
         def chdir(directory):
             return True
+
         def umask(integer):
             return True
+
         def setsid():
             return True
+
         def dup2(one, two):
             return True
+
         def fork():
             return -1
+
+        onelogtrace = 'this is an info booo log trace'
+        anotherlogtrace = 'this is a debug log trace'
+
+        def write_log():
+            fh = open(self.log_name, 'a')
+            fh.write(onelogtrace + '\n')
+            fh.write(anotherlogtrace + '\n')
+            fh.close()
+            self.raise_count += 1
+
         log4tailer.setup_mail = setup_mail
         options_mock = OptionsMock2()
         args = [self.log_name]
-        log4tailer.initialize(options_mock)
-        interruptor = Interruptor()
+        default_config = DefaultConfig()
+        log4tailer.initialize(options_mock, default_config)
         os.fork = fork
         os.chdir = chdir
         os.setsid = setsid
         os.dup2 = dup2
         os.umask = umask
-        interruptor.start()
-        log4tailer.monitor(options_mock, args)
-        interruptor.join()
+        log4tailer.monitor(options_mock, args, default_config,
+                wait_for)
+        expectedlogtrace = ("\x1b[32m\x1b[44mthis is an info booo log "
+            "trace\x1b[0m")
+        assert_that(expectedlogtrace,
+                is_in(sys.stdout.captured))
 
     def tearDown(self):
         sys.stdout = SYSOUT
@@ -153,12 +167,7 @@ class TestDemon(unittest.TestCase):
         os.umask = self.os_umask
         os.dup2 = self.os_dup2
         log4tailer.setup_mail = self.utils_back
-        log4tailer.defaults = copy.deepcopy(LOG4TAILER_DEFAULTS)
         if os.path.exists(self.log_name):
             os.remove(self.log_name)
         if os.path.exists(ACONFIG):
             os.remove(ACONFIG)
-
-if __name__ == '__main__':
-    unittest.main()
-

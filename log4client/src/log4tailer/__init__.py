@@ -2,24 +2,14 @@ import os
 import sys
 import re
 import logging
-from . import logtailer, logcolors, logfile, propertyparser
+from . import logtailer, logfile, propertyparser
 from . import notifications
 from .utils import setup_mail
+import time
 
 __version__ = "3.0.5"
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger('log4tail')
-
-defaults = {'pause': 1,
-    'silence': False,
-    'throttle': 0,
-    'actions': [],
-    'nlines': False,
-    'target': None,
-    'logcolors': logcolors.LogColors(),
-    'properties': None,
-    'alt_config': os.path.expanduser('~/.log4tailer'),
-    'post': False}
 
 
 def parse_config(configfile):
@@ -28,33 +18,33 @@ def parse_config(configfile):
     return properties
 
 
-def initialize(options):
-    colors = defaults['logcolors']
-    actions = defaults['actions']
-    config = options.configfile or defaults['alt_config']
+def initialize(options, default_config):
+    colors = default_config.logcolors
+    actions = default_config.actions
+    config_file = options.configfile or default_config.alt_config
     if options.version:
         print __version__
         sys.exit(0)
-    if os.path.exists(config):
-        logger.info("Configuration file [%s] found" % config)
-        defaults['properties'] = parse_config(config)
-        colors.parse_config(defaults['properties'])
-    properties = defaults['properties']
+    if os.path.exists(config_file):
+        logger.info("Configuration file [%s] found" % config_file)
+        default_config.properties = parse_config(config_file)
+        colors.parse_config(default_config.properties)
+    properties = default_config.properties
     actions.append(notifications.Print(properties))
     if options.pause:
-        defaults['pause'] = int(options.pause)
+        default_config.pause = int(options.pause)
     if options.throttle:
         throttle = float(options.throttle)
-        defaults['throttle'] = throttle
+        default_config.throttle = throttle
     if options.silence and properties:
         mailAction = setup_mail(properties)
         actions.append(mailAction)
-        defaults['silence'] = True
+        default_config.silence = True
     if options.nomailsilence:
         # silence option with no mail
         # up to user to provide notification by mail
         # or do some kind of reporting
-        defaults['silence'] = True
+        default_config.silence = True
     if options.mail and properties:
         mailAction = setup_mail(properties)
         actions.append(mailAction)
@@ -65,9 +55,9 @@ def initialize(options):
         # overrides Print notifier
         actions[0] = notifications.IgnoreAction(re.compile(options.ignore))
     if options.tailnlines:
-        defaults['nlines'] = int(options.tailnlines)
+        default_config.nlines = int(options.tailnlines)
     if options.target:
-        defaults['target'] = options.target
+        default_config.target = options.target
     if options.inactivity:
         inactivityAction = notifications.Inactivity(options.inactivity,
                 properties)
@@ -82,7 +72,7 @@ def initialize(options):
         cornermark = notifications.CornerMark(options.cornermark)
         actions.append(cornermark)
     if options.post and properties:
-        defaults['post'] = True
+        default_config.post = True
         poster = notifications.Poster(properties)
         actions.append(poster)
     if options.executable and properties:
@@ -93,10 +83,10 @@ def initialize(options):
         actions[0] = printandshoot
 
 
-def monitor(options, args):
+def monitor(options, args, default_config, wait_for=time.sleep):
     if options.remote:
         from . import sshlogtailer
-        tailer = sshlogtailer.SSHLogTailer(defaults)
+        tailer = sshlogtailer.SSHLogTailer(default_config)
         if not tailer.sanityCheck():
             print "missing config file parameters"
             sys.exit()
@@ -109,17 +99,17 @@ def monitor(options, args):
             sys.exit()
         tailer.tailer()
         sys.exit()
-    tailer = logtailer.LogTailer(defaults)
+    tailer = logtailer.LogTailer(default_config, wait_for)
 
     if args[0] == '-':
         tailer.pipeOut()
         sys.exit()
     for i in args:
-        log = logfile.Log(i, defaults['properties'], options)
+        log = logfile.Log(i, default_config.properties, options)
         tailer.addLog(log)
-    if defaults.get('nlines', None):
+    if default_config.nlines:
         try:
-            tailer.printLastNLines(defaults['nlines'])
+            tailer.printLastNLines(default_config.nlines)
             print "Ended log4tailer, because colors are fun"
             sys.exit()
         except KeyboardInterrupt:
@@ -128,6 +118,6 @@ def monitor(options, args):
     tailer.tailer()
 
 
-def main(options, args):
-    initialize(options)
-    monitor(options, args)
+def main(options, args, default_config):
+    initialize(options, default_config)
+    monitor(options, args, default_config)

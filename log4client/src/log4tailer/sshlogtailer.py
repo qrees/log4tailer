@@ -24,15 +24,15 @@ class SSHLogTailer(object):
     HOSTNAME_PROPERTY_PREFIX = "hostname "
     TAIL_COMMAND_PREFIX = "tail -F "
 
-    def __init__(self, defaults):
+    def __init__(self, default_config, wait_for=time.sleep):
         self.arrayLog = []
-        self.logcolors = defaults['logcolors']
-        self.pause = defaults['pause']
-        self.silence = defaults['silence']
+        self.logcolors = default_config.logcolors
+        self.pause = default_config.pause
+        self.silence = default_config.silence
         self.actions = notifications.Print()
-        self.throttleTime = defaults['throttle'] 
-        self.target = defaults['target']
-        self.properties = defaults['properties']
+        self.throttleTime = default_config.throttle 
+        self.target = default_config.target
+        self.properties = default_config.properties
         self.mailAction = None
         self.logger = logging.getLogger('SSHLogTailer')
         self.sshusername = None
@@ -40,6 +40,7 @@ class SSHLogTailer(object):
         self.hostnameChannels = {}
         self.color = TermColorCodes()
         self.rsa_key = SSH_KEY
+        self._wait_for = wait_for
 
     def sanityCheck(self):
         hostnamescsv = self.properties.get_value('sshhostnames')
@@ -165,7 +166,7 @@ class SSHLogTailer(object):
                             message.parse(line, anylog)
                             self.actions.notify(message, anylog)
                         lasthostnameChanged = hostname
-                time.sleep(1)
+                self._wait_for(1)
         except:
             print "\nfinishing ..."
             for hostname in self.hostnames.keys():

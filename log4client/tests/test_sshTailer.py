@@ -19,31 +19,22 @@
 
 import unittest,logging
 import os
-import copy
-from log4tailer.logcolors import LogColors
 from log4tailer.propertyparser import Property
 from log4tailer import notifications
 from log4tailer.sshlogtailer import SSHLogTailer
-import log4tailer
-from tests import LOG4TAILER_DEFAULTS
+from log4tailer.configuration import DefaultConfig
 
 class TestSSHTailer(unittest.TestCase):
 
     def setUp(self):
         self.configfile = 'sshconfigfile.txt'
 
-    def __getDefaults(self):
-        return {'pause' : 0, 
-            'silence' : False,
-            'throttle' : 0,
-            'actions' : [notifications.Print()],
-            'nlines' : False,
-            'target': None, 
-            'logcolors' : LogColors(),
-            'properties' : None}
- 
+    def _getDefaults(self):
+        defaults = DefaultConfig()
+        defaults.actions = [notifications.Print()]
+        return defaults
 
-    def __setUpConfigFile(self):
+    def _setUpConfigFile(self):
         fh = open(self.configfile,'w')
         fh.write('sshhostnames = hostname0, hostname1, hostname2\n')
         fh.write('hostname0 = username, /var/log/anylog555, /var/log/anylog1\n')
@@ -52,45 +43,46 @@ class TestSSHTailer(unittest.TestCase):
         fh.close()
 
     def testShouldHaveUsernameandAtLeastOneHostnameSetUp(self):
-        self.__setUpConfigFile()
-        properties = Property(self.configfile)        
+        self._setUpConfigFile()
+        properties = Property(self.configfile)
         properties.parse_properties()
         logging.debug(properties.get_keys())
-        defaults = self.__getDefaults()
-        defaults['properties'] = properties
+        defaults = self._getDefaults()
+        defaults.properties = properties
         logtailer = SSHLogTailer(defaults)
         self.assertTrue(logtailer.sanityCheck())
-    
+
     def testIfParametersNotProvidedShouldExit(self):
         fh = open('wrongconfigfile','w')
         fh.write('anything = anything\n')
         fh.close()
         properties = Property('wrongconfigfile')
         properties.parse_properties()
-        defaults = self.__getDefaults()
-        defaults['properties'] = properties
+        defaults = self._getDefaults()
+        defaults.properties = properties
         logtailer = SSHLogTailer(defaults)
         self.assertFalse(logtailer.sanityCheck())
-    
+
     def testItShouldhaveBuildADictWithAllParamsIfAllParametersOk(self):
-        self.__setUpConfigFile()
-        properties = Property(self.configfile)        
+        self._setUpConfigFile()
+        properties = Property(self.configfile)
         properties.parse_properties()
         logging.debug(properties.get_keys())
-        defaults = self.__getDefaults()
-        defaults['properties'] = properties
+        defaults = self._getDefaults()
+        defaults.properties = properties
         logtailer = SSHLogTailer(defaults)
         logtailer.sanityCheck()
         self.assertEquals(3,len(logtailer.hostnames.keys()))
-        self.assertEquals('username',logtailer.hostnames['hostname0']['username'])
-    
+        self.assertEquals('username',
+                logtailer.hostnames['hostname0']['username'])
+
     def testshouldBuildCommandTailBasedOnHostnamesDict(self):
-        self.__setUpConfigFile()
-        properties = Property(self.configfile)        
+        self._setUpConfigFile()
+        properties = Property(self.configfile)
         properties.parse_properties()
         logging.debug(properties.get_keys())
-        defaults = self.__getDefaults()
-        defaults['properties'] = properties
+        defaults = self._getDefaults()
+        defaults.properties = properties
         logtailer = SSHLogTailer(defaults)
         logtailer.sanityCheck()
         command = "tail -F /var/log/anylog555 /var/log/anylog1"
@@ -98,14 +90,7 @@ class TestSSHTailer(unittest.TestCase):
         self.assertEquals(command,logtailer.hostnames['hostname0']['command'])
 
     def tearDown(self):
-        log4tailer.defaults = copy.deepcopy(LOG4TAILER_DEFAULTS)
         if os.path.exists('wrongconfigfile'):
             os.remove('wrongconfigfile')
         if os.path.exists(self.configfile):
             os.remove(self.configfile)
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    unittest.main()
-        
-

@@ -53,16 +53,17 @@ def hasRotated(log):
 
 class LogTailer(object):
     '''Tails the logs provided by Log class'''
-    def __init__(self, defaults):
+    def __init__(self, default_config, wait_for=time.sleep):
         self.arrayLog = []
-        self.logcolors = defaults['logcolors']
-        self.pause = defaults['pause']
-        self.silence = defaults['silence']
-        self.actions = defaults['actions']
-        self.throttleTime = defaults['throttle']
-        self.target = defaults['target']
-        self.properties = defaults['properties']
+        self.logcolors = default_config.logcolors
+        self.pause = default_config.pause
+        self.silence = default_config.silence
+        self.actions = default_config.actions
+        self.throttleTime = default_config.throttle
+        self.target = default_config.target
+        self.properties = default_config.properties
         self.mailAction = None
+        self._wait_for = wait_for
 
     def addLog(self, log):
         self.arrayLog.append(log)
@@ -201,7 +202,7 @@ class LogTailer(object):
             curpath = ""
             while True:
                 found = 0
-                time.sleep(self.throttleTime)
+                self._wait_for(self.throttleTime)
                 for log in self.arrayLog:
                     curpath = log.path
                     if hasRotated(log):
@@ -229,7 +230,7 @@ class LogTailer(object):
                     log.size = log.getcurrSize()
                 if found == 0:
                     #sleep for 1 sec
-                    time.sleep(self.pause)
+                    self._wait_for(self.pause)
         except (KeyboardInterrupt, OSError, IOError):
             for log in self.arrayLog:
                 log.closeLog()

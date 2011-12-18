@@ -31,7 +31,7 @@ class Message(object):
         if target:
             # user can provide multiple
             # comma separated targets
-            target = self.__getMultipleTargets(target)
+            target = self._getMultipleTargets(target)
             self.patarget = re.compile(target)
         self.color = logcolor
         self.plainMessage = None
@@ -101,7 +101,7 @@ class Message(object):
         else:
             return (pause, self.plainMessage)
         
-    def __getMultipleTargets(self, target):
+    def _getMultipleTargets(self, target):
         target = target.replace(' ','').replace(',','|')
         return target
 

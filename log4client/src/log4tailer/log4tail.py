@@ -21,6 +21,7 @@ import sys
 
 from optparse import OptionParser
 import log4tailer
+from log4tailer.configuration import DefaultConfig
 
 
 def startupNotice():
@@ -75,7 +76,8 @@ def log4tail_cli(parser, argv):
 
 
 def main():
-    log4tailer.main(*log4tail_cli(OptionParser(), sys.argv[1:]))
+    options, args = log4tail_cli(OptionParser(), sys.argv[1:])
+    log4tailer.main(options, args, DefaultConfig())
 
 if __name__ == '__main__':
     main()
