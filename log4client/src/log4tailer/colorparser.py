@@ -19,6 +19,8 @@
 # Thanks to Carlo Bertoldi for suggesting a better regex.
 
 import re
+from . import loglevels
+
 
 EQUIVALENT_LEVELS = {'WARNING': 'WARN'}
 
@@ -28,9 +30,8 @@ class ColorParser(object):
     defined levels in log4j'''
 
     def __init__(self):
-        self.all = re.compile(
-                r'.*?\b(debug|info|warn|warning|error|fatal|critical)\b',
-                re.I)
+        regex = r".*?\b(" + "|".join(loglevels.logLevels) + r")\b"
+        self.all = re.compile(regex, re.I)
 
     def parse(self, line):
         isMatch = self.all.match(line)
