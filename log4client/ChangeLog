@@ -1,5 +1,5 @@
 ====================================
-xx/xx/xx release 3.0.6
+19/12/11 release 3.0.6
 ====================================
 - Bug fixes MacOS readlines problem issue #11
 - Big refactor to make tests easily to mantain. Renamed capital case modules
