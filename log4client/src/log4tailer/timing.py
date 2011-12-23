@@ -18,18 +18,20 @@
 
 import time
 
-class Timer:
+class Timer(object):
     """Class implementing several
     timing methods"""
 
-    def __init__(self, gapNotification):
-        self.start = 0
+    def __init__(self, notify_thr=60, time_counter=time.time):
+        self._start = 0
         self.count = 0
-        self.gapNotification = gapNotification
+        self._notify_thr = notify_thr
+        self._time_counter = time_counter
 
     def startTimer(self):
         """sets the start time in epoch seconds"""
-        self.start = time.time()
+        self._start = self._time_counter()
+        return self._start
 
     def ellapsed(self):
         """return the number of seconds ellapsed"""
@@ -37,14 +39,14 @@ class Timer:
         # an alert when is the first time you call
         # ellapsed and is below the gap notification time
 
-        now = time.time()
-        ellapsed = now-self.start
-        self.start = now
+        now = self._time_counter()
+        ellapsed = now-self._start
+        self._start = now
         return ellapsed
 
     def __time_diff(self):
         now = time.time()
-        ellapsed = now-self.start
+        ellapsed = now-self._start
         return ellapsed
 
     def corner_mark_ellapsed(self):
@@ -54,10 +56,11 @@ class Timer:
         return self.__time_diff()
 
     def stopTimer(self):
-        self.start = 0
+        self._start = 0
+        return self._start
 
     def beyondGap(self,ellapsed):
-        return ellapsed > self.gapNotification
+        return ellapsed > self._notify_thr
 
     def awaitSend(self,triggeredNotSent):
         """return True if we have timed out
@@ -71,7 +74,7 @@ class Timer:
                 return False
             return True
         ellapsed = self.ellapsed()
-        if ellapsed <= self.gapNotification and self.count == 0:
+        if ellapsed <= self._notify_thr and self.count == 0:
             self.count += 1
             return False
         elif self.beyondGap(ellapsed):
@@ -81,7 +84,7 @@ class Timer:
     def reset(self):
         '''actually the same
         as start timer method'''
-        self.start = time.time()
+        self._start = time.time()
 
 
 
