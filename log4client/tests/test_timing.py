@@ -18,6 +18,7 @@
 
 import unittest
 from log4tailer.timing import Timer
+import mocker
 
 
 class TimeCounter(object):
@@ -29,6 +30,9 @@ class TimeCounter(object):
 
 
 class TestTimer(unittest.TestCase):
+
+    def setUp(self):
+        self.mocker = mocker.Mocker()
 
     def test_instantiates(self):
         timer = Timer()
@@ -54,3 +58,38 @@ class TestTimer(unittest.TestCase):
         timer = Timer(time_counter=TimeCounter(5))
         timer.startTimer()
         self.assertEqual(timer.ellapsed(), 0)
+
+    def test_over_threshold(self):
+        timer = Timer(notify_thr=1)
+        self.assertTrue(timer.over_threshold(3))
+
+    def test_below_threshold(self):
+        timer = Timer(notify_thr=2)
+        self.assertFalse(timer.over_threshold(1))
+
+    def test_reset(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        self.assertEqual(timer.reset(), 5)
+
+    def test_no_await_sending(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        timer_proxy = self.mocker.proxy(timer)
+        timer_proxy.over_threshold(mocker.ANY)
+        self.mocker.result(True)
+        self.mocker.replay()
+        # do not await sending. We are over gap 
+        self.assertFalse(timer.in_safeguard_gap.im_func(timer_proxy))
+
+    def test_await_sending(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        timer_proxy = self.mocker.proxy(timer)
+        timer_proxy.over_threshold(mocker.ANY)
+        self.mocker.result(False)
+        self.mocker.replay()
+        # await sending. We are still in the safe guard gap
+        self.assertTrue(timer.in_safeguard_gap.im_func(timer_proxy))
+
+    def tearDown(self):
+        self.mocker.restore()
+        self.mocker.verify()
+

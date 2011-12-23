@@ -28,63 +28,61 @@ class Timer(object):
         self._notify_thr = notify_thr
         self._time_counter = time_counter
 
+    def _now(self):
+        return self._time_counter()
+
     def startTimer(self):
         """sets the start time in epoch seconds"""
-        self._start = self._time_counter()
+        self._start = self._now()
         return self._start
-
+    
     def ellapsed(self):
+        return self._now() - self._start
+
+    def _update_timer(self):
         """return the number of seconds ellapsed"""
         # the count is to avoid not sending
         # an alert when is the first time you call
         # ellapsed and is below the gap notification time
-
-        now = self._time_counter()
-        ellapsed = now-self._start
-        self._start = now
-        return ellapsed
-
-    def __time_diff(self):
-        now = time.time()
-        ellapsed = now-self._start
-        return ellapsed
+        self._start = self._now()
+        return self._start
 
     def corner_mark_ellapsed(self):
-        return self.__time_diff()
+        return self.ellapsed()
 
     def inactivityEllapsed(self):
-        return self.__time_diff()
+        return self.ellapsed()
 
     def stopTimer(self):
         self._start = 0
         return self._start
 
-    def beyondGap(self,ellapsed):
+    def over_threshold(self, ellapsed):
         return ellapsed > self._notify_thr
 
-    def awaitSend(self,triggeredNotSent):
+    def in_safeguard_gap(self):
+        if self.over_threshold(self.inactivityEllapsed()):
+            self.reset()
+            return False
+        return True
+
+    def awaitSend(self, triggeredNotSent):
         """return True if we have timed out
         False otherwise"""
-        # triggered not sent; when it is being
+        # triggered not sent; when it was
         # triggered but we are in an awaiting
         # gap period
         if triggeredNotSent:
-            if self.beyondGap(self.inactivityEllapsed()):
-                self.reset()
-                return False
-            return True
+            return self.in_safeguard_gap()
+        self.reset()
         ellapsed = self.ellapsed()
-        if ellapsed <= self._notify_thr and self.count == 0:
+        if self.ellapsed <= self._notify_thr and self.count == 0:
             self.count += 1
             return False
-        elif self.beyondGap(ellapsed):
+        elif self.over_threshold(self.ellapsed()):
             return False
         return True
 
     def reset(self):
-        '''actually the same
-        as start timer method'''
-        self._start = time.time()
-
-
+        return self._update_timer()
 
