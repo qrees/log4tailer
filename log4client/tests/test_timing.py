@@ -89,7 +89,28 @@ class TestTimer(unittest.TestCase):
         # await sending. We are still in the safe guard gap
         self.assertTrue(timer.in_safeguard_gap.im_func(timer_proxy))
 
+    def test_awaitSend(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        self.assertTrue(timer.awaitSend(True))
+
+    def test_awaitSend_notsend_firstcount(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        self.assertFalse(timer.awaitSend(False))
+
+    def test_awaitSend_notsend_secondcount(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        timer.awaitSend(False)
+        self.assertTrue(timer.awaitSend(False))
+
+    def test_awaitSend_notsend_secondcount_overthr(self):
+        timer = Timer(time_counter=TimeCounter(5))
+        timer_proxy = self.mocker.proxy(timer)
+        timer_proxy.over_threshold(mocker.ANY)
+        self.mocker.result(True)
+        self.mocker.replay()
+        timer.awaitSend(False)
+        self.assertFalse(timer.awaitSend.im_func(timer_proxy, False))
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
-

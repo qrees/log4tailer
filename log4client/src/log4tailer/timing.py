@@ -76,10 +76,10 @@ class Timer(object):
             return self.in_safeguard_gap()
         self.reset()
         ellapsed = self.ellapsed()
-        if self.ellapsed <= self._notify_thr and self.count == 0:
+        if ellapsed <= self._notify_thr and self.count == 0:
             self.count += 1
             return False
-        elif self.over_threshold(self.ellapsed()):
+        elif self.over_threshold(ellapsed):
             return False
         return True
 
