@@ -24,40 +24,14 @@ from log4tailer.configuration import DefaultConfig
 import log4tailer
 from hamcrest import assert_that
 from hamcrest import is_in
+from .utils import MemoryWriter
+from .utils import MemoryReader
 
 SYSOUT = sys.stdout
 SYSIN = sys.stdin
 SYSERR = sys.stderr
 ACONFIG = 'aconfig.cfg'
 
-
-class Writer:
-    def __init__(self):
-        self.captured = []
-
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
-
-    def fileno(self):
-        return True
-
-    def flush(self):
-        pass
-
-
-class Reader(object):
-    """docstring for Reader"""
-    def __init__(self):
-        pass
-
-    def fileno(self):
-        return True
-
-    def __getattr__(self, method):
-        pass
 
 
 class TestDemon(unittest.TestCase):
@@ -80,9 +54,9 @@ class TestDemon(unittest.TestCase):
         self.raise_count = 0
 
     def test_demonizedoptionsilence(self):
-        sys.stdout = Writer()
-        sys.stderr = Writer()
-        sys.stdin = Reader()
+        sys.stdout = MemoryWriter()
+        sys.stderr = MemoryWriter()
+        sys.stdin = MemoryReader()
         fh = open(ACONFIG, 'w')
         fh.write('info = green, on_blue\n')
         fh.write('debug = yellow\n')

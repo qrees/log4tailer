@@ -24,18 +24,10 @@ from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer.logfile import Log
 from log4tailer.termcolorcodes import TermColorCodes
+from .utils import MemoryWriter
 
 SYSOUT = sys.stdout
 
-class Writer:
-    def __init__(self):
-        self.captured = []
-    
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 class TestIgnoreAction(unittest.TestCase):
     def setUp(self):
@@ -52,7 +44,7 @@ class TestIgnoreAction(unittest.TestCase):
         trace = "info hi, this line will not be notified"
         level = "INFO"
         notifier = notifications.IgnoreAction(pattern)
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -67,7 +59,7 @@ class TestIgnoreAction(unittest.TestCase):
         trace = "info hi, but this line will be"
         level = "INFO"
         notifier = notifications.IgnoreAction(pattern)
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)

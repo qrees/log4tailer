@@ -26,3 +26,22 @@ class MemoryWriter(object):
 
     def write(self, txt):
         self.captured.append(txt)
+
+    def flush(self):
+        self.captured = []
+
+    def fileno(self):
+        return True
+
+
+class MemoryReader(object):
+    def __init__(self):
+        pass
+
+    def fileno(self):
+        return True
+
+    def __getattr__(self, method):
+        pass
+
+

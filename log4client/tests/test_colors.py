@@ -23,18 +23,10 @@ from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 from log4tailer.termcolorcodes import TermColorCodes
+from .utils import MemoryWriter
 
 SYSOUT = sys.stdout
 
-class Writer:
-    def __init__(self):
-        self.captured = []
-    
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 class PropertiesMock(object):
     """docstring for Properties"""
@@ -84,7 +76,7 @@ class TestColors(unittest.TestCase):
         message = Message(logcolors,target)
         log = Log(self.logfile)
         log.openLog()
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         #testing Colors with default pauseModes
         for count in range(len(self.someLogTraces)):
             line = log.readLine()
@@ -105,7 +97,7 @@ class TestColors(unittest.TestCase):
         # Should give priority to FATAL in next trace
         level = 'FATAL'
         trace = "FATAL there could be an error in the application"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -120,7 +112,7 @@ class TestColors(unittest.TestCase):
         # Testing boundary regex as for suggestion of 
         # Carlo Bertoldi
         trace = "this is a logtrace where someinfoword could be found"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         message = Message(logcolors)
         notifier = notifications.Print()
@@ -142,7 +134,7 @@ class TestColors(unittest.TestCase):
         level = 'FATAL'
         termcolors = TermColorCodes()
         # now assert trace0 and trace1 are in FATAL level
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         message = Message(logcolors)
         notifier = notifications.Print()
@@ -163,7 +155,7 @@ class TestColors(unittest.TestCase):
     def testshouldColorizeWithBackground(self):
         trace = "FATAL there could be an error in the application"
         level = 'FATAL'
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         logcolors.parse_config(PropertiesBackGround())
         termcolors = TermColorCodes()
@@ -178,7 +170,7 @@ class TestColors(unittest.TestCase):
     def testshouldFailColorizeWithBackground(self):
         trace = "FATAL there could be an error in the application"
         level = 'WARN'
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         logcolors.parse_config(PropertiesBackGround())
@@ -194,7 +186,7 @@ class TestColors(unittest.TestCase):
         '''test that *warning* keyword gets colorized as well'''
         level = 'WARNING'
         trace = "WARNING there could be an error in the application"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)

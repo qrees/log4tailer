@@ -19,30 +19,19 @@
 import unittest
 import sys
 import mocker
-import time
 import os
-import signal
 import re
-import threading
 from nose.tools import raises
 from log4tailer.logfile import Log
 from log4tailer.configuration import DefaultConfig
 import log4tailer
 from tests import TESTS_DIR
 from os.path import join as pjoin
+from tests.utils import MemoryWriter
+
 
 SYSOUT = sys.stdout
 ACONFIG = 'aconfig.cfg'
-
-class Writer(object):
-    def __init__(self):
-        self.captured = []
-
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 
 class TestEndToEnd(unittest.TestCase):
@@ -85,7 +74,7 @@ class TestEndToEnd(unittest.TestCase):
             raise KeyboardInterrupt
 
     def test_tailerfrommonitor(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
 
         class OptionsMock(object):
             def __init__(self):
@@ -112,7 +101,7 @@ class TestEndToEnd(unittest.TestCase):
             self.fail()
 
     def test_endtoend_withconfig(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         fh = open(ACONFIG, 'w')
         fh.write('info = green, on_blue\n')
         fh.write('debug = yellow\n')
@@ -141,7 +130,7 @@ class TestEndToEnd(unittest.TestCase):
             self.fail()
 
     def test_options_with_screenshot(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         fh  = open(ACONFIG, 'w')
         fh.write('screenshot = ' + self.apicture + '\n')
         fh.close()
@@ -173,7 +162,7 @@ class TestEndToEnd(unittest.TestCase):
         self.assertTrue(os.path.exists(self.apicture))
 
     def test_printversion_andexit(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         class OptionsMock(object):
             def __init__(self):
                 pass
@@ -207,7 +196,7 @@ class TestMonitor(unittest.TestCase):
 
     @raises(SystemExit)
     def test_tailLastNlines(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         fh = open(self.log_name, 'w')
         onelogtrace = 'this is an info log trace'
         anotherlogtrace = 'this is a debug log trace'

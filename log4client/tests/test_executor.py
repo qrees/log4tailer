@@ -26,6 +26,7 @@ from log4tailer.propertyparser import Property
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer.logfile import Log
+from .utils import MemoryWriter
 
 CONFIG = 'aconfig.txt'
 SYSOUT = sys.stdout
@@ -38,20 +39,11 @@ EXECUTABLE = 'python executable.py'
 if current_directory != 'tests':
     EXECUTABLE = 'python '+ os.path.join('tests', 'executable.py')
 
-class Writer:
-    def __init__(self):
-        self.captured = []
-    
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
     
     def testShouldReadExecutorFromConfigFile(self):
         fh = open(CONFIG, 'w')

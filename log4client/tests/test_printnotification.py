@@ -24,18 +24,10 @@ from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 from log4tailer.termcolorcodes import TermColorCodes
 import socket
+from .utils import MemoryWriter
 
 SYSOUT = sys.stdout
 
-class Writer:
-    def __init__(self):
-        self.captured = []
-    
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 class PropertiesMock(object):
     """docstring for Properties"""
@@ -75,7 +67,7 @@ class TestPrintWithHostname(unittest.TestCase):
         message = Message(logcolors,target)
         log = Log(self.logfile)
         log.openLog()
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         hostname = socket.gethostname()
         for count in range(len(self.someLogTraces)):
             line = log.readLine()

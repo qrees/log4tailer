@@ -12,19 +12,9 @@ from log4tailer.logfile import Log
 from log4tailer.propertyparser import Property
 from log4tailer.logtailer import hasRotated
 import log4tailer
+from .utils import MemoryWriter
 
 SYSOUT = sys.stdout
-
-
-class Writer:
-    def __init__(self):
-        self.captured = []
-
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 
 def getDefaults():
@@ -66,7 +56,7 @@ class TestResume(unittest.TestCase):
 
     def testPipeOutShouldSendMessageParseThreeParams(self):
         sys.stdin = ['error > one error', 'warning > one warning']
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         defaults = getDefaults()
         defaults.actions.append(notifications.Print())
         logtailer = LogTailer(defaults)
@@ -74,7 +64,7 @@ class TestResume(unittest.TestCase):
         self.assertTrue('error > one error' in sys.stdout.captured[0])
 
     def testResumeBuilderWithAnalyticsFile(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         reportfile = 'reportfile.txt'
         configfile = 'aconfig'
         fh = open(configfile, 'w')
@@ -134,7 +124,7 @@ class TestTailer(unittest.TestCase):
                 return
             raise KeyboardInterrupt
 
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         tailer = LogTailer(getDefaults(), wait_for)
         tailer.addLog(self.onelog)
         tailer.tailer()

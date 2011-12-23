@@ -12,19 +12,9 @@ from log4tailer.logfile import Log
 import sys
 import os
 from os.path import join as pjoin
+from .utils import MemoryWriter
 
 CONFIG = 'printshot.cfg'
-
-
-class Writer:
-    def __init__(self):
-        self.captured = []
-
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 
 class PrintShotTest(unittest.TestCase):
@@ -66,7 +56,7 @@ class PrintShotTest(unittest.TestCase):
         self.assertTrue(0x3a00004, printshot.winid)
 
     def test_printandshoot(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         log_traces = ['this is an info log trace',
                 'this is a fatal log trace']
         log = Log('anylog')

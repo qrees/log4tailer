@@ -24,18 +24,10 @@ from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer.logfile import Log
 from log4tailer.termcolorcodes import TermColorCodes
+from .utils import MemoryWriter
 
 SYSOUT = sys.stdout
 
-class Writer:
-    def __init__(self):
-        self.captured = []
-    
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
 
 class TestFilterNotifier(unittest.TestCase):
     def setUp(self):
@@ -52,7 +44,7 @@ class TestFilterNotifier(unittest.TestCase):
         trace = "info hi, this line to be notified"
         level = "INFO"
         notifier = notifications.Filter(pattern)
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -66,7 +58,7 @@ class TestFilterNotifier(unittest.TestCase):
         pattern = re.compile(r'hi, this line to be notified')
         trace = "info this is just a log trace"
         notifier = notifications.Filter(pattern)
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         message = Message(logcolors)
         anylog = Log('out.log')

@@ -10,22 +10,10 @@ from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 from log4tailer.termcolorcodes import TermColorCodes
 from log4tailer.propertyparser import Property
+from .utils import MemoryWriter
 
 
 CONFIG = 'aconfig.txt'
-
-class Writer:
-    def __init__(self):
-        self.captured = []
-
-    def __len__(self):
-        return len(self.captured)
-
-    def write(self, txt):
-        self.captured.append(txt)
-
-    def flush(self):
-        self.captured = []
 
 
 class TestCornerMark(unittest.TestCase):
@@ -46,7 +34,7 @@ class TestCornerMark(unittest.TestCase):
     def testWillMarkForSpecifiedTime(self):
         level = 'FATAL'
         trace = "FATAL there could be an error in the application"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -66,7 +54,7 @@ class TestCornerMark(unittest.TestCase):
     def testWillMarkforSpecifiedTimeandNotAfterwards(self):
         level = 'FATAL'
         trace = "FATAL there could be an error in the application"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -91,7 +79,7 @@ class TestCornerMark(unittest.TestCase):
 
     def testNotMarkMarkedNotMark(self):
         trace = "INFO this is an info trace"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -127,7 +115,7 @@ class TestCornerMark(unittest.TestCase):
         ttcols = termcols.readline()
         termcols.close()
         trace = "FATAL this is a fatal trace"
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         message = Message(logcolors)
@@ -153,7 +141,7 @@ class TestCornerMark(unittest.TestCase):
         fh.close()
         properties = Property(configfile)
         properties.parse_properties()
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         notifier = notifications.CornerMark(0.02)
@@ -179,7 +167,7 @@ class TestCornerMark(unittest.TestCase):
         fh.close()
         properties = Property(configfile)
         properties.parse_properties()
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         logcolors = LogColors()
         termcolors = TermColorCodes()
         notifier = notifications.CornerMark(0.02)

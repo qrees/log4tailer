@@ -27,22 +27,15 @@ from log4tailer import notifications
 from log4tailer.message import Message
 from log4tailer.propertyparser import Property
 from log4tailer.logfile import Log
+from .utils import MemoryWriter
 
 SYSOUT = sys.stdout
+
 
 class Options:
     def __init__(self):
         self.inactivity = None
 
-class Writer(object):
-    def __init__(self):
-        self.capt = []
-
-    def __len__(self):
-        return len(self.capt)
-
-    def write(self, txt):
-        self.capt.append(txt)
 
 class TestInactivityAction(unittest.TestCase):
     '''test that we print an alert to stdout
@@ -56,7 +49,7 @@ class TestInactivityAction(unittest.TestCase):
         self.mocker = mocker.Mocker()
 
     def testSendingAlertBeyondInactivityTime(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         message = self.message_mocker.CreateMock(Message)
         # when there is no message, inactivity action 
         # is triggered if ellapsed time is greater than
@@ -69,11 +62,11 @@ class TestInactivityAction(unittest.TestCase):
         timer = self.log.inactivityTimer
         self.assertTrue(timer.inactivityEllapsed() > inactivityTime)
         notifier.notify(message,self.log)
-        self.assertTrue('Inactivity' in sys.stdout.capt[0])
+        self.assertTrue('Inactivity' in sys.stdout.captured[0])
         self.message_mocker.VerifyAll()
     
     def testNotSendingAlertBelowInactivityTime(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         message = self.message_mocker.CreateMock(Message)
         message.getPlainMessage().AndReturn(('error> this is an error message',
             'logpath'))
@@ -89,7 +82,7 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker.VerifyAll()
 
     def testInactivityTimeCanBeFloatingPointNumberSeconds(self):
-        sys.stdout = Writer()
+        sys.stdout = MemoryWriter()
         message = self.message_mocker.CreateMock(Message)
         
         # when there is no message, inactivity action 
@@ -101,7 +94,7 @@ class TestInactivityAction(unittest.TestCase):
         self.options.inactivity = 0.0000002543
         time.sleep(0.0000003)
         notifier.notify(message,self.log)
-        self.assertTrue('Inactivity' in sys.stdout.capt[0])
+        self.assertTrue('Inactivity' in sys.stdout.captured[0])
         self.assertTrue(notifier.alerted)
         self.message_mocker.VerifyAll()
 
