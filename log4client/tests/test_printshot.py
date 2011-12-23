@@ -12,9 +12,9 @@ from log4tailer.logfile import Log
 import sys
 import os
 from os.path import join as pjoin
-from tests import TESTS_DIR
 
 CONFIG = 'printshot.cfg'
+
 
 class Writer:
     def __init__(self):
@@ -25,6 +25,7 @@ class Writer:
 
     def write(self, txt):
         self.captured.append(txt)
+
 
 class PrintShotTest(unittest.TestCase):
     def setUp(self):
@@ -52,7 +53,7 @@ class PrintShotTest(unittest.TestCase):
         procins.communicate()
         self.mocker.result((res, False))
         self.procmock = self.mocker.replace('subprocess')
-        self.procmock.Popen(getId, shell = True, stdout = PIPE, stderr = PIPE)
+        self.procmock.Popen(getId, shell=True, stdout=PIPE, stderr=PIPE)
         self.mocker.result(procins)
         output = 'picture.png'
         propertiesmock = self.mocker.mock()
@@ -78,7 +79,7 @@ class PrintShotTest(unittest.TestCase):
         self.mocker.result(False)
         self.mocker.replay()
         printandshoot = notifications.PrintShot(propertiesmock,
-                shot_process=pjoin(TESTS_DIR,"printashot.sh"))
+                shot_process=pjoin(TESTS_DIR, "printashot.sh"))
         message = Message(logcolors)
         for trace in log_traces:
             message.parse(trace, log)
@@ -97,7 +98,3 @@ class PrintShotTest(unittest.TestCase):
         self.mocker.restore()
         self.mocker.verify()
         sys.stdout = self.sysout
-
-if __name__ == '__main__':
-    unittest.main()
-
