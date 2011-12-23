@@ -108,7 +108,7 @@ class Message(object):
     def getPlainMessage(self):
         return (self.plainMessage, self.currentLogPath)
     
-    def __parseSetOpts(self, line):
+    def _parseSetOpts(self, line):
         self.isTarget = None
         self.isOwnTarget = None
         self.targetColor = None
@@ -146,5 +146,5 @@ class Message(object):
         self.log = log
         if log.patTarget:
             self.patOwnTarget = log.logTargetColor.keys()
-        self.__parseSetOpts(line)                
+        self._parseSetOpts(line)                
 
