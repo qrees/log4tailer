@@ -15,6 +15,9 @@ from .utils import MemoryWriter
 
 CONFIG = 'aconfig.txt'
 
+def overgap():
+    return 0.02
+
 
 class TestCornerMark(unittest.TestCase):
     """The purpose of the corner mark is to have an small square in the bottom
@@ -72,7 +75,7 @@ class TestCornerMark(unittest.TestCase):
         self.assertEqual(output, sys.stdout.captured[0])
         trace = "INFO this is an info trace"
         sys.stdout.flush()
-        time.sleep(0.02)
+        notifier.timer.corner_mark_ellapsed = overgap
         message.parse(trace, anylog)
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
@@ -95,17 +98,18 @@ class TestCornerMark(unittest.TestCase):
                 termcolors.reset
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
-        time.sleep(0.02)
+        def belowgap():
+            return 0
+        notifier.timer.corner_mark_ellapsed = belowgap
         level = 'FATAL'
         trace = "FATAL there could be an error in the application"
         message.parse(trace, anylog)
         notifier.notify(message, anylog)
         self.assertTrue(sys.stdout.captured)
         self.assertEquals(output, sys.stdout.captured[0])
-        time.sleep(0.02)
         trace = "INFO this is an info trace"
         sys.stdout.flush()
-        time.sleep(0.02)
+        notifier.timer.corner_mark_ellapsed = overgap
         message.parse(trace, anylog)
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
