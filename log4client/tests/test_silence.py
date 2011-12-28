@@ -118,7 +118,7 @@ class TestDemon(unittest.TestCase):
         options_mock = OptionsMock2()
         args = [self.log_name]
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         os.fork = fork
         os.chdir = chdir
         os.setsid = setsid

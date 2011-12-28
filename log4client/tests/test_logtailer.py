@@ -185,7 +185,7 @@ class TestInit(unittest.TestCase):
         self._options_mocker_generator(options_mock, params)
         default_config = DefaultConfig()
         self.mocker.replay()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         actions = default_config.actions
         self.assertEquals(2, len(actions))
         self.assertTrue(isinstance(actions[0], notifications.Print))
@@ -206,7 +206,7 @@ class TestInit(unittest.TestCase):
         utils_mock(ANY)
         self.mocker.result(True)
         self.mocker.replay()
-        log4tailer.initialize(self.OptionsMock(), default_config)
+        log4tailer.setup_config(self.OptionsMock(), default_config)
         actions = default_config.actions
         self.assertEquals(2, len(actions))
         self.assertTrue(isinstance(actions[0], notifications.Print))
@@ -236,7 +236,7 @@ class TestInit(unittest.TestCase):
         self._options_mocker_generator(options_mock, params)
         default_config = DefaultConfig()
         self.mocker.replay()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         actions = default_config.actions
         self.assertEquals(2, len(actions))
         self.assertTrue(isinstance(actions[0], notifications.Print))

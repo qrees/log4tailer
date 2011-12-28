@@ -88,7 +88,7 @@ class TestEndToEnd(unittest.TestCase):
 
         options_mock = OptionsMock()
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         args_mock = [self.log_name]
         log4tailer.monitor(options_mock, args_mock, default_config,
                 self._wait_for())
@@ -117,7 +117,7 @@ class TestEndToEnd(unittest.TestCase):
 
         optionsmock_withconfig = OptionsMockWithConfig()
         default_config = DefaultConfig()
-        log4tailer.initialize(optionsmock_withconfig, default_config)
+        log4tailer.setup_config(optionsmock_withconfig, default_config)
         args_mock = [self.log_name]
         log4tailer.monitor(optionsmock_withconfig, args_mock, default_config,
                 self._wait_for())
@@ -147,7 +147,7 @@ class TestEndToEnd(unittest.TestCase):
         options_mock = OptionWithScreenshot()
         shot_process = pjoin(TESTS_DIR, 'printashot.sh')
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         default_config.actions[0].screenproc = shot_process
         args_mock = [self.log_name]
         log4tailer.monitor(options_mock, args_mock, default_config,
@@ -171,7 +171,7 @@ class TestEndToEnd(unittest.TestCase):
                     return True
                 return False
         default_config = DefaultConfig()
-        self.assertRaises(SystemExit, log4tailer.initialize,
+        self.assertRaises(SystemExit, log4tailer.setup_config,
                 OptionsMock(), default_config)
         doc_version = re.search('\large Version (\d+\.?\d+\.?\d*)',
                 open('../userguide/log4tailer.tex').read()).group(1)
@@ -213,7 +213,7 @@ class TestMonitor(unittest.TestCase):
         options_mock_nlines = OptionsMockWithNlines()
         args = [self.log_name]
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock_nlines, default_config)
+        log4tailer.setup_config(options_mock_nlines, default_config)
         log4tailer.monitor(options_mock_nlines, args, default_config)
 
     @raises(SystemExit)
@@ -232,7 +232,7 @@ class TestMonitor(unittest.TestCase):
                 return False
         options_mock = OptionWithRemoteAndConfig()
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         args = []
         log4tailer.monitor(options_mock, args, default_config)
 
@@ -256,7 +256,7 @@ class TestMonitor(unittest.TestCase):
                 return False
         options_mock = OptionWithRemoteAndConfig()
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         args = []
         self.mocker.replay()
         log4tailer.monitor(options_mock, args, default_config)
@@ -278,7 +278,7 @@ class TestMonitor(unittest.TestCase):
                 return False
         options_mock = OptionWithPostandConfig()
         default_config = DefaultConfig()
-        log4tailer.initialize(options_mock, default_config)
+        log4tailer.setup_config(options_mock, default_config)
         self.assertTrue(default_config.post)
 
     def tearDown(self):

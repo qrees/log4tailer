@@ -18,7 +18,7 @@ def parse_config(configfile):
     return properties
 
 
-def initialize(options, default_config):
+def setup_config(options, default_config):
     colors = default_config.logcolors
     actions = default_config.actions
     config_file = options.configfile or default_config.alt_config
@@ -119,5 +119,5 @@ def monitor(options, args, default_config, wait_for=time.sleep):
 
 
 def main(options, args, default_config):
-    initialize(options, default_config)
+    setup_config(options, default_config)
     monitor(options, args, default_config)
