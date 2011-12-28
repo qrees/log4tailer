@@ -152,6 +152,17 @@ class TestInitialize(unittest.TestCase):
         setup_config(OptionsWithNLines(), config)
         self.assertEqual(config.nlines, 56700)
 
+    def test_target_setup(self):
+        config = DefaultConfig()
+        setup_config(OptionsMock("target"), config)
+        self.assertTrue(config.target)
+
+    def test_cornermark_setup(self):
+        config = DefaultConfig()
+        setup_config(OptionsMock("cornermark"), config)
+        last_action = config.actions[-1:][0]
+        self.assertTrue(isinstance(last_action, notifications.CornerMark))
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
