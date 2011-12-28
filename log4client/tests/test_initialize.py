@@ -76,6 +76,23 @@ class OptionsWithNLines(object):
         return "56700"
 
 
+def callback():
+    return False
+
+
+class MyProperties(object):
+    def __init__(self):
+        pass
+
+    def get_value(self, value):
+        if value == 'executor':
+            return "ls -l"
+        return callback
+
+    def __getattr__(self, method):
+        return False
+
+
 class TestInitialize(unittest.TestCase):
     def setUp(self):
         sysoutback = sys.stdout
@@ -105,20 +122,6 @@ class TestInitialize(unittest.TestCase):
 
     def test_mail_properties_setup(self):
         config = DefaultConfig()
-
-        def callback():
-            return False
-
-        class MyProperties(object):
-            def __init__(self):
-                pass
-
-            def get_value(self, value):
-                return callback
-
-            def __getattr__(self, method):
-                return False
-
         config.properties = MyProperties()
         setup_mail_mock = self.mocker.replace('log4tailer.setup_mail')
         setup_mail_mock(mocker.ANY)
@@ -162,6 +165,42 @@ class TestInitialize(unittest.TestCase):
         setup_config(OptionsMock("cornermark"), config)
         last_action = config.actions[-1:][0]
         self.assertTrue(isinstance(last_action, notifications.CornerMark))
+
+    def test_postnotification_setup(self):
+        config = DefaultConfig()
+        config.properties = MyProperties()
+
+        class MyAction(object):
+            def __init__(self):
+                pass
+
+        setup_config(OptionsMock("post"), config)
+        last_action = config.actions[-1:][0]
+        self.assertTrue(isinstance(last_action, notifications.Poster))
+
+    def test_executable_setup(self):
+        config = DefaultConfig()
+        config.properties = MyProperties()
+
+        class MyAction(object):
+            def __init__(self):
+                pass
+
+        setup_config(OptionsMock("executable"), config)
+        last_action = config.actions[-1:][0]
+        self.assertTrue(isinstance(last_action, notifications.Executor))
+
+    def test_screenshot_setup(self):
+        config = DefaultConfig()
+        config.properties = MyProperties()
+
+        class MyAction(object):
+            def __init__(self):
+                pass
+
+        setup_config(OptionsMock("screenshot"), config)
+        last_action = config.actions[-1:][0]
+        self.assertTrue(isinstance(last_action, notifications.PrintShot))
 
     def tearDown(self):
         self.mocker.restore()
