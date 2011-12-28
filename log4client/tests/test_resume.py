@@ -164,17 +164,27 @@ class TestResume(unittest.TestCase):
         log = Log('out.log')
         arrayLog = [log]
         resume = reporting.Resume(arrayLog)
-        resume.setAnalyticsGapNotification(0.1)
+        gaptime = 0.1
+        resume.setAnalyticsGapNotification(gaptime)
         resume.notification_type(reportfileFullPath)
         fh = open('out.log')
         lines = fh.readlines()
         fh.close()
         logcolors = LogColors()
         msg = Message(logcolors)
-        time.sleep(0.1)
+
+        def overgap():
+            return gaptime + 1
+
+        def belowgap():
+            return gaptime - 0.01
+
+        resume.timer.inactivityEllapsed = overgap
+
         for line in lines:
             msg.parse(line, log)
             resume.update(msg, log)
+            resume.timer.inactivityEllapsed = belowgap
         fh = open(reportfileFullPath)
         reportlength = len(fh.readlines())
         fh.close()
@@ -247,7 +257,9 @@ class TestResume(unittest.TestCase):
         resume.gapTime = 0.05
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog, message, resume)
-        time.sleep(0.05)
+        def overgap():
+            return resume.gapTime + 10
+        resume.timer.inactivityEllapsed = overgap
         resume.update(message, log)
         expected = {'TARGET':0,
              'DEBUG':0,
