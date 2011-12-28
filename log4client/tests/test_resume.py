@@ -19,7 +19,6 @@
 
 import unittest
 import os
-import time
 import mox
 import mocker
 from log4tailer import reporting
@@ -29,21 +28,22 @@ from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 
+
 class TestResume(unittest.TestCase):
 
-    def writer(self,fh,logTraces):
+    def writer(self, fh, logTraces):
         for line in logTraces:
-            fh.write(line+'\n')
+            fh.write(line + '\n')
 
     def setUp(self):
-        fh = open('out.log','w')
+        fh = open('out.log', 'w')
         someLogTracesForOutLog = ['fatal> something went wrong',
                               'error> not so wrong',
                               'warn> be careful',
                               'debug> looking behind the scenes',
                               'info> the app is running',
                               'fatal> the app is in really bad state']
-        
+
         someLogTracesForOut2Log = ['fatal> something went wrong',
                               'error> not so wrong',
                               'warn> be careful',
@@ -51,16 +51,16 @@ class TestResume(unittest.TestCase):
                               'info> the app is running',
                               'fatal> the app is in really bad state']
 
-        fh2 = open('out2.log','w')
-        self.writer(fh,someLogTracesForOutLog)
-        self.writer(fh2,someLogTracesForOut2Log)
+        fh2 = open('out2.log', 'w')
+        self.writer(fh, someLogTracesForOutLog)
+        self.writer(fh2, someLogTracesForOut2Log)
         fh.close()
         fh2.close()
         self.mocker = mocker.Mocker()
 
     def readAndUpdateLines(self, log, message, resume):
         fh = log.openLog()
-        lines = [ line.rstrip() for line in fh.readlines() ]
+        lines = [line.rstrip() for line in fh.readlines()]
         for line in lines:
             message.parse(line, log)
             resume.update(message, log)
@@ -74,13 +74,13 @@ class TestResume(unittest.TestCase):
         message = Message(logcolors)
         resume = reporting.Resume(arrayLogs)
         for anylog in arrayLogs:
-            self.readAndUpdateLines(anylog,message,resume)
+            self.readAndUpdateLines(anylog, message, resume)
         outlogReport = resume.logsReport[log.path]
         expectedOutLogErrorReport = 'error> not so wrong'
         gotLogTrace = outlogReport['ERROR'][0].split('=>> ')[1]
         self.assertEquals(expectedOutLogErrorReport,
                 gotLogTrace)
-    
+
     def testShouldReportaTarget(self):
         logline = 'this is a target line and should be reported'
         message = self.mocker.mock()
@@ -94,7 +94,7 @@ class TestResume(unittest.TestCase):
         mylog = Log('out.log')
         arraylogs = [mylog]
         resume = reporting.Resume(arraylogs)
-        resume.update(message,mylog)
+        resume.update(message, mylog)
         outLogReport = resume.logsReport[mylog.path]
         numofTargets = 1
         gotnumTargets = outLogReport['TARGET']
@@ -105,7 +105,7 @@ class TestResume(unittest.TestCase):
         configfile = "aconfig.txt"
         logcolors = LogColors()
         fh = open(configfile, 'w')
-        fh.write("targets "+logfile+" = should\n")
+        fh.write("targets " + logfile + " = should\n")
         fh.close()
         properties = Property(configfile)
         properties.parse_properties()
@@ -115,7 +115,7 @@ class TestResume(unittest.TestCase):
             mylog.patTarget, mylog.path))
         arraylogs = [mylog]
         resume = reporting.Resume(arraylogs)
-        message = Message(logcolors, properties = properties)
+        message = Message(logcolors, properties=properties)
         logtrace = "log trace info target should be reported"
         message.parse(logtrace, mylog)
         resume.update(message, mylog)
@@ -123,16 +123,15 @@ class TestResume(unittest.TestCase):
         numofTargets = 1
         gotnumTargets = outLogReport['TARGET']
         self.assertEquals(numofTargets, gotnumTargets)
- 
-    
+
     def testTargetsAreNonTimeStampedinResume(self):
         arrayLog = [Log('out.log')]
         resume = reporting.Resume(arrayLog)
         self.assertTrue('TARGET' in resume.nonTimeStamped)
         self.assertTrue('TARGET' in resume.orderReport)
-    
+
     def testShouldSetupMailNotificationIfAnalyticsNotificationIsSetup(self):
-        fh = open('aconfig','w')
+        fh = open('aconfig', 'w')
         fh.write('analyticsnotification = mail\n')
         fh.write('analyticsgaptime = 3600\n')
         fh.close()
@@ -145,17 +144,17 @@ class TestResume(unittest.TestCase):
         mailaction = mailactionmocker.CreateMock(notifications.Mail)
         if properties.get_value('analyticsnotification') == 'mail':
             resume.setMailNotification(mailaction)
-            self.assertEquals('mail',resume.getNotificationType())
+            self.assertEquals('mail', resume.getNotificationType())
             gaptime = properties.get_value('analyticsgaptime')
             if gaptime:
                 resume.setAnalyticsGapNotification(gaptime)
-                self.assertEquals(3600,int(resume.getGapNotificationTime()))
+                self.assertEquals(3600, int(resume.getGapNotificationTime()))
         os.remove('aconfig')
 
     def testReportToAFile(self):
         reportfileFullPath = "reportfile.txt"
-        fh = open('aconfig','w')
-        fh.write('analyticsnotification = '+ reportfileFullPath +'\n')
+        fh = open('aconfig', 'w')
+        fh.write('analyticsnotification = ' + reportfileFullPath + '\n')
         fh.write('analyticsgaptime = 0.1\n')
         fh.close()
         properties = Property('aconfig')
@@ -200,6 +199,7 @@ class TestResume(unittest.TestCase):
         inactivity_mock.alerted
         self.mocker.count(1, None)
         self.mocker.result(True)
+
         def populate_log():
             fh = open('out2.log', 'w')
             someLogTracesForLog = ['something here',
@@ -229,22 +229,22 @@ class TestResume(unittest.TestCase):
         log2 = Log('secondone.log')
         logs = [log1, log2]
         resume = reporting.Resume(logs)
-        reports = {'TARGET':0,
-             'DEBUG':0,
-             'INFO':0,
-             'WARN':0,
-             'OTHERS':[],
-             'ERROR':[],
-             'FATAL':[],
-             'CRITICAL':[]}
+        reports = {'TARGET': 0,
+             'DEBUG': 0,
+             'INFO': 0,
+             'WARN': 0,
+             'OTHERS': [],
+             'ERROR': [],
+             'FATAL': [],
+             'CRITICAL': []}
         self.assertEquals(resume.logsReport['firstone.log'], reports)
         self.assertEquals(resume.logsReport['secondone.log'], reports)
         reports_firstone = resume.logsReport['firstone.log']
-        tobe_flushed_firstone = [ k for k in reports_firstone if
-                isinstance(reports_firstone[k], list) ]
+        tobe_flushed_firstone = [k for k in reports_firstone if
+                isinstance(reports_firstone[k], list)]
         resume.flushReport()
-        flushed_firstone = [ k for k in reports_firstone if
-                isinstance(reports_firstone[k], list) ]
+        flushed_firstone = [k for k in reports_firstone if
+                isinstance(reports_firstone[k], list)]
         self.assertEquals(tobe_flushed_firstone, flushed_firstone)
 
     def test_flush_report_aftergaptime_daemonized(self):
@@ -257,18 +257,19 @@ class TestResume(unittest.TestCase):
         resume.gapTime = 0.05
         for anylog in arrayLogs:
             self.readAndUpdateLines(anylog, message, resume)
+
         def overgap():
             return resume.gapTime + 10
         resume.timer.inactivityEllapsed = overgap
         resume.update(message, log)
-        expected = {'TARGET':0,
-             'DEBUG':0,
-             'INFO':0,
-             'WARN':0,
-             'OTHERS':[],
-             'ERROR':[],
-             'FATAL':[],
-             'CRITICAL':[]}
+        expected = {'TARGET': 0,
+             'DEBUG': 0,
+             'INFO': 0,
+             'WARN': 0,
+             'OTHERS': [],
+             'ERROR': [],
+             'FATAL': [],
+             'CRITICAL': []}
         outlogReport = resume.logsReport[log.path]
         self.assertEquals(expected, outlogReport)
 
@@ -281,9 +282,3 @@ class TestResume(unittest.TestCase):
             os.remove('aconfig.txt')
         os.remove('out.log')
         os.remove('out2.log')
-
-if __name__ == '__main__':
-    unittest.main()
-
-
-
