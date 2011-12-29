@@ -27,7 +27,6 @@ from log4tailer.logfile import Log
 from .utils import MemoryWriter
 
 CONFIG = 'aconfig.txt'
-SYSOUT = sys.stdout
 
 
 # so we can run the tests in ../test or inside test
@@ -67,6 +66,7 @@ class TriggerExecutorStub(object):
 class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
+        self.SYSOUT = sys.stdout
         sys.stdout = MemoryWriter()
 
     def testShouldReadExecutorFromConfigFile(self):
@@ -159,4 +159,4 @@ class TestExecutor(unittest.TestCase):
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
-        sys.stdout = SYSOUT
+        sys.stdout = self.SYSOUT
