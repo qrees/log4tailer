@@ -160,22 +160,26 @@ class QueueStub(object):
             return self.default_elem
         return self.store.pop()
 
+
 class QueueStubStop(QueueStub):
     def get(self):
         return "stop"
+
 
 class SubProcessStub(object):
     msg = "called..."
 
     def __init__(self):
         pass
-    
+
     @staticmethod
     def call(*args, **kwargs):
         print SubProcessStub.msg
 
+
 class SubProcessStubRaise(object):
     msg = "Boo, it failed"
+
     def __init__(self):
         pass
 
@@ -188,7 +192,7 @@ class OnceStub(object):
     def __init__(self):
         self._forever = False
         self.first_time = True
-    
+
     @property
     def forever(self):
         if self.first_time:
@@ -199,14 +203,14 @@ class OnceStub(object):
     @forever.setter
     def forever(self, value):
         self._forever = value
-        
+
 
 class TriggerExecutorTest(unittest.TestCase):
 
     def setUp(self):
         self.SYSOUT = sys.stdout
         sys.stdout = MemoryWriter()
-    
+
     def test_instantiates(self):
         trigger_executor = TriggerExecutor()
         self.assertTrue(isinstance(trigger_executor, TriggerExecutor))
@@ -260,4 +264,3 @@ class WaitForeverTest(unittest.TestCase):
         wait = WaitForever()
         wait.forever = False
         self.assertFalse(wait.forever)
-        
