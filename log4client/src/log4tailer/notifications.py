@@ -446,7 +446,7 @@ class Executor(object):
     PlaceHolders = '%s'
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
-    def __init__(self, properties):
+    def __init__(self, properties, trigger_executor=TriggerExecutor):
         executable = properties.get_value('executor')
         if not executable:
             raise Exception("need to provide executor option")
@@ -454,7 +454,7 @@ class Executor(object):
         self.full_trigger_active = False
         if self.PlaceHolders in self.executable:
             self.full_trigger_active = True
-        self.trigger_executor = TriggerExecutor()
+        self.trigger_executor = trigger_executor()
         self.started = False
 
     def _build_trigger(self, logtrace, logpath):

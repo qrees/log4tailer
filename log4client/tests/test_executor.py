@@ -32,55 +32,61 @@ CONFIG = 'aconfig.txt'
 SYSOUT = sys.stdout
 
 
-# so we can run the tests in ../test or inside test 
+# so we can run the tests in ../test or inside test
 # folder
-current_directory = os.path.basename(os.getcwd())
 EXECUTABLE = 'python executable.py'
-if current_directory != 'tests':
-    EXECUTABLE = 'python '+ os.path.join('tests', 'executable.py')
+
+
+class PropertiesStub(object):
+    def __init__(self, command, raises=False):
+        self._command = command
+        self._raises = raises
+
+    def get_value(self, value):
+        if self._raises:
+            raise Exception("Value not found")
+        return self._command
+
+
+class TriggerExecutorStub(object):
+    execute_msg = "executing..."
+
+    def __init__(self, raises=False):
+        self._raises = raises
+
+    def start(self):
+        pass
+
+    def landing(self, *args):
+        if self._raises:
+            raise Exception
+        print self.execute_msg
+
+    def run(self):
+        pass
 
 
 class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
         sys.stdout = MemoryWriter()
-    
+
     def testShouldReadExecutorFromConfigFile(self):
-        fh = open(CONFIG, 'w')
-        fh.write('executor = ls -l\n')
-        fh.close()
-        properties = Property(CONFIG)
-        properties.parse_properties()
+        command = "ls -l"
+        properties = PropertiesStub(command)
         executor = notifications.Executor(properties)
         self.assertEquals(['ls', '-l'], executor.executable)
-        executor.stop()
 
     def testShouldRaiseIfExecutorNotProvided(self):
-        fh = open(CONFIG, 'w')
-        fh.write('anything = ls -l\n')
-        fh.close()
-        properties = Property(CONFIG)
-        properties.parse_properties()
+        command = "anything"
+        properties = PropertiesStub(command, raises=True)
         self.assertRaises(Exception, notifications.Executor, properties)
 
     def testShouldProvideNotifyMethod(self):
-        fh = open(CONFIG, 'w')
-        fh.write('executor = ls -l\n')
-        fh.close()
-        properties = Property(CONFIG)
-        properties.parse_properties()
+        command = "ls -l"
+        properties = PropertiesStub(command)
         executor = notifications.Executor(properties)
         self.assertTrue(hasattr(executor, 'notify'))
-
-    def testFullTriggerTrueTwoPlaceHoldersBasedOnConfig(self):
-        fh = open(CONFIG, 'w')
-        fh.write('executor = ls -l %s %s\n')
-        fh.close()
-        properties = Property(CONFIG)
-        properties.parse_properties()
-        executor = notifications.Executor(properties)
-        self.assertEqual(True, executor.full_trigger_active)
-        executor.stop()
 
     def testFullTriggerFalseBasedOnConfig(self):
         fh = open(CONFIG, 'w')
@@ -92,133 +98,67 @@ class TestExecutor(unittest.TestCase):
         self.assertEqual(False, executor.full_trigger_active)
         executor.stop()
 
-    def testShouldNotifyWithFullTrigger(self):
-        logcolor = LogColors()
-        message = Message(logcolor)
-        log = Log('anylog')
-        fh = open(CONFIG, 'w')
-        fh.write('executor = ls -l %s %s\n')
-        fh.close()
-        trace = "this is a FATAL log trace"
-        trigger = ['ls', '-l', trace, log.path ]
-        properties = Property(CONFIG)
-        properties.parse_properties()
-        os_mock = self.mocker.replace('subprocess')
-        os_mock.call(' '.join(trigger), shell = True)
-        self.mocker.result(True)
-        self.mocker.replay()
-        # we just verify the trigger gets 
-        # called in the tearDown
-        executor = notifications.Executor(properties)
-        message.parse(trace, log)
-        executor.notify(message, log)
-        time.sleep(0.0002)
-        executor.stop()
-    
     def testShouldNotifyWithNoFullTrigger(self):
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
         logpath = log.path
-        fh = open(CONFIG, 'w')
-        fh.write('executor = echo\n')
-        fh.close()
+        command = 'echo'
+        properties = PropertiesStub(command)
         trace = "this is a fatal log trace"
-        properties = Property(CONFIG)
-        properties.parse_properties()
-        executor = notifications.Executor(properties)
-        message.parse(trace, log)
+        executor = notifications.Executor(properties,
+                trigger_executor=TriggerExecutorStub)
         trigger = executor._build_trigger(trace, logpath)
         self.assertEqual(['echo'], trigger)
-        executor.notify(message, log)
-        executor.stop()
 
     def testShouldContinueIfExecutorFails(self):
+        mock_proc_call = self.mocker.replace('subprocess')
+        mock_proc_call.call(mocker.ANY, shell=True)
+        exception_trace = "Command not found"
+        self.mocker.throw(Exception(exception_trace))
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
-        fh = open(CONFIG, 'w')
-        fh.write('executor = anycommand\n')
-        fh.close()
         trace = "this is a critical log trace"
-        properties = Property(CONFIG)
-        properties.parse_properties()
+        properties = PropertiesStub("anycommand -s")
+        self.mocker.replay()
         executor = notifications.Executor(properties)
         message.parse(trace, log)
         executor.notify(message, log)
-        time.sleep(0.0002)
         executor.stop()
-
-    def testShouldContinueTailingIfExecutableTakesLongTime(self):
-        logcolor = LogColors()
-        message = Message(logcolor)
-        log = Log('anylog')
-        fh = open(CONFIG, 'w')
-        fh.write('executor = ' + EXECUTABLE +'\n')
-        fh.close()
-        trace = "this is an error log trace"
-        properties = Property(CONFIG)
-        properties.parse_properties()
-        executor = notifications.Executor(properties)
-        message.parse(trace, log)
-        start = time.time()
-        executor.notify(message, log)
-        finished = time.time()
-        ellapsed = start - finished
-        time.sleep(0.0002)
-        executor.stop()
-        # executable.py sleeps for three seconds
-        self.assertTrue(ellapsed < 0.1)
+        self.assertEqual(exception_trace, sys.stdout.captured[0])
 
     def testShouldNotExecuteIfLevelNotInPullers(self):
         logcolor = LogColors()
         message = Message(logcolor)
         log = Log('anylog')
-        fh = open(CONFIG, 'w')
-        fh.write('executor = anything %s %s\n')
-        fh.close()
+        command = 'anything %s %s'
         trace = "this is an info log trace"
-        properties = Property(CONFIG)
-        properties.parse_properties()
-        executor = notifications.Executor(properties)
+        properties = PropertiesStub(command)
+        executor = notifications.Executor(properties,
+                trigger_executor=TriggerExecutorStub)
         message.parse(trace, log)
         executor.notify(message, log)
-        time.sleep(0.0002)
-        executor.stop()
-        self.assertFalse(sys.stdout.captured)
+        len_captured_lines = len(sys.stdout.captured)
+        self.assertEqual(len_captured_lines, 0)
 
     def testShouldExecuteIfTargetMessage(self):
         logcolor = LogColors()
         logfile = 'anylog'
         log = Log(logfile)
-        fh = open(CONFIG, 'w')
-        fh.write("executor = echo ' %s %s '\n")
-        fh.close()
+        command = "echo %s %s"
         trace = "this is an info log trace"
         trigger = ['echo', trace, logfile]
-        properties = Property(CONFIG)
-        properties.parse_properties()
-        message = Message(logcolor, target = 'trace')
-        executor_mock = self.mocker.mock()
-        executor_mock._build_trigger(trace, logfile)
-        self.mocker.result(trigger)
-        executor_mock.started
-        self.mocker.result(True)
-        landing_mock = self.mocker.mock()
-        landing_mock.landing(trigger)
-        self.mocker.result(True)
-        executor_mock.trigger_executor
-        self.mocker.result(landing_mock)
-        self.mocker.replay()
+        properties = PropertiesStub(command)
+        message = Message(logcolor, target='trace')
         message.parse(trace, log)
-        self.assertTrue(message.isATarget())
-        notifications.Executor.notify.im_func(executor_mock, message, log)
+        executor = notifications.Executor(properties,
+                trigger_executor=TriggerExecutorStub)
+        executor.notify(message, log)
+        self.assertEqual(TriggerExecutorStub.execute_msg,
+                sys.stdout.captured[0])
 
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
         sys.stdout = SYSOUT
-
-if __name__ == '__main__':
-    unittest.main()
-
