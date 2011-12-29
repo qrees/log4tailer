@@ -409,16 +409,22 @@ class CornerMark(object):
                 self.count = 0
                 self.flagged = False
 
+class WaitForever(object):
+    def __init__(self):
+        self.forever = True
+        
 
 class TriggerExecutor(threading.Thread):
     """Triggers the trigger command, one
     trigger_command at a time, in its own thread.
     """
 
-    def __init__(self):
+    def __init__(self, queue=queue.Queue, caller=subprocess, 
+            wait=WaitForever):
         threading.Thread.__init__(self)
-        self.queue = queue.Queue()
-        self.go = True
+        self.queue = queue()
+        self.caller = caller
+        self.wait = wait()
 
     def landing(self, trigger_command):
         """One command to be triggered. Enqueued
@@ -429,17 +435,17 @@ class TriggerExecutor(threading.Thread):
         self.queue.put(trigger_command)
 
     def run(self):
-        while self.go:
+        while self.wait.forever:
             trigger_command = self.queue.get()
             if trigger_command == 'stop':
                 continue
             try:
-                subprocess.call(' '.join(trigger_command), shell = True)
+                self.caller.call(' '.join(trigger_command), shell = True)
             except Exception, err:
                 print err
 
     def stop(self):
-        self.go = False
+        self.wait.forever = False
 
 class Executor(object):
     """Will execute a program if a certain condition is given"""

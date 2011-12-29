@@ -20,6 +20,8 @@ import unittest
 import sys
 import mocker
 from log4tailer import notifications
+from log4tailer.notifications import TriggerExecutor
+from log4tailer.notifications import WaitForever
 from log4tailer.propertyparser import Property
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
@@ -63,7 +65,7 @@ class TriggerExecutorStub(object):
         pass
 
 
-class TestExecutor(unittest.TestCase):
+class ExecutorTest(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
         self.SYSOUT = sys.stdout
@@ -109,23 +111,6 @@ class TestExecutor(unittest.TestCase):
         trigger = executor._build_trigger(trace, logpath)
         self.assertEqual(['echo'], trigger)
 
-    def testShouldContinueIfExecutorFails(self):
-        mock_proc_call = self.mocker.replace('subprocess')
-        mock_proc_call.call(mocker.ANY, shell=True)
-        exception_trace = "Command not found"
-        self.mocker.throw(Exception(exception_trace))
-        logcolor = LogColors()
-        message = Message(logcolor)
-        log = Log('anylog')
-        trace = "this is a critical log trace"
-        properties = PropertiesStub("anycommand -s")
-        self.mocker.replay()
-        executor = notifications.Executor(properties)
-        message.parse(trace, log)
-        executor.notify(message, log)
-        executor.stop()
-        self.assertEqual(exception_trace, sys.stdout.captured[0])
-
     def testShouldNotExecuteIfLevelNotInPullers(self):
         logcolor = LogColors()
         message = Message(logcolor)
@@ -160,3 +145,119 @@ class TestExecutor(unittest.TestCase):
         self.mocker.restore()
         self.mocker.verify()
         sys.stdout = self.SYSOUT
+
+
+class QueueStub(object):
+    def __init__(self):
+        self.store = []
+        self.default_elem = "command"
+
+    def put(self, elem):
+        self.store.append(elem)
+
+    def get(self):
+        if not len(self.store):
+            return self.default_elem
+        return self.store.pop()
+
+class QueueStubStop(QueueStub):
+    def get(self):
+        return "stop"
+
+class SubProcessStub(object):
+    msg = "called..."
+
+    def __init__(self):
+        pass
+    
+    @staticmethod
+    def call(*args, **kwargs):
+        print SubProcessStub.msg
+
+class SubProcessStubRaise(object):
+    msg = "Boo, it failed"
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def call(*args, **kwargs):
+        raise Exception(SubProcessStubRaise.msg)
+
+
+class OnceStub(object):
+    def __init__(self):
+        self._forever = False
+        self.first_time = True
+    
+    @property
+    def forever(self):
+        if self.first_time:
+            self.first_time = False
+            return True
+        return False
+
+    @forever.setter
+    def forever(self, value):
+        self._forever = value
+        
+
+class TriggerExecutorTest(unittest.TestCase):
+
+    def setUp(self):
+        self.SYSOUT = sys.stdout
+        sys.stdout = MemoryWriter()
+    
+    def test_instantiates(self):
+        trigger_executor = TriggerExecutor()
+        self.assertTrue(isinstance(trigger_executor, TriggerExecutor))
+
+    def test_landing_queue_has_command(self):
+        trigger_executor = TriggerExecutor(queue=QueueStub)
+        command = "anycommand"
+        trigger_executor.landing(command)
+        self.assertTrue(trigger_executor.queue.store[0], command)
+
+    def test_executes_command(self):
+        trigger_executor = TriggerExecutor(queue=QueueStub,
+                caller=SubProcessStub, wait=OnceStub)
+        trigger_executor.run()
+        self.assertEqual(SubProcessStub.msg, sys.stdout.captured[0])
+
+    def test_executes_command_throws(self):
+        trigger_executor = TriggerExecutor(queue=QueueStub,
+                caller=SubProcessStubRaise, wait=OnceStub)
+        trigger_executor.run()
+        self.assertEqual(SubProcessStubRaise.msg, sys.stdout.captured[0])
+
+    def test_stops_executor(self):
+        trigger_executor = TriggerExecutor(queue=QueueStubStop,
+                caller=SubProcessStub, wait=OnceStub)
+        trigger_executor.run()
+        #nothing executes
+        self.assertEqual(len(sys.stdout.captured), 0)
+
+    def test_sets_stop(self):
+        trigger_executor = TriggerExecutor(queue=QueueStub,
+                caller=SubProcessStub)
+        trigger_executor.stop()
+        self.assertFalse(trigger_executor.wait.forever)
+
+    def tearDown(self):
+        sys.stdout = self.SYSOUT
+
+
+class WaitForeverTest(unittest.TestCase):
+
+    def test_instantiates(self):
+        wait = WaitForever()
+        self.assertTrue(isinstance(wait, WaitForever))
+
+    def test_has_forever_attr(self):
+        wait = WaitForever()
+        self.assertTrue(hasattr(wait, 'forever'))
+
+    def test_sets_forever_false(self):
+        wait = WaitForever()
+        wait.forever = False
+        self.assertFalse(wait.forever)
+        
