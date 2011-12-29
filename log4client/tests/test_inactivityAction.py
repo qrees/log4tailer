@@ -37,6 +37,14 @@ class Options:
         self.inactivity = None
 
 
+def overgap():
+    return 0.06
+
+
+def belowgap():
+    return 0.00001
+
+
 class TestInactivityAction(unittest.TestCase):
     '''test that we print an alert to stdout
     once we expire the inactivity time'''
@@ -56,29 +64,28 @@ class TestInactivityAction(unittest.TestCase):
         # inactivity time
         message.getPlainMessage().AndReturn((None,'logpath'))
         self.message_mocker.ReplayAll()
-        inactivityTime = 0.0000001
+        inactivityTime = 0.01
         notifier = notifications.Inactivity(inactivityTime)
-        time.sleep(0.0000002)
-        timer = self.log.inactivityTimer
-        self.assertTrue(timer.inactivityEllapsed() > inactivityTime)
-        notifier.notify(message,self.log)
+        self.log.inactivityTimer.inactivityEllapsed = overgap
+        notifier.notify(message, self.log)
         self.assertTrue('Inactivity' in sys.stdout.captured[0])
         self.message_mocker.VerifyAll()
     
     def testNotSendingAlertBelowInactivityTime(self):
         sys.stdout = MemoryWriter()
-        message = self.message_mocker.CreateMock(Message)
-        message.getPlainMessage().AndReturn(('error> this is an error message',
-            'logpath'))
         self.message_mocker.ReplayAll()
-        inactivityTime = 0.005
+        inactivityTime = 0.01
+        class Message(object):
+            def __init__(self):
+                pass
+            def getPlainMessage(self):
+                return (None, "alog")
+                
         notifier = notifications.Inactivity(inactivityTime)
         self.options.inactivity = inactivityTime
-        timer = self.log.inactivityTimer
-        time.sleep(0.000000001)
-        self.assertTrue(timer.inactivityEllapsed() < inactivityTime)
-        notifier.notify(message,self.log)
-        self.assertTrue(len(sys.stdout) == 0)
+        self.log.inactivityTimer.inactivityEllapsed = belowgap
+        notifier.notify(Message(), self.log)
+        self.assertTrue(len(sys.stdout.captured) == 0)
         self.message_mocker.VerifyAll()
 
     def testInactivityTimeCanBeFloatingPointNumberSeconds(self):
@@ -92,8 +99,8 @@ class TestInactivityAction(unittest.TestCase):
         self.message_mocker.ReplayAll()
         notifier = notifications.Inactivity(0.0000002543)
         self.options.inactivity = 0.0000002543
-        time.sleep(0.0000003)
-        notifier.notify(message,self.log)
+        self.log.inactivityTimer.inactivityEllapsed = overgap
+        notifier.notify(message, self.log)
         self.assertTrue('Inactivity' in sys.stdout.captured[0])
         self.assertTrue(notifier.alerted)
         self.message_mocker.VerifyAll()
@@ -138,13 +145,14 @@ class TestInactivityAction(unittest.TestCase):
         inactivityTime = 0.05
         notifier = notifications.Inactivity(inactivityTime)
         self.mocker.replay()
-        time.sleep(0.06)
+        log.inactivityTimer.inactivityEllapsed = overgap
         notifier.notify(message_mock, log)
         self.assertTrue(notifier.alerted)
+        log.inactivityTimer.inactivityEllapsed = belowgap
         notifier.notify(message_mock, log)
         self.assertFalse(notifier.alerted)
         notifier.notify(message_mock, log)
-        time.sleep(0.06)
+        log.inactivityTimer.inactivityEllapsed = overgap
         notifier.notify(message_mock, log)
         self.assertTrue(notifier.alerted)
 
