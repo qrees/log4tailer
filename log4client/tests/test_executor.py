@@ -19,8 +19,6 @@
 import unittest
 import sys
 import mocker
-import time
-import os
 from log4tailer import notifications
 from log4tailer.propertyparser import Property
 from log4tailer.message import Message
@@ -78,8 +76,8 @@ class TestExecutor(unittest.TestCase):
         self.assertEquals(['ls', '-l'], executor.executable)
 
     def testShouldRaiseIfExecutorNotProvided(self):
-        command = "anything"
-        properties = PropertiesStub(command, raises=True)
+        command = ""
+        properties = PropertiesStub(command)
         self.assertRaises(Exception, notifications.Executor, properties)
 
     def testShouldProvideNotifyMethod(self):
