@@ -89,11 +89,12 @@ class PrintShot(Print):
 
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
-    def __init__(self, properties, shot_process="import"):
+    def __init__(self, properties, caller=subprocess):
         super(PrintShot, self).__init__(properties)
         self.screenshot = properties.get_value('screenshot')
+        self.caller = caller
         self.winid = self.get_windowsid()
-        self.screenproc = [shot_process, '-window', self.winid,
+        self.screenproc = ['import', '-window', self.winid,
                 self.screenshot]
 
     def notify(self, message, log):
@@ -102,14 +103,14 @@ class PrintShot(Print):
         if not message.isATarget() and msg_level not in self.Pullers:
             return
         try:
-            subprocess.call(self.screenproc)
+            self.caller.call(self.screenproc)
         except Exception, err:
             print err
-
+    
     def get_windowsid(self):
         getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
         try:
-            proc = subprocess.Popen(getId, shell = True,
+            proc = self.caller.Popen(getId, shell = True,
                     stdout = PIPE, stderr = PIPE)
         except Exception, err:
             print err

@@ -2,89 +2,78 @@
 
 import unittest
 from log4tailer import notifications
-from tests import TESTS_DIR
-import mocker
-from mocker import ANY
-from subprocess import PIPE
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer.logfile import Log
 import sys
-import os
-from os.path import join as pjoin
 from .utils import MemoryWriter
+from .utils import SubProcessStub
 
-CONFIG = 'printshot.cfg'
+
+def callback():
+    pass
+
+
+class PropertiesStub(object):
+
+    def __init__(self):
+        pass
+
+    def get_value(self, value):
+        return "picture.png"
+
+
+class ProcessStub(object):
+    def __init__(self, returns_val):
+        self.returns_val = returns_val
+
+    def communicate(self):
+        return (self.returns_val, None)
+
+
+class SubProcessStubPopen(SubProcessStub):
+    returns_val = "_NET_ACTIVE_WINDOW(WINDOW): window id # 0x3a00004"
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def Popen(*args, **kwargs):
+        return ProcessStub(SubProcessStubPopen.returns_val)
 
 
 class PrintShotTest(unittest.TestCase):
     def setUp(self):
-        self.mocker = mocker.Mocker()
         self.sysout = sys.stdout
-        self.output = pjoin(TESTS_DIR, 'apicture.png')
 
     def test_instantiatesprintshot(self):
-        output = 'picture.png'
-        propertiesmock = self.mocker.mock()
-        propertiesmock.get_value('screenshot')
-        self.mocker.result(output)
-        propertiesmock.get_value(ANY)
-        self.mocker.result(False)
-        self.mocker.replay()
-        printshot = notifications.PrintShot(propertiesmock)
+        printshot = notifications.PrintShot(PropertiesStub())
         self.assertTrue(isinstance(printshot, notifications.PrintShot))
-        self.assertTrue(output, printshot.screenshot)
 
     def test_getwindowid(self):
         getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
         res = "_NET_ACTIVE_WINDOW(WINDOW): window id # 0x3a00004"
-        winid = 0x3a00004
-        procins = self.mocker.mock()
-        procins.communicate()
-        self.mocker.result((res, False))
-        self.procmock = self.mocker.replace('subprocess')
-        self.procmock.Popen(getId, shell=True, stdout=PIPE, stderr=PIPE)
-        self.mocker.result(procins)
-        output = 'picture.png'
-        propertiesmock = self.mocker.mock()
-        propertiesmock.get_value('screenshot')
-        self.mocker.result(output)
-        propertiesmock.get_value(ANY)
-        self.mocker.result(False)
-        self.mocker.replay()
-        printshot = notifications.PrintShot(propertiesmock)
-        self.assertTrue(0x3a00004, printshot.winid)
+        expected_winid = "0x3a00004"
+        caller = SubProcessStubPopen()
+        printshot = notifications.PrintShot(PropertiesStub(), caller=caller)
+        winid = printshot.get_windowsid()
+        self.assertEqual(expected_winid, winid)
 
     def test_printandshoot(self):
         sys.stdout = MemoryWriter()
-        log_traces = ['this is an info log trace',
-                'this is a fatal log trace']
+        log_trace = 'this is a fatal log trace'
         log = Log('anylog')
         logcolors = LogColors()
-        output = 'picture.png'
-        propertiesmock = self.mocker.mock()
-        propertiesmock.get_value('screenshot')
-        self.mocker.result(output)
-        propertiesmock.get_value(ANY)
-        self.mocker.result(False)
-        self.mocker.replay()
-        printandshoot = notifications.PrintShot(propertiesmock,
-                shot_process=pjoin(TESTS_DIR, "printashot.sh"))
+        caller = SubProcessStubPopen()
+        printandshoot = notifications.PrintShot(PropertiesStub(),
+                caller=caller)
         message = Message(logcolors)
-        for trace in log_traces:
-            message.parse(trace, log)
-            printandshoot.notify(message, log)
-        found = False
-        for msg in sys.stdout.captured:
-            if msg.find(log_traces[1]) >= 0:
-                found = True
-        if not found:
-            self.fail()
-        self.assertTrue(os.path.exists(self.output))
+        message.parse(log_trace, log)
+        printandshoot.notify(message, log)
+        colorized_logtrace = '\x1b[31mthis is a fatal log trace\x1b[0m'
+        self.assertEqual(colorized_logtrace, sys.stdout.captured[0])
+        # in [1] has '\n', and [2] should have the result
+        self.assertEqual(SubProcessStub.msg, sys.stdout.captured[2])
 
     def tearDown(self):
-        if os.path.exists(self.output):
-            os.remove(self.output)
-        self.mocker.restore()
-        self.mocker.verify()
         sys.stdout = self.sysout

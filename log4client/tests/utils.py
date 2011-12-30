@@ -45,3 +45,23 @@ class MemoryReader(object):
         pass
 
 
+class SubProcessStub(object):
+    msg = "called..."
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def call(*args, **kwargs):
+        print SubProcessStub.msg
+
+
+class SubProcessStubRaise(object):
+    msg = "Boo, it failed"
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def call(*args, **kwargs):
+        raise Exception(SubProcessStubRaise.msg)

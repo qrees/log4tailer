@@ -27,9 +27,11 @@ from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer.logfile import Log
 from .utils import MemoryWriter
+from .utils import SubProcessStub
+from .utils import SubProcessStubRaise
+
 
 CONFIG = 'aconfig.txt'
-
 
 # so we can run the tests in ../test or inside test
 # folder
@@ -164,28 +166,6 @@ class QueueStub(object):
 class QueueStubStop(QueueStub):
     def get(self):
         return "stop"
-
-
-class SubProcessStub(object):
-    msg = "called..."
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def call(*args, **kwargs):
-        print SubProcessStub.msg
-
-
-class SubProcessStubRaise(object):
-    msg = "Boo, it failed"
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def call(*args, **kwargs):
-        raise Exception(SubProcessStubRaise.msg)
 
 
 class OnceStub(object):
