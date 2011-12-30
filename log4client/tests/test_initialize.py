@@ -196,11 +196,15 @@ class TestInitialize(unittest.TestCase):
     def test_screenshot_setup(self):
         config = DefaultConfig()
         config.properties = MyProperties()
+        winid_mock = self.mocker.replace('log4tailer.notifications'
+            '.get_windowsid')
+        winid_mock(mocker.ANY)
+        self.mocker.result("234")
 
         class MyAction(object):
             def __init__(self):
                 pass
-
+        self.mocker.replay()
         setup_config(OptionsMock("screenshot"), config)
         last_action = config.actions[-1:][0]
         self.assertTrue(isinstance(last_action, notifications.PrintShot))
