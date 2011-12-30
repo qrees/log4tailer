@@ -82,6 +82,17 @@ class Print(object):
             print colormsg
 
 
+def get_windowsid(proc_caller):
+    getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
+    proc = proc_caller.Popen(getId, shell = True,
+                stdout = PIPE, stderr = PIPE)
+    res, err = proc.communicate()
+    if err:
+        raise Exception(err)
+    winid = (res.split('#'))[1].strip()
+    return winid
+
+
 class PrintShot(Print):
     """Prints log trace and takes
     an screenshot whenever we find an alertable
@@ -93,7 +104,7 @@ class PrintShot(Print):
         super(PrintShot, self).__init__(properties)
         self.screenshot = properties.get_value('screenshot')
         self.caller = caller
-        self.winid = self.get_windowsid()
+        self.winid = get_windowsid(caller)
         self.screenproc = ['import', '-window', self.winid,
                 self.screenshot]
 
@@ -102,24 +113,8 @@ class PrintShot(Print):
         msg_level = message.messageLevel.upper()
         if not message.isATarget() and msg_level not in self.Pullers:
             return
-        try:
-            self.caller.call(self.screenproc)
-        except Exception, err:
-            print err
-    
-    def get_windowsid(self):
-        getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
-        try:
-            proc = self.caller.Popen(getId, shell = True,
-                    stdout = PIPE, stderr = PIPE)
-        except Exception, err:
-            print err
-            return
-        res, err = proc.communicate()
-        if err:
-            return
-        winid = (res.split('#'))[1].strip()
-        return winid
+        self.caller.call(self.screenproc)
+
 
 class Inactivity(object):
     '''sends an email or print

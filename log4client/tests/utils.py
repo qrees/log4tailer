@@ -33,6 +33,11 @@ class MemoryWriter(object):
     def fileno(self):
         return True
 
+    def contains(self, msg):
+        if msg in self.captured:
+            return True
+        return False
+
 
 class MemoryReader(object):
     def __init__(self):
@@ -64,4 +69,8 @@ class SubProcessStubRaise(object):
 
     @staticmethod
     def call(*args, **kwargs):
+        raise Exception(SubProcessStubRaise.msg)
+
+    @staticmethod
+    def Popen(*args, **kwargs):
         raise Exception(SubProcessStubRaise.msg)
