@@ -22,17 +22,16 @@ from log4tailer import notifications
 import os
 import sys
 
-def setup_mail(properties):
+def setup_mail(properties, get_pass=getpass.getpass):
     username = properties.get_value("mail_username")
     hostname = properties.get_value("mail_hostname")
     port = properties.get_value("mail_port") or 25
     ssl = properties.get_value("mail_ssl")
     mail_from = properties.get_value("mail_from")
     mail_to = properties.get_value("mail_to")
-    password = getpass.getpass()
+    password = get_pass()
     mailAction = notifications.Mail(mail_from, mail_to, hostname, username,
             password, port, ssl) 
-    mailAction.connectSMTP()
     return mailAction
 
 def get_now():

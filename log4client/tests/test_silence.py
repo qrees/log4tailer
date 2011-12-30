@@ -80,6 +80,9 @@ class TestDemon(unittest.TestCase):
             def notify(self, message, log):
                 pass
 
+            def connectSMTP(self):
+                pass
+
         def setup_mail(properties):
             return ActionMock()
 

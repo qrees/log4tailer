@@ -36,54 +36,35 @@ class TestMailAction(unittest.TestCase):
 
     def setUp(self):
         self.mocker = mocker.Mocker()
-    
+
     def testshouldBeFineImportingformatdate(self):
         mailaction = notifications.Mail()
         self.assertTrue(mailaction.getNow())
-    
+
     @dec.skipif(skip_from_time, "invalid for 2.4")
     def testshoulGetNowDateFromTime(self):
         mailaction = notifications.Mail()
         del(email.utils.formatdate)
-        now = mailaction.getNow() 
+        now = mailaction.getNow()
         self.assertTrue(now)
 
     def test_setupMail(self):
-        username = 'john@doe.com'
-        hostname = '127.0.0.1'
-        port = 25
-        ssl = False
-        mail_from = 'john@doe.com'
-        mail_to = 'john@doe.com'
-        password = 'anypassword'
-        properties_mock = self.mocker.mock()
-        properties_mock.get_value('mail_username')
-        self.mocker.result(username)
-        properties_mock.get_value('mail_hostname')
-        self.mocker.result(hostname)
-        properties_mock.get_value('mail_port')
-        self.mocker.result(port)
-        properties_mock.get_value('mail_ssl')
-        self.mocker.result(ssl)
-        properties_mock.get_value('mail_to')
-        self.mocker.result(mail_to)
-        properties_mock.get_value('mail_from')
-        self.mocker.result(mail_from)
-        getpass_mock = self.mocker.replace('getpass.getpass')
-        getpass_mock()
-        self.mocker.result(password)
-        mail_action = self.mocker.mock()
-        mail_mock = self.mocker.replace('log4tailer.notifications.Mail')
-        mail_mock(mail_from, mail_to, hostname, username, password, port, ssl)
-        self.mocker.result(mail_action)
-        mail_action.connectSMTP()
-        self.mocker.result(True)
-        self.mocker.replay()
-        utils.setup_mail(properties_mock)
-    
+        def getpass():
+            return "111"
+
+        def callback():
+            return "some_data"
+
+        class PropertiesStub(object):
+            def __init__(self):
+                pass
+
+            def get_value(self, value):
+                return callback
+
+        mailaction = utils.setup_mail(PropertiesStub(), getpass)
+        self.assertTrue(isinstance(mailaction, notifications.Mail))
+
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
-
-if __name__=='__main__':
-    unittest.main()

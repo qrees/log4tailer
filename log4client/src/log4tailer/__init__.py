@@ -17,6 +17,10 @@ def parse_config(configfile):
     properties.parse_properties()
     return properties
 
+def set_mail_connect(properties):
+    mailAction = setup_mail(properties)
+    mailAction.connectSMTP()
+    return mailAction
 
 def setup_config(options, default_config):
     colors = default_config.logcolors
@@ -37,8 +41,8 @@ def setup_config(options, default_config):
         throttle = float(options.throttle)
         default_config.throttle = throttle
     if options.silence and properties:
-        mailAction = setup_mail(properties)
-        actions.append(mailAction)
+        mail_action = set_mail_connect(properties)
+        actions.append(mail_action)
         default_config.silence = True
     if options.nomailsilence:
         # silence option with no mail
@@ -46,8 +50,8 @@ def setup_config(options, default_config):
         # or do some kind of reporting
         default_config.silence = True
     if options.mail and properties:
-        mailAction = setup_mail(properties)
-        actions.append(mailAction)
+        mail_action = set_mail_connect(properties)
+        actions.append(mail_action)
     if options.filter:
         # overrides Print notifier
         actions[0] = notifications.Filter(re.compile(options.filter))
@@ -65,8 +69,8 @@ def setup_config(options, default_config):
             if options.mail or options.silence:
                 inactivityAction.setMailNotification(actions[len(actions) - 1])
             else:
-                mailAction = setup_mail(properties)
-                inactivityAction.setMailNotification(mailAction)
+                mail_action = set_mail_connect(properties)
+                inactivityAction.setMailNotification(mail_action)
         actions.append(inactivityAction)
     if options.cornermark:
         cornermark = notifications.CornerMark(options.cornermark)

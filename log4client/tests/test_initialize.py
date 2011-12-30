@@ -130,6 +130,9 @@ class TestInitialize(unittest.TestCase):
             def __init__(self):
                 pass
 
+            def connectSMTP(self):
+                pass
+
         self.mocker.result(MyAction())
         self.mocker.replay()
         setup_config(OptionsMock("mail"), config)

@@ -203,8 +203,13 @@ class TestInit(unittest.TestCase):
         default_config = getDefaults()
         default_config.properties = properties_mock
         utils_mock = self.mocker.replace('log4tailer.utils.setup_mail')
+        class MailActionMock(object):
+            def __init__(self):
+                pass
+            def connectSMTP(self):
+                pass
         utils_mock(ANY)
-        self.mocker.result(True)
+        self.mocker.result(MailActionMock())
         self.mocker.replay()
         log4tailer.setup_config(self.OptionsMock(), default_config)
         actions = default_config.actions
