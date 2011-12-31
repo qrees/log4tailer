@@ -193,15 +193,19 @@ class TestInit(unittest.TestCase):
         self.assertFalse(isinstance(actions[0], notifications.CornerMark))
 
     def test_monitor_inactivity_withmail(self):
-        properties_mock = self.mocker.mock()
-        properties_mock.get_value('inactivitynotification')
-        self.mocker.result('mail')
-        properties_mock.get_value('print_hostname')
-        self.mocker.result('false')
-        properties_mock.get_keys()
-        self.mocker.result([])
+        class PropertiesStub(object):
+            def __init__(self):
+                pass
+
+            def get_value(self, value):
+                if value == "inactivitynotification":
+                    return "mail"
+                elif value == "print_hostname":
+                    return "false"
+            def get_keys(self):
+                return []
         default_config = getDefaults()
-        default_config.properties = properties_mock
+        default_config.properties = PropertiesStub()
         utils_mock = self.mocker.replace('log4tailer.utils.setup_mail')
         class MailActionMock(object):
             def __init__(self):
