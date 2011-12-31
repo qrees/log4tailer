@@ -359,7 +359,7 @@ class CornerMark(object):
     def corner_mark_time(self):
         return self.corner_time
 
-    def _term_num_cols(self):
+    def term_num_cols(self):
         """Returns the number columns in the current terminal using the Linux
         tputs command line tool.
 
@@ -396,7 +396,7 @@ class CornerMark(object):
                 self.timer.startTimer()
             self.count += 1
             if self.timer.corner_mark_ellapsed() < self.corner_time:
-                padding = self._term_num_cols() - self.len_mark
+                padding = self.term_num_cols() - self.len_mark
                 trace = (padding * " " + getattr(self.termcolors,
                     self.emphcolor)+ self.MARK + self.termcolors.reset)
                 print trace

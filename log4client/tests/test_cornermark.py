@@ -3,7 +3,6 @@
 import unittest
 import sys
 import os
-import time
 from log4tailer.logfile import Log
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
@@ -18,6 +17,12 @@ CONFIG = 'aconfig.txt'
 def overgap():
     return 0.02
 
+def tcols_callback():
+    return 5
+
+def patch_term_num_cols(notifier):
+    notifier.term_num_cols = tcols_callback
+
 
 class TestCornerMark(unittest.TestCase):
     """The purpose of the corner mark is to have an small square in the bottom
@@ -25,6 +30,7 @@ class TestCornerMark(unittest.TestCase):
     """ 
     def setUp(self):
         self.sysback = sys.stdout
+        self.ttcols = tcols_callback()
     
     def testIsCornerMark(self):
         cornermark = notifications.CornerMark(10)
@@ -44,11 +50,8 @@ class TestCornerMark(unittest.TestCase):
         notifier = notifications.CornerMark(10)
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
-        ttcols = int(ttcols)
-        padding = ttcols - len(notifier.MARK)
+        patch_term_num_cols(notifier)
+        padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.backgroundemph + notifier.MARK +\
                 termcolors.reset
         notifier.notify(message, anylog)
@@ -64,13 +67,10 @@ class TestCornerMark(unittest.TestCase):
         notifier = notifications.CornerMark(0.01)
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
-        ttcols = int(ttcols)
-        padding = ttcols - len(notifier.MARK)
+        padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.backgroundemph + notifier.MARK +\
                 termcolors.reset
+        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
         trace = "INFO this is an info trace"
@@ -89,13 +89,10 @@ class TestCornerMark(unittest.TestCase):
         notifier = notifications.CornerMark(0.01)
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
-        ttcols = int(ttcols)
-        padding = ttcols - len(notifier.MARK)
+        padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.backgroundemph + notifier.MARK +\
                 termcolors.reset
+        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
         def belowgap():
@@ -115,9 +112,6 @@ class TestCornerMark(unittest.TestCase):
         self.assertFalse(sys.stdout.captured)
 
     def testMarkedFATALMarkedWARNING(self):
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
         trace = "FATAL this is a fatal trace"
         sys.stdout = MemoryWriter()
         logcolors = LogColors()
@@ -127,12 +121,12 @@ class TestCornerMark(unittest.TestCase):
         anylog = Log('out.log')
         message.parse(trace, anylog)
         notifier.notify(message, anylog)
-        ttcols = int(ttcols)
-        padding = ttcols - len(notifier.MARK)
+        padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.onyellowemph + notifier.MARK +\
                 termcolors.reset
         trace = "WARN this is just a warn"
         message.parse(trace, anylog)
+        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEquals(output, sys.stdout.captured[2])
 
@@ -151,14 +145,11 @@ class TestCornerMark(unittest.TestCase):
         notifier = notifications.CornerMark(0.02)
         anylog = Log(logfile, properties)
         message = Message(logcolors, properties = properties)
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
-        ttcols = int(ttcols)
-        padding = ttcols - len(notifier.MARK)
+        padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.oncyanemph + notifier.MARK +\
                 termcolors.reset
         message.parse(trace, anylog)
+        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
@@ -177,14 +168,11 @@ class TestCornerMark(unittest.TestCase):
         notifier = notifications.CornerMark(0.02)
         anylog = Log(logfile, properties)
         message = Message(logcolors, properties = properties)
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
-        ttcols = int(ttcols)
-        padding = ttcols - len(notifier.MARK)
+        padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.oncyanemph + notifier.MARK +\
                 termcolors.reset
         message.parse(trace, anylog)
+        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
     
