@@ -74,3 +74,17 @@ class SubProcessStubRaise(object):
     @staticmethod
     def Popen(*args, **kwargs):
         raise Exception(SubProcessStubRaise.msg)
+
+
+def properties_callback():
+    return "some_data"
+
+
+class PropertiesStub(object):
+    def __init__(self):
+        pass
+
+    def get_value(self, value):
+        return properties_callback
+
+

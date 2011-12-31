@@ -498,7 +498,7 @@ class Poster(object):
     """
     Pullers = ['ERROR', 'FATAL', 'CRITICAL']
 
-    def __init__(self, properties):
+    def __init__(self, properties, http_conn=httplib.HTTPConnection):
         """Instantiates a REST notifier.
 
         :param properties: a Property instance holding the necessary parameters
@@ -513,6 +513,7 @@ class Poster(object):
         self.unregister_uri = properties.get_value('server_service_unregister_uri')
         self.headers = {'Content-type' : 'application/json'}
         self.registered_logs = {}
+        self.http_conn = http_conn
         from socket import gethostname
         self.hostname = gethostname()
         # TODO should we set socket timeout?
@@ -551,7 +552,7 @@ class Poster(object):
             return body
 
     def send(self, uri, params):
-        conn = httplib.HTTPConnection(self.url, self.port)
+        conn = self.http_conn(self.url, self.port)
         try:
             conn.request('POST', uri, params, self.headers)
             response = conn.getresponse()
@@ -561,4 +562,3 @@ class Poster(object):
         body = response.read()
         conn.close()
         return body
-

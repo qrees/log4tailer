@@ -23,6 +23,7 @@ import mocker
 import decorators as dec
 from log4tailer import notifications
 from log4tailer import utils
+from .utils import PropertiesStub
 
 
 version_info = sys.version_info
@@ -51,16 +52,6 @@ class TestMailAction(unittest.TestCase):
     def test_setupMail(self):
         def getpass():
             return "111"
-
-        def callback():
-            return "some_data"
-
-        class PropertiesStub(object):
-            def __init__(self):
-                pass
-
-            def get_value(self, value):
-                return callback
 
         mailaction = utils.setup_mail(PropertiesStub(), getpass)
         self.assertTrue(isinstance(mailaction, notifications.Mail))

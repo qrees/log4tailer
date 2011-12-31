@@ -7,6 +7,29 @@ from log4tailer.logcolors import LogColors
 from log4tailer.message import Message
 from log4tailer.logfile import Log
 import json
+from .utils import PropertiesStub
+
+class ResponseStub(object):
+    def __init__(self):
+        pass
+    
+    def read(self):
+        return "anydata"
+        
+
+class HttpConnStub(object):
+    def __init__(self, url, port):
+        pass
+
+    def request(self, *args, **kwargs):
+        pass
+
+    def getresponse(self):
+        return ResponseStub()
+
+    def close(self):
+        pass
+
 
 def mock_server(mocker_obj):
     body = json.dumps({'status_code' : 200})
@@ -28,85 +51,39 @@ def mock_server(mocker_obj):
     mocker_obj.result(conn)
 
 
-class TestPost(unittest.TestCase):
+class PostNotificationTest(unittest.TestCase):
     def setUp(self):
         self.mocker = mocker.Mocker()
 
-    def test_post_notification(self):
-        properties = self.mocker.mock()
-        properties.get_value('server_url')
-        self.mocker.result('localhost')
-        properties.get_value('server_port')
-        self.mocker.result(8000)
-        properties.get_value('server_service_uri')
-        self.mocker.result('/')
-        properties.get_value('server_service_register_uri')
-        self.mocker.result('/register')
-        properties.get_value('server_service_unregister_uri')
-        self.mocker.result('/unregister')
-        self.mocker.replay()
-        poster = notifications.Poster(properties)
+    def test_post_notification_instantiates(self):
+        poster = notifications.Poster(PropertiesStub())
         self.assertTrue(isinstance(poster, notifications.Poster))
 
     def test_has_notify_method(self):
-        properties = self.mocker.mock()
-        properties.get_value('server_url')
-        self.mocker.result('localhost')
-        properties.get_value('server_port')
-        self.mocker.result(8000)
-        properties.get_value('server_service_uri')
-        self.mocker.result('/')
-        properties.get_value('server_service_register_uri')
-        self.mocker.result('/register')
-        properties.get_value('server_service_unregister_uri')
-        self.mocker.result('/unregister')
-        self.mocker.replay()
-        poster = notifications.Poster(properties)
+        poster = notifications.Poster(PropertiesStub())
         self.assertTrue(getattr(poster, 'notify'))
 
     def test_shouldPost_if_alertable(self):
-        properties = self.mocker.mock()
-        properties.get_value('server_url')
-        self.mocker.result('localhost')
-        properties.get_value('server_port')
-        self.mocker.result(8000)
-        properties.get_value('server_service_uri')
-        self.mocker.result('/')
-        properties.get_value('server_service_register_uri')
-        self.mocker.result('/register')
-        properties.get_value('server_service_unregister_uri')
-        self.mocker.result('/unregister')
         logcolors = LogColors()
         logtrace = 'this is an error log trace'
         log = Log('anylog')
         message = Message(logcolors)
         message.parse(logtrace, log)
-        mock_server(self.mocker)
-        self.mocker.replay()
-        poster = notifications.Poster(properties)
+        poster = notifications.Poster(PropertiesStub(), 
+                http_conn=HttpConnStub)
         body = poster.notify(message, log)
         self.assertTrue(body)
 
     def test_execute_if_targetMessage(self):
-        properties = self.mocker.mock()
-        properties.get_value('server_url')
-        self.mocker.result('localhost')
-        properties.get_value('server_port')
-        self.mocker.result(8000)
-        properties.get_value('server_service_uri')
-        self.mocker.result('/')
-        properties.get_value('server_service_register_uri')
-        self.mocker.result('/register')
-        properties.get_value('server_service_unregister_uri')
-        self.mocker.result('/unregister')
         logcolors = LogColors()
         logtrace = 'this is a target log trace'
         log = Log('anylog')
         message = Message(logcolors, target='trace')
         message.parse(logtrace, log)
-        mock_server(self.mocker)
-        self.mocker.replay()
-        poster = notifications.Poster(properties)
+        poster = notifications.Poster(PropertiesStub(),
+                http_conn=HttpConnStub)
+        poster.registered_logs[log] = {'id' : 1, 'logserver' :
+                "anything"}
         body = poster.notify(message, log)
         self.assertTrue(body)
 
@@ -134,42 +111,18 @@ class TestPost(unittest.TestCase):
         self.assertFalse(body)
 
     def test_register_to_server_first_time(self):
-        properties = self.mocker.mock()
-        properties.get_value('server_url')
-        self.mocker.result('localhost')
-        properties.get_value('server_port')
-        self.mocker.result(8000)
-        properties.get_value('server_service_uri')
-        self.mocker.result('/')
-        properties.get_value('server_service_register_uri')
-        self.mocker.result('/register')
-        properties.get_value('server_service_unregister_uri')
-        self.mocker.result('/unregister')
         logcolors = LogColors()
         log = Log('anylog')
-        mock_server(self.mocker)
-        self.mocker.replay()
-        poster = notifications.Poster(properties)
+        poster = notifications.Poster(PropertiesStub(),
+                http_conn=HttpConnStub)
         body = poster.register(log)
         self.assertFalse(body)
 
     def test_unregister_method_for_shutdown(self):
-        properties = self.mocker.mock()
-        properties.get_value('server_url')
-        self.mocker.result('localhost')
-        properties.get_value('server_port')
-        self.mocker.result(8000)
-        properties.get_value('server_service_uri')
-        self.mocker.result('/')
-        properties.get_value('server_service_register_uri')
-        self.mocker.result('/register')
-        properties.get_value('server_service_unregister_uri')
-        self.mocker.result('/unregister')
         logcolors = LogColors()
         log = Log('anylog')
-        mock_server(self.mocker)
-        self.mocker.replay()
-        poster = notifications.Poster(properties)
+        poster = notifications.Poster(PropertiesStub(), 
+                http_conn=HttpConnStub)
         poster.registered_logs[log] = {'id' : 5, 'logserver' : 'anyserver'}
         body = poster.unregister(log)
         self.assertTrue(body)
