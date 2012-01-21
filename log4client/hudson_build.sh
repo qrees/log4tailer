@@ -1,7 +1,7 @@
 cd $WORKSPACE/log4client
 CWD=`pwd`
 COVERAGE=bin/coverage
-TEST=bin/test 
+TEST=bin/unittests
 
 make env
 export PATH=$CWD/ENV/bin:$PATH
