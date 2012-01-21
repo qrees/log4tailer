@@ -40,11 +40,18 @@ class PropertiesMock(object):
     def get_value(self, key):
         if key == 'print_hostname':
             return "true"
-        if key == 'interspacing':
-            return 1
 
     def is_key(self, key):
         return True
+
+
+class PropertiesTraceSpacing(object):
+    def __init__(self):
+        pass
+    def get_value(self, key):
+        if key == 'tracespacing':
+            return 1
+        return "false"
 
 
 class MessageMock(object):
@@ -112,12 +119,14 @@ class PrintTraceSpacing(unittest.TestCase):
 
     def test_oneline_space_between_traces(self):
         sys.stdout = MemoryWriter()
-        notifier = notifications.Print(PropertiesMock())
+        notifier = notifications.Print(PropertiesTraceSpacing())
         logtrace = "this is a log trace in red"
         message = MessageMock(logtrace)
         log = LogMock() 
         notifier.notify(message, log)
-        firstline = '\n'
-        self.assertTrue(firstline, sys.stdout.captured[1])
-        self.assertTrue(logtrace, sys.stdout.captured[1])
+        expected_logtrace = "\n" + logtrace
+        self.assertEqual(expected_logtrace, sys.stdout.captured[0])
+
+    def tearDown(self):
+        sys.stdout = self.sysout
 

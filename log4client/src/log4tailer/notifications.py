@@ -44,11 +44,12 @@ except ImportError:
     import Queue as queue
 
 try:
-    # this needs more thought... Should be activated only if required 
+    # this needs more thought... Should be activated only if required
     # from command line.
     from smtplib import SMTP_SSL
 except ImportError:
     pass
+
 
 class Print(object):
     '''PrintAction: prints to stdout the
@@ -69,22 +70,25 @@ class Print(object):
             if tracespacing:
                 self.inter_space = int(tracespacing) * self.line_sep
 
+    def _print(self, message):
+        print self.inter_space + message
+
     def notify(self, message, log):
         '''msg should be colorized already
         there is a module in pypy colorize, check it out'''
         (pause, colormsg) = message.getColorizedMessage()
         if colormsg:
             if self.hostname:
-                print self.hostname + ': ' + colormsg + self.inter_space
+                self._print(self.hostname + ': ' + colormsg)
             else:
-                print colormsg + self.inter_space 
+                self._print(colormsg)
             time.sleep(pause)
 
     def printInit(self, message):
         (pause,colormsg) = message.getColorizedMessage()
         pause = 0
         if colormsg:
-            print colormsg
+            self._print(colormsg)
 
 
 def get_windowsid(proc_caller):
@@ -413,14 +417,14 @@ class CornerMark(object):
 class WaitForever(object):
     def __init__(self):
         self.forever = True
-        
+
 
 class TriggerExecutor(threading.Thread):
     """Triggers the trigger command, one
     trigger_command at a time, in its own thread.
     """
 
-    def __init__(self, queue=queue.Queue, caller=subprocess, 
+    def __init__(self, queue=queue.Queue, caller=subprocess,
             wait=WaitForever):
         threading.Thread.__init__(self)
         self.queue = queue()
