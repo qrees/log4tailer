@@ -58,11 +58,16 @@ class Print(object):
         # we can append extra information to lines regarding
         # hostname we are in
         self.hostname = False
+        self.line_sep = "\n"
+        self.inter_space = 0 * self.line_sep
         if properties:
             printhostname = properties.get_value('print_hostname')
+            tracespacing = properties.get_value('tracespacing')
             if evalvalue(printhostname):
                 from socket import gethostname
                 self.hostname = gethostname()
+            if tracespacing:
+                self.inter_space = int(tracespacing) * self.line_sep
 
     def notify(self, message, log):
         '''msg should be colorized already
@@ -70,9 +75,9 @@ class Print(object):
         (pause, colormsg) = message.getColorizedMessage()
         if colormsg:
             if self.hostname:
-                print self.hostname + ': ' + colormsg
+                print self.hostname + ': ' + colormsg + self.inter_space
             else:
-                print colormsg
+                print colormsg + self.inter_space 
             time.sleep(pause)
 
     def printInit(self, message):

@@ -40,13 +40,32 @@ class PropertiesMock(object):
     def get_value(self, key):
         if key == 'print_hostname':
             return "true"
+        if key == 'interspacing':
+            return 1
 
     def is_key(self, key):
         return True
 
 
+class MessageMock(object):
+    def __init__(self, logtrace):
+        self.logtrace = logtrace
+
+    def getColorizedMessage(self):
+        return (0, self.logtrace)
+
+class LogMock(object):
+    def __init__(self):
+        pass
+        
+        
+
+
 class TestPrintWithHostname(unittest.TestCase):
     def setUp(self):
+        self.sysout = sys.stdout
+
+    def test_hostnameinconfig(self):
         self.logfile = 'out.log'
         fh = open(self.logfile,'w')
         self.someLogTraces = ['FATAL> something went wrong',
@@ -57,9 +76,6 @@ class TestPrintWithHostname(unittest.TestCase):
         for line in self.someLogTraces:
             fh.write(line+'\n')
         fh.close()
-        self.sysout = sys.stdout
-
-    def test_hostnameinconfig(self):
         logcolors = LogColors() #using default colors
         termcolors = TermColorCodes()
         target = None
@@ -87,5 +103,21 @@ class TestPrintWithHostname(unittest.TestCase):
 
     def tearDown(self):
         sys.stdout = self.sysout
-    
- 
+
+
+class PrintTraceSpacing(unittest.TestCase):
+
+    def setUp(self):
+        self.sysout = sys.stdout
+
+    def test_oneline_space_between_traces(self):
+        sys.stdout = MemoryWriter()
+        notifier = notifications.Print(PropertiesMock())
+        logtrace = "this is a log trace in red"
+        message = MessageMock(logtrace)
+        log = LogMock() 
+        notifier.notify(message, log)
+        firstline = '\n'
+        self.assertTrue(firstline, sys.stdout.captured[1])
+        self.assertTrue(logtrace, sys.stdout.captured[1])
+
