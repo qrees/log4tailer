@@ -87,7 +87,8 @@ class MyProperties(object):
     def get_value(self, value):
         if value == 'executor':
             return "ls -l"
-        return callback
+        elif value == "screenshot":
+            return callback
 
     def __getattr__(self, method):
         return False

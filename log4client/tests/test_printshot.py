@@ -21,7 +21,8 @@ class PropertiesStub(object):
         pass
 
     def get_value(self, value):
-        return "picture.png"
+        if value == "screenshot":
+            return "picture.png"
 
 
 class ProcessStub(object):
