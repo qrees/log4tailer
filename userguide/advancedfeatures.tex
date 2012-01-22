@@ -229,6 +229,21 @@ The example in \autoref{fig:multiple_colors} will clarify that.
 \caption{\logftailer{} each log with its own color scheme}\label{fig:multiple_colors}
 \end{figure}
 
+\subsubsection{Line spacing}
+
+You can specify if you want line spacing in between log traces. By default,
+there is no line spacing, but you can specify in your configuration file the
+next parameter:
+
+\begin{config}
+\begin{verbatim}
+ tracespacing = 2
+\end{verbatim}
+\end{config}
+
+and \logftailer{} will leave two white lines in between log traces. That
+configuration is good for easy identification of specific patterns.
+
 \subsection{Filter Notification}
 \label{sec:filter}
 It implements the tail and grep. You tail the log 
@@ -636,6 +651,8 @@ You can tail last \emph{N} lines from the log with the \emph{-n} option. Just ty
 and it will output the last \emph{numberOfLines} from the log colorizing the
 corresponding levels.
 
+  
+
 \section{SSH Tailing}
 SSH Tailing or remote tailing will allow you to tail multiple remote logs from
 different hosts. As of now, only PrintAction is available, so you'll be able to
@@ -739,6 +756,12 @@ The config file provided for convenience is called log4tailerconfig.txt and is q
 # fatal = red, on_green
 # info = green
 # debug = black
+
+# ====================================================
+# White lines in between log traces
+# ====================================================
+
+# tracespacing = 1
 
 # ================================
 # targets: which lines do you want 

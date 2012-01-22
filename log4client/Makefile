@@ -53,6 +53,9 @@ releasetag: $(EXE)
 $(TEST): $(BUILDOUT)
 	$(BUILDOUT) install test
 
+doc:
+	$(PYTHON) setup.py dodoc
+
 clean:
 	@echo "clean ..."
 	rm -f `find src -name "*.pyc"`
