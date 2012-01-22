@@ -35,7 +35,7 @@ coverage: $(TEST)
 $(EXE): $(BUILDOUT) 
 	$(BUILDOUT) install log4tail
 
-$(BUILDOUT): env bootstrap.py
+$(BUILDOUT): bootstrap.py
 	$(PYTHON) bootstrap.py
 	$(BUILDOUT)
 

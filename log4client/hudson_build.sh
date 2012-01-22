@@ -4,8 +4,6 @@ COVERAGE=bin/coverage
 TEST=bin/unittests
 UNITTESTXML=unittests.xml
 
-make env
-export PATH=$CWD/ENV/bin:$PATH
 make all
 
 # HACK to make the hudson job fail if tests fail
@@ -21,4 +19,3 @@ fi
 $COVERAGE xml 
 make pylint > /dev/null 2>&1
 make coberturasource
-
