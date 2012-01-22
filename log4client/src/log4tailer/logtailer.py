@@ -79,7 +79,7 @@ class LogTailer(object):
         '''prints the last 10
         lines for each log, one log
         at a time'''
-        printAction = notifications.Print()
+        printAction = notifications.Print(self.properties)
         lenarray = len(self.arrayLog)
         cont = 0
         for log in self.arrayLog:
