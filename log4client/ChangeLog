@@ -1,4 +1,11 @@
 ====================================
+xx/xx/xx release 3.0.7
+====================================
+- Log trace line spacing feature
+- improved tests
+- code more PEP8 compliance
+
+====================================
 19/12/11 release 3.0.6
 ====================================
 - Bug fixes MacOS readlines problem issue #11
