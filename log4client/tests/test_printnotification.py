@@ -46,8 +46,10 @@ class PropertiesMock(object):
 
 
 class PropertiesTraceSpacing(object):
+
     def __init__(self):
         pass
+
     def get_value(self, key):
         if key == 'tracespacing':
             return 1
@@ -61,38 +63,38 @@ class MessageMock(object):
     def getColorizedMessage(self):
         return (0, self.logtrace)
 
+
 class LogMock(object):
     def __init__(self):
         pass
-        
-        
 
 
 class TestPrintWithHostname(unittest.TestCase):
+
     def setUp(self):
         self.sysout = sys.stdout
 
     def test_hostnameinconfig(self):
-        self.logfile = 'out.log'
-        fh = open(self.logfile,'w')
-        self.someLogTraces = ['FATAL> something went wrong',
+        logfile = 'out.log'
+        fh = open(logfile, 'w')
+        someLogTraces = ['FATAL> something went wrong',
                               'ERROR> not so wrong',
                               'WARN> be careful',
                               'DEBUG> looking behind the scenes',
                               'INFO> the app is running']
-        for line in self.someLogTraces:
-            fh.write(line+'\n')
+        for line in someLogTraces:
+            fh.write(line + '\n')
         fh.close()
-        logcolors = LogColors() #using default colors
+        logcolors = LogColors()  # using default colors
         termcolors = TermColorCodes()
         target = None
         notifier = notifications.Print(PropertiesMock())
-        message = Message(logcolors,target)
-        log = Log(self.logfile)
+        message = Message(logcolors, target)
+        log = Log(logfile)
         log.openLog()
         sys.stdout = MemoryWriter()
         hostname = socket.gethostname()
-        for count in range(len(self.someLogTraces)):
+        for _ in range(len(someLogTraces)):
             line = log.readLine()
             line = line.rstrip()
             level = line.split('>')
@@ -101,12 +103,12 @@ class TestPrintWithHostname(unittest.TestCase):
                     logcolors.getLevelColor(level[0]) +
                     line +
                     termcolors.reset)
-            notifier.notify(message,log)
+            notifier.notify(message, log)
             self.assertTrue(output in sys.stdout.captured)
         line = log.readLine()
-        self.assertEqual('',line)
+        self.assertEqual('', line)
         message.parse(line, log)
-        self.assertFalse(notifier.notify(message,log))
+        self.assertFalse(notifier.notify(message, log))
 
     def tearDown(self):
         sys.stdout = self.sysout
@@ -122,11 +124,10 @@ class PrintTraceSpacing(unittest.TestCase):
         notifier = notifications.Print(PropertiesTraceSpacing())
         logtrace = "this is a log trace in red"
         message = MessageMock(logtrace)
-        log = LogMock() 
+        log = LogMock()
         notifier.notify(message, log)
         expected_logtrace = "\n" + logtrace
         self.assertEqual(expected_logtrace, sys.stdout.captured[0])
 
     def tearDown(self):
         sys.stdout = self.sysout
-
