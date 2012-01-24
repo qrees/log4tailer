@@ -1,5 +1,5 @@
 ====================================
-xx/xx/xx release 3.0.7
+23/01/12 release 3.0.7
 ====================================
 - Log trace line spacing feature
 - improved tests
@@ -12,12 +12,10 @@ xx/xx/xx release 3.0.7
 - Big refactor to make tests easily to mantain. Renamed capital case modules
 to lower case. 
 
-
 ====================================
 03/12/11 release 3.0.5
 ====================================
 - Bug fixes import SMTP_SSL Fixes issue #8.
-
 
 ====================================
 28/08/11 release 3.0.4
