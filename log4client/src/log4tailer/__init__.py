@@ -85,6 +85,8 @@ def setup_config(options, default_config):
     if options.screenshot and properties:
         printandshoot = notifications.PrintShot(properties)
         actions[0] = printandshoot
+    if options.slowdown:
+        actions.append(notifications.SlowDown(default_config.tail_context))
 
 
 def monitor(options, args, default_config, wait_for=time.sleep):

@@ -24,6 +24,7 @@ from log4tailer.propertyparser import evalvalue
 from log4tailer.timing import Timer
 from smtplib import SMTP, SMTPServerDisconnected
 from log4tailer.termcolorcodes import TermColorCodes
+from log4tailer import strategy
 import subprocess
 from subprocess import PIPE
 import threading
@@ -100,6 +101,35 @@ def get_windowsid(proc_caller):
         raise Exception(err)
     winid = (res.split('#'))[1].strip()
     return winid
+
+
+class SlowDown(object):
+
+    Pullers = ['WARN', 'ERROR', 'FATAL', 'CRITICAL']
+    THROTTLE_TIME = 1
+    MAX_COUNT = 10
+
+    def __init__(self, tail_context):
+        self.tail_context = tail_context
+        self.counter = 0
+        self.triggered = False
+
+    def notify(self, message, log):
+        msg_level = message.messageLevel.upper()
+        if not message.isATarget() and msg_level not in self.Pullers:
+            if self.triggered:
+                self.counter += 1
+                if self.counter > self.MAX_COUNT :
+                    self.tail_context.change_tail_method(
+                            strategy.TailMultiLineMethod())
+                    self.tail_context.throttle_time = 0
+                    self.counter = 0
+                    self.triggered = False
+            return
+        self.counter = 0
+        self.triggered = True
+        self.tail_context.change_tail_method(strategy.TailOneLineMethod())
+        self.tail_context.throttle_time = self.THROTTLE_TIME
 
 
 class PrintShot(Print):

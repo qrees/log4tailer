@@ -181,7 +181,8 @@ class TestInit(unittest.TestCase):
                 'silence': False,
                 'mail': False,
                 'nomailsilence': False,
-                'screenshot': False}
+                'screenshot': False, 
+                'slowdown' : False}
         self._options_mocker_generator(options_mock, params)
         default_config = DefaultConfig()
         self.mocker.replay()
@@ -241,7 +242,8 @@ class TestInit(unittest.TestCase):
                 'inactivity': False,
                 'nomailsilence': False,
                 'post': False,
-                'screenshot': False}
+                'screenshot': False, 
+                'slowdown': False}
         self._options_mocker_generator(options_mock, params)
         default_config = DefaultConfig()
         self.mocker.replay()

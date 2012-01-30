@@ -59,11 +59,12 @@ class LogTailer(object):
         self.pause = default_config.pause
         self.silence = default_config.silence
         self.actions = default_config.actions
-        self.throttleTime = default_config.throttle
         self.target = default_config.target
         self.properties = default_config.properties
         self.mailAction = None
         self._wait_for = wait_for
+        self.tail_context = default_config.tail_context
+        self.tail_context.throttle_time = default_config.throttle
 
     def addLog(self, log):
         self.arrayLog.append(log)
@@ -191,9 +192,6 @@ class LogTailer(object):
         message = Message(self.logcolors, self.target, self.properties)
         resume = self.resumeBuilder()
         self.posEnd()
-        get_log_lines = "readLines"
-        if self.throttleTime:
-            get_log_lines = "readLine"
         if self.silence:
             daemonize()
         try:
@@ -202,12 +200,12 @@ class LogTailer(object):
             curpath = ""
             while True:
                 found = 0
-                self._wait_for(self.throttleTime)
+                self._wait_for(self.tail_context.throttle_time)
                 for log in self.arrayLog:
                     curpath = log.path
                     if hasRotated(log):
                         found = 0
-                    lines = getattr(log, get_log_lines)()
+                    lines =  self.tail_context.get_trace(log)
                     if not lines:
                         # notify actions
                         message.parse('', log)

@@ -19,6 +19,9 @@
 import unittest
 import sys
 from log4tailer.logfile import Log
+from log4tailer.strategy import TailContext
+from log4tailer.strategy import TailOneLineMethod
+from log4tailer.strategy import TailMultiLineMethod
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
 from log4tailer import notifications
@@ -45,7 +48,7 @@ class PropertiesMock(object):
         return True
 
 
-class PropertiesTraceSpacing(object):
+class PropertiesTraceStub(object):
 
     def __init__(self):
         pass
@@ -53,6 +56,10 @@ class PropertiesTraceSpacing(object):
     def get_value(self, key):
         if key == 'tracespacing':
             return 1
+        if key == 'slowdown':
+            # would slow down for 5 seconds
+            # one log trace/second
+            return 5
         return "false"
 
 
@@ -121,7 +128,7 @@ class PrintTraceSpacing(unittest.TestCase):
 
     def test_oneline_space_between_traces(self):
         sys.stdout = MemoryWriter()
-        notifier = notifications.Print(PropertiesTraceSpacing())
+        notifier = notifications.Print(PropertiesTraceStub())
         logtrace = "this is a log trace in red"
         message = MessageMock(logtrace)
         log = LogMock()
@@ -131,3 +138,128 @@ class PrintTraceSpacing(unittest.TestCase):
 
     def tearDown(self):
         sys.stdout = self.sysout
+
+
+class WaitForMock(object):
+
+    def __init__(self):
+        self.called = False
+
+    def __call__(self):
+        self.called = True
+
+
+class TailMethod(object):
+    def __init__(self):
+        pass
+
+    def get_trace(self, log):
+        return "hi"
+
+
+class OtherTailMethod(object):
+    """docstring for OtherTailMethod"""
+    def __init__(self):
+        pass
+
+
+class TailContextTestCase(unittest.TestCase):
+
+    def test_instantiates(self):
+        throttle_time = 0
+        context = TailContext(throttle_time, default_tail_method=TailMethod)
+        self.assertTrue(isinstance(context, TailContext))
+
+    def test_changes_tail_method(self):
+        throttle_time = 0
+        context = TailContext(throttle_time, default_tail_method=TailMethod)
+        context.change_tail_method(OtherTailMethod())
+        self.assertTrue(isinstance(context.tail_method, OtherTailMethod))
+
+    def test_get_trace(self):
+        throttle_time = 0
+        context = TailContext(throttle_time, default_tail_method=TailMethod)
+        trace = context.get_trace(DummyLog())
+        self.assertEqual(trace, "hi")
+
+
+class DummyLog(object):
+    def __init__(self):
+        pass
+
+    def readLine(self):
+        return "one line"
+
+    def readLines(self):
+        return "many lines"
+
+
+class TailOneLineMethodTestCase(unittest.TestCase):
+
+    def test_instantiates(self):
+        one_line_method = TailOneLineMethod()
+        self.assertTrue(isinstance(one_line_method, TailOneLineMethod))
+
+    def test_get_trace(self):
+        one_line_method = TailOneLineMethod()
+        self.assertTrue(one_line_method.read_method, "readLine")
+        trace = one_line_method.get_trace(DummyLog())
+        self.assertEqual(trace, "one line")
+
+
+class TailMultiLineMethodTestCase(unittest.TestCase):
+
+    def test_instantiates(self):
+        one_line_method = TailMultiLineMethod()
+        self.assertTrue(isinstance(one_line_method, TailMultiLineMethod))
+
+    def test_get_trace(self):
+        one_line_method = TailMultiLineMethod()
+        self.assertTrue(one_line_method.read_method, "readLines")
+        trace = one_line_method.get_trace(DummyLog())
+        self.assertEqual(trace, "many lines")
+
+
+class WarningMessage(object):
+    def __init__(self):
+        self.messageLevel = "warn"
+
+    def isATarget(self):
+        return False
+
+
+class NormalMessage(object):
+    def __init__(self):
+        self.messageLevel = "info"
+
+    def isATarget(self):
+        return False
+
+
+class SlowDownNotificationTestCase(unittest.TestCase):
+
+    def test_instantiates(self):
+        throttle_time = 0
+        context = TailContext(throttle_time)
+        slow_down = notifications.SlowDown(context)
+        self.assertTrue(isinstance(slow_down, notifications.SlowDown))
+
+    def test_notify_changes_tail_method(self):
+        throttle_time = 0
+        context = TailContext(throttle_time)
+        self.assertTrue(isinstance(context.tail_method, TailMultiLineMethod))
+        slow_down = notifications.SlowDown(context)
+        slow_down.notify(WarningMessage(), DummyLog())
+        self.assertTrue(isinstance(context.tail_method, TailOneLineMethod))
+
+    def test_notify_back_to_default_after_10_tails(self):
+        throttle_time = 0
+        context = TailContext(throttle_time)
+        self.assertTrue(isinstance(context.tail_method, TailMultiLineMethod))
+        slow_down = notifications.SlowDown(context)
+        notifications.SlowDown.MAX_COUNT = 1
+        slow_down.notify(WarningMessage(), DummyLog())
+        self.assertTrue(isinstance(context.tail_method, TailOneLineMethod))
+        slow_down.notify(NormalMessage(), DummyLog())
+        slow_down.notify(NormalMessage(), DummyLog())
+        self.assertTrue(isinstance(context.tail_method, TailMultiLineMethod))

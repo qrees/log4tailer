@@ -72,6 +72,9 @@ def log4tail_cli(parser, argv):
     parser.add_option("--screenshot", action="store_true", dest="screenshot",
         help="takes a terminal screenshot whenever it finds an alertable log "
                 "trace")
+    parser.add_option("--slowdown", action="store_true", dest="slowdown",
+        help="throttles output for a second up to 5 consecutive tails")
+ 
     return parser.parse_args(argv)
 
 

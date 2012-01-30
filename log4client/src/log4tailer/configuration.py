@@ -19,6 +19,7 @@
 
 import os
 from . import logcolors
+from . import strategy
 
 class DefaultConfig(object):
     def __init__(self):
@@ -32,3 +33,4 @@ class DefaultConfig(object):
         self.properties = None
         self.alt_config = os.path.expanduser('~/.log4tailer')
         self.post = False
+        self.tail_context = strategy.TailContext(self.throttle)
