@@ -156,9 +156,8 @@ class PrintShot(Print):
     def notify(self, message, log):
         Print.notify(self, message, log)
         msg_level = message.messageLevel.upper()
-        if not message.isATarget() and msg_level not in self.Pullers:
-            return
-        self.caller.call(self.screenproc)
+        if message.isATarget() or msg_level in self.Pullers:
+            self.caller.call(self.screenproc)
 
 
 class Inactivity(object):
