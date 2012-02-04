@@ -88,6 +88,7 @@ provided as of version v05 are:
  \item Executor (see \autoref{sec:executor})
  \item Poster (see \autoref{sec:poster})
  \item PrintShot (see \autoref{sec:PrintShot})
+ \item SlowDown (see \autoref{sec:slowdown})
 \end{itemize}
 
 \subsection{Print Notification}
@@ -480,6 +481,21 @@ This feature is useful whenever you are testing in your local desktop any
 software and you would like to have a proof that some log trace is getting
 traced by that software. It would be good for software documentation purposes
 as well. 
+
+\subsection{SlowDown}
+\label{sec:slowdown}
+
+When activated with the command line parameter \emph{slowdown} it will slow
+down the tailing any time it finds a target, warning, error or fatal log
+traces. Currently, it will tail one trace per second up to ten consecutives
+traces.
+
+It can be activated as follows:
+
+\begin{cmd}
+ log4tail --slowdown pathToLogs
+\end{cmd}
+
 
 \section{Pause Modes}
 \label{sec:PauseModes}
