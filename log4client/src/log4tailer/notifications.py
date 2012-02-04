@@ -114,22 +114,28 @@ class SlowDown(object):
         self.counter = 0
         self.triggered = False
 
-    def notify(self, message, log):
-        msg_level = message.messageLevel.upper()
-        if not message.isATarget() and msg_level not in self.Pullers:
-            if self.triggered:
-                self.counter += 1
-                if self.counter > self.MAX_COUNT :
-                    self.tail_context.change_tail_method(
-                            strategy.TailMultiLineMethod())
-                    self.tail_context.throttle_time = 0
-                    self.counter = 0
-                    self.triggered = False
-            return
+    def restore_context(self):
+        if self.triggered:
+            self.counter += 1
+            if self.counter > self.MAX_COUNT :
+                self.tail_context.change_tail_method(
+                        strategy.TailMultiLineMethod())
+                self.tail_context.throttle_time = 0
+                self.counter = 0
+                self.triggered = False
+
+    def change_context(self):
         self.counter = 0
         self.triggered = True
         self.tail_context.change_tail_method(strategy.TailOneLineMethod())
         self.tail_context.throttle_time = self.THROTTLE_TIME
+
+    def notify(self, message, log):
+        msg_level = message.messageLevel.upper()
+        if message.isATarget() or msg_level in self.Pullers:
+            self.change_context()
+        else:
+            self.restore_context()
 
 
 class PrintShot(Print):

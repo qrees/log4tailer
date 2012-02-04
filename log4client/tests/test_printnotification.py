@@ -252,7 +252,7 @@ class SlowDownNotificationTestCase(unittest.TestCase):
         slow_down.notify(WarningMessage(), DummyLog())
         self.assertTrue(isinstance(context.tail_method, TailOneLineMethod))
 
-    def test_notify_back_to_default_after_10_tails(self):
+    def test_notify_back_to_default_after_1_tails(self):
         throttle_time = 0
         context = TailContext(throttle_time)
         self.assertTrue(isinstance(context.tail_method, TailMultiLineMethod))
@@ -263,3 +263,11 @@ class SlowDownNotificationTestCase(unittest.TestCase):
         slow_down.notify(NormalMessage(), DummyLog())
         slow_down.notify(NormalMessage(), DummyLog())
         self.assertTrue(isinstance(context.tail_method, TailMultiLineMethod))
+
+    def test_notify_no_change_context(self):
+        throttle_time = 0
+        context = TailContext(throttle_time)
+        self.assertTrue(isinstance(context.tail_method, TailMultiLineMethod))
+        slow_down = notifications.SlowDown(context)
+        slow_down.notify(NormalMessage(), DummyLog())
+        self.assertFalse(slow_down.triggered)
