@@ -18,9 +18,6 @@
 
 import sys
 import unittest
-import email
-import mocker
-import decorators as dec
 from log4tailer import notifications
 from log4tailer import utils
 from .utils import PropertiesStub
@@ -35,20 +32,6 @@ if version_info[:2] == version2_4:
 
 class TestMailAction(unittest.TestCase):
 
-    def setUp(self):
-        self.mocker = mocker.Mocker()
-
-    def testshouldBeFineImportingformatdate(self):
-        mailaction = notifications.Mail()
-        self.assertTrue(mailaction.getNow())
-
-    @dec.skipif(skip_from_time, "invalid for 2.4")
-    def testshoulGetNowDateFromTime(self):
-        mailaction = notifications.Mail()
-        del(email.utils.formatdate)
-        now = mailaction.getNow()
-        self.assertTrue(now)
-
     def test_setupMail(self):
         def getpass():
             return "111"
@@ -56,9 +39,35 @@ class TestMailAction(unittest.TestCase):
         mailaction = utils.setup_mail(PropertiesStub(), getpass)
         self.assertTrue(isinstance(mailaction, notifications.Mail))
 
-    def tearDown(self):
-        self.mocker.restore()
-        self.mocker.verify()
+
+class SMTPStub(object):
+    def __init__(self, hostname, port):
+        self.hostname = hostname
+        self.port = port
+
+    def login(self, user, passwd):
+        pass
+
+
+class SMTPStubRaise(object):
+    def __init__(self, hostname, port):
+        self.hostname = hostname
+        self.port = port
+
+    def login(self, user, passwd):
+        raise Exception("Could not login")
+
+
+class SMTPFactoryStub(notifications.SMTPFactory):
+
+    def connection_type(self):
+        return SMTPStub
+
+
+class SMTPFactoryStubRaise(notifications.SMTPFactory):
+
+    def connection_type(self):
+        return SMTPStubRaise
 
 
 class MailTestCase(unittest.TestCase):
@@ -69,8 +78,52 @@ class MailTestCase(unittest.TestCase):
 
     def test_is_ssl(self):
         mail = notifications.Mail(ssl=True)
-        self.assertEqual(mail.connection_method, "smtp_ssl")
+        self.assertTrue(isinstance(mail.smtpfactory,
+            notifications.SMTPFactory))
 
-    def test_is_not_ssl(self):
-        mail = notifications.Mail()
-        self.assertEqual(mail.connection_method, "smtp")
+    def test_connects_login(self):
+        hostname = "localhost"
+        port = 3456
+        user = "test"
+        passwd = "test"
+        mail = notifications.Mail(hostname=hostname,
+                port=port, user=user, passwd=passwd,
+                smtpfactory=SMTPFactoryStub)
+        conn = mail.connectSMTP()
+        self.assertTrue(isinstance(mail.conn, SMTPStub))
+
+    def test_connect_raises(self):
+        hostname = "localhost"
+        port = 3456
+        user = "test"
+        passwd = "test"
+        mail = notifications.Mail(hostname=hostname,
+                port=port, user=user, passwd=passwd,
+                smtpfactory=SMTPFactoryStubRaise)
+        try:
+            conn = mail.connectSMTP()
+            self.fail()
+        except SystemExit:
+            pass
+
+
+class TimeStub(object):
+    def __init__(self):
+        pass
+
+    def time(self):
+        pass
+
+    def gmtime(self, current_time):
+        return (2012, 02, 12, 00, 01, 01, 6, 0, 0)
+
+
+class DateFormatterTestCase(unittest.TestCase):
+
+    def test_date_time(self):
+        date_formatter = notifications.DateFormatter(time=TimeStub())
+        expected_format = 'Sun, 12 Feb 2012 00:01:01 GMT'
+        self.assertEqual(expected_format, date_formatter.date_time())
+
+    def test_get_now(self):
+        date_formatter = notifications.DateFormatter(time=TimeStub())

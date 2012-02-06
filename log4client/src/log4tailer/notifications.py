@@ -224,30 +224,17 @@ class Inactivity(object):
     def getMailAction(self):
         return self.mailAction
 
-class Mail(object):
-    """Common actions to be taken
-    by the Tailer"""
 
-    mailLevels = ['CRITICAL', 'ERROR', 'FATAL']
+class DateFormatter(object):
+
     weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     monthname = [None,
                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-    def __init__(self, fro = None, to = None, hostname = None, user = None,
-            passwd = None, port = 25, ssl = False):
-        self.fro = fro
-        self.to = to
-        self.hostname = hostname
-        self.user = user
-        self.passwd = passwd
-        self.conn = None
-        self.bodyMailAction = None
-        self.port = port
-        self.ssl = ssl
-        self.connection_method = "smtp"
-        if self.ssl:
-            self.connection_method = "smtp_ssl"
+
+    def __init__(self, time=time):
+        self.time = time
 
     def date_time(self):
         """
@@ -256,21 +243,52 @@ class Mail(object):
         Return the current date and time formatted for a MIME header.
         Needed for Python 1.5.2 (no email package available)
         """
-        year, month, day, hh, mm, ss, wd, _, _ = time.gmtime(time.time())
+        year, month, day, hh, mm, ss, wd, _, _ = self.time.gmtime(self.time.time())
         s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (
                 self.weekdayname[wd],
                 day, self.monthname[month], year,
                 hh, mm, ss)
         return s
 
-    def getNow(self):
+    def get_now(self):
         try:
             from email.utils import formatdate
         except ImportError:
             formatdate = self.date_time
         return formatdate()
 
-    def notify(self,message,log):
+
+class SMTPFactory(object):
+    def __init__(self, ssl=False):
+        self.ssl = ssl
+
+    def connection_type(self):
+        if self.ssl:
+            return SMTP_SSL
+        return SMTP
+        
+
+
+class Mail(object):
+    """Common actions to be taken
+    by the Tailer"""
+
+    mailLevels = ['CRITICAL', 'ERROR', 'FATAL']
+
+    def __init__(self, fro=None, to=None, hostname=None, user=None,
+            passwd=None, port=25, ssl=False, smtpfactory=SMTPFactory, date=DateFormatter):
+        self.fro = fro
+        self.to = to
+        self.hostname = hostname
+        self.user = user
+        self.passwd = passwd
+        self.bodyMailAction = None
+        self.port = port
+        self.date = date
+        self.smtpfactory = smtpfactory(ssl)
+        self.conn = None
+
+    def notify(self, message, log):
         '''msg to print, send by email, whatever...'''
 
         body = self.bodyMailAction
@@ -286,7 +304,7 @@ class Mail(object):
             body += fancyheader+"\n"
             body += message+"\n"
 
-        now = self.getNow()
+        now = self.date.get_now()
 
         msg = ("Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: "
                 "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
@@ -308,12 +326,12 @@ class Mail(object):
         log.triggeredNotSent = False
         return
 
-    def setBodyMailAction(self,body):
+    def setBodyMailAction(self, body):
         self.bodyMailAction = body
 
-    def sendNotificationMail(self,body):
+    def sendNotificationMail(self, body):
         '''Sends a notification mail'''
-        now = self.getNow()
+        now = self.date.get_now()
         msg = ("Subject: Log4Tailer Notification Message\r\nFrom: %s\r\nTo: "
                 "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
         try:
@@ -322,20 +340,10 @@ class Mail(object):
             self.connectSMTP()
             self.conn.sendmail(self.fro,self.to,msg)
 
-    def _connect_smtp(self):
-        conn = SMTP(self.hostname, self.port)
-        return conn
-
-    def _connect_smtp_ssl(self):
-        print "using ssl connection"
-        conn = SMTP_SSL(self.hostname, self.port)
-        return conn
-
     def connectSMTP(self):
-        connection_method = "_connect_" + self.connection_method
-        conn = getattr(self, connection_method)()
+        conn_type = self.smtpfactory.connection_type()
         try:
-            conn.connect(self.hostname, self.port)
+            conn = conn_type(self.hostname, self.port)
             conn.login(self.user, self.passwd)
             print "connected"
         except Exception, ex:
