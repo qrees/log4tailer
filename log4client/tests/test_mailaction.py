@@ -59,3 +59,18 @@ class TestMailAction(unittest.TestCase):
     def tearDown(self):
         self.mocker.restore()
         self.mocker.verify()
+
+
+class MailTestCase(unittest.TestCase):
+
+    def test_instantiates(self):
+        mail = notifications.Mail()
+        self.assertTrue(isinstance(mail, notifications.Mail))
+
+    def test_is_ssl(self):
+        mail = notifications.Mail(ssl=True)
+        self.assertEqual(mail.connection_method, "smtp_ssl")
+
+    def test_is_not_ssl(self):
+        mail = notifications.Mail()
+        self.assertEqual(mail.connection_method, "smtp")

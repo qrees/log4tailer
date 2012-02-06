@@ -235,7 +235,7 @@ class Mail(object):
                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     def __init__(self, fro = None, to = None, hostname = None, user = None,
-            passwd = None, port = 25, ssl = "False"):
+            passwd = None, port = 25, ssl = False):
         self.fro = fro
         self.to = to
         self.hostname = hostname
@@ -246,7 +246,7 @@ class Mail(object):
         self.port = port
         self.ssl = ssl
         self.connection_method = "smtp"
-        if self.ssl == "True":
+        if self.ssl:
             self.connection_method = "smtp_ssl"
 
     def date_time(self):
@@ -448,6 +448,7 @@ class CornerMark(object):
                 self.timer.stopTimer()
                 self.count = 0
                 self.flagged = False
+
 
 class WaitForever(object):
     def __init__(self):
