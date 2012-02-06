@@ -49,6 +49,9 @@ class SMTPStub(object):
     def login(self, user, passwd):
         pass
 
+    def quit(self):
+        pass
+
 
 class SMTPStubRaise(object):
     def __init__(self, hostname, port):
@@ -69,6 +72,18 @@ class SMTPFactoryStubRaise(notifications.SMTPFactory):
 
     def connection_type(self):
         return SMTPStubRaise
+
+
+class SMTPStubLoginRaise(SMTPStub):
+
+    def quit(self):
+        raise SystemExit
+        
+
+class SMTPFactoryLoginRaiseStub(notifications.SMTPFactory):
+
+    def connection_type(self):
+        return SMTPStubLoginRaise
 
 
 class SMPTFactoryTestCase(unittest.TestCase):
@@ -116,6 +131,35 @@ class MailTestCase(unittest.TestCase):
                 smtpfactory=SMTPFactoryStubRaise)
         try:
             conn = mail.connectSMTP()
+            self.fail()
+        except SystemExit:
+            pass
+
+    def test_connection_exit(self):
+        hostname = "localhost"
+        port = 3456
+        user = "test"
+        passwd = "test"
+        mail = notifications.Mail(hostname=hostname,
+                port=port, user=user, passwd=passwd,
+                smtpfactory=SMTPFactoryStub)
+        mail.connectSMTP()
+        try:
+            mail.quitSMTP()
+        except SystemExit:
+            self.fail()
+
+    def test_connection_exit_raises(self):
+        hostname = "localhost"
+        port = 3456
+        user = "test"
+        passwd = "test"
+        mail = notifications.Mail(hostname=hostname,
+                port=port, user=user, passwd=passwd,
+                smtpfactory=SMTPFactoryLoginRaiseStub)
+        mail.connectSMTP()
+        try:
+            mail.quitSMTP()
             self.fail()
         except SystemExit:
             pass
