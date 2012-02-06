@@ -21,6 +21,7 @@ import unittest
 from log4tailer import notifications
 from log4tailer import utils
 from .utils import PropertiesStub
+from smtplib import SMTP, SMTP_SSL
 
 
 version_info = sys.version_info
@@ -68,6 +69,19 @@ class SMTPFactoryStubRaise(notifications.SMTPFactory):
 
     def connection_type(self):
         return SMTPStubRaise
+
+
+class SMPTFactoryTestCase(unittest.TestCase):
+
+    def test_smtpssl(self):
+        factory = notifications.SMTPFactory(ssl=True)
+        conn_type = factory.connection_type()
+        self.assertEqual(conn_type, SMTP_SSL)
+
+    def test_smtp_nossl(self):
+        factory = notifications.SMTPFactory(ssl=False)
+        conn_type = factory.connection_type()
+        self.assertEqual(conn_type, SMTP)
 
 
 class MailTestCase(unittest.TestCase):
