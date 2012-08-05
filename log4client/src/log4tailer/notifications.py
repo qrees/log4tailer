@@ -86,16 +86,14 @@ class Print(object):
             time.sleep(pause)
 
     def printInit(self, message):
-        (pause,colormsg) = message.getColorizedMessage()
-        pause = 0
+        (_, colormsg) = message.getColorizedMessage()
         if colormsg:
             self._print(colormsg)
 
 
 def get_windowsid(proc_caller):
     getId = "xprop -root | grep '_NET_ACTIVE_WINDOW(WINDOW)'"
-    proc = proc_caller.Popen(getId, shell = True,
-                stdout = PIPE, stderr = PIPE)
+    proc = proc_caller.Popen(getId, shell=True, stdout=PIPE, stderr=PIPE)
     res, err = proc.communicate()
     if err:
         raise Exception(err)
@@ -117,7 +115,7 @@ class SlowDown(object):
     def restore_context(self):
         if self.triggered:
             self.counter += 1
-            if self.counter > self.MAX_COUNT :
+            if self.counter > self.MAX_COUNT:
                 self.tail_context.change_tail_method(
                         strategy.TailMultiLineMethod())
                 self.tail_context.throttle_time = 0
@@ -197,11 +195,11 @@ class Inactivity(object):
                 messageAlert = ("Inactivity in the log " + logpath + " for " +
                         str(log.inactivityAccTime) + " seconds")
                 if self.notification == 'print':
-                    print (self.logColors.backgroundemph+messageAlert+
+                    print (self.logColors.backgroundemph + messageAlert +
                             self.logColors.reset)
                 elif self.notification == 'mail':
                     self.mailAction.setBodyMailAction(messageAlert)
-                    self.mailAction.triggerAction(message,log)
+                    self.mailAction.triggerAction(message, log)
                     self.mailAction.setBodyMailAction(None)
                 timer.reset()
         # else if we got sth in message then, means we got
@@ -216,7 +214,7 @@ class Inactivity(object):
     def getNotificationType(self):
         return self.notification
 
-    def setMailNotification(self,mailAction):
+    def setMailNotification(self, mailAction):
         '''sets a mailAction for inactivityAction notification'''
         self.notification = 'mail'
         self.mailAction = mailAction
@@ -232,7 +230,6 @@ class DateFormatter(object):
                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-
     def __init__(self, time=time):
         self.time = time
 
@@ -243,7 +240,8 @@ class DateFormatter(object):
         Return the current date and time formatted for a MIME header.
         Needed for Python 1.5.2 (no email package available)
         """
-        year, month, day, hh, mm, ss, wd, _, _ = self.time.gmtime(self.time.time())
+        year, month, day, hh, mm, ss, wd, _, _ = self.time.gmtime(
+                self.time.time())
         s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (
                 self.weekdayname[wd],
                 day, self.monthname[month], year,
@@ -266,7 +264,6 @@ class SMTPFactory(object):
         if self.ssl:
             return SMTP_SSL
         return SMTP
-        
 
 
 class Mail(object):
@@ -276,7 +273,8 @@ class Mail(object):
     mailLevels = ['CRITICAL', 'ERROR', 'FATAL']
 
     def __init__(self, fro=None, to=None, hostname=None, user=None,
-            passwd=None, port=25, ssl=False, smtpfactory=SMTPFactory, date=DateFormatter):
+            passwd=None, port=25, ssl=False, smtpfactory=SMTPFactory,
+            date=DateFormatter):
         self.fro = fro
         self.to = to
         self.hostname = hostname
@@ -297,30 +295,30 @@ class Mail(object):
                     and not message.isATarget()):
                 return
             message, logpath = message.getPlainMessage()
-            title = "Alert found for log "+logpath
-            fancyheader = len(title)*'='
-            body = fancyheader+"\n"
-            body += title+"\n"
-            body += fancyheader+"\n"
-            body += message+"\n"
+            title = "Alert found for log " + logpath
+            fancyheader = len(title) * '='
+            body = fancyheader + "\n"
+            body += title + "\n"
+            body += fancyheader + "\n"
+            body += message + "\n"
 
         now = self.date.get_now()
 
         msg = ("Subject: Log4Tailer alert\r\nFrom: %s\r\nTo: "
-                "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
+                "%s\r\nDate: %s\r\n\r\n" % (self.fro, self.to, now) + body)
         timer = log.mailTimer
         try:
             if timer.awaitSend(log.triggeredNotSent):
                 log.triggeredNotSent = True
                 return
-            self.conn.sendmail(self.fro,self.to,msg)
+            self.conn.sendmail(self.fro, self.to, msg)
         except SMTPServerDisconnected:
             # server could have disconnected
             # after a long inactivity. Connect
             # again and send the corresponding
             # alert
             self.connectSMTP()
-            self.conn.sendmail(self.fro,self.to,msg)
+            self.conn.sendmail(self.fro, self.to, msg)
 
         self.bodyMailAction = None
         log.triggeredNotSent = False
@@ -333,12 +331,12 @@ class Mail(object):
         '''Sends a notification mail'''
         now = self.date.get_now()
         msg = ("Subject: Log4Tailer Notification Message\r\nFrom: %s\r\nTo: "
-                "%s\r\nDate: %s\r\n\r\n" % (self.fro,self.to,now)+ body)
+                "%s\r\nDate: %s\r\n\r\n" % (self.fro, self.to, now) + body)
         try:
-            self.conn.sendmail(self.fro,self.to,msg)
+            self.conn.sendmail(self.fro, self.to, msg)
         except SMTPServerDisconnected:
             self.connectSMTP()
-            self.conn.sendmail(self.fro,self.to,msg)
+            self.conn.sendmail(self.fro, self.to, msg)
 
     def connectSMTP(self):
         conn_type = self.smtpfactory.connection_type()
@@ -358,6 +356,7 @@ class Mail(object):
         except:
             print "failed to quit SMTP connection"
             sys.exit()
+
 
 class Filter(Print):
     """ When a pattern is found, it will notify
@@ -379,6 +378,7 @@ class Filter(Print):
         if self.pattern.search(plainMessage):
             Print.notify(self, message, log)
 
+
 class IgnoreAction(Filter):
 
     def notify(self, message, log):
@@ -393,11 +393,11 @@ class CornerMark(object):
     is found."""
 
     MARK = 5 * " "
-    markable = {'FATAL' : 'backgroundemph',
-            'ERROR' : 'backgroundemph',
-            'WARN' : 'onyellowemph',
-            'WARNING' : 'onyellowemph',
-            'TARGET' : 'oncyanemph'}
+    markable = {'FATAL': 'backgroundemph',
+            'ERROR': 'backgroundemph',
+            'WARN': 'onyellowemph',
+            'WARNING': 'onyellowemph',
+            'TARGET': 'oncyanemph'}
 
     def __init__(self, gaptime):
         self.corner_time = float(gaptime)
@@ -450,7 +450,7 @@ class CornerMark(object):
             if self.timer.corner_mark_ellapsed() < self.corner_time:
                 padding = self.term_num_cols() - self.len_mark
                 trace = (padding * " " + getattr(self.termcolors,
-                    self.emphcolor)+ self.MARK + self.termcolors.reset)
+                    self.emphcolor) + self.MARK + self.termcolors.reset)
                 print trace
             else:
                 self.timer.stopTimer()
@@ -489,12 +489,13 @@ class TriggerExecutor(threading.Thread):
             if trigger_command == 'stop':
                 continue
             try:
-                self.caller.call(' '.join(trigger_command), shell = True)
+                self.caller.call(' '.join(trigger_command), shell=True)
             except Exception, err:
                 print err
 
     def stop(self):
         self.wait.forever = False
+
 
 class Executor(object):
     """Will execute a program if a certain condition is given"""
@@ -563,8 +564,9 @@ class Poster(object):
         self.port = properties.get_value('server_port')
         self.service_uri = properties.get_value('server_service_uri')
         self.register_uri = properties.get_value('server_service_register_uri')
-        self.unregister_uri = properties.get_value('server_service_unregister_uri')
-        self.headers = {'Content-type' : 'application/json'}
+        self.unregister_uri = properties.get_value(
+                'server_service_unregister_uri')
+        self.headers = {'Content-type': 'application/json'}
         self.registered_logs = {}
         self.http_conn = http_conn
         from socket import gethostname
@@ -581,26 +583,25 @@ class Poster(object):
         logtrace, _ = message.getPlainMessage()
         log_info = self.registered_logs[log]
         log_id = log_info['id']
-        params = json.dumps({'logtrace': logtrace, 'loglevel' : msg_level,
-            'log': { 'id' : log_id, 'logpath' : log.path,
-                'logserver' : self.hostname}})
+        params = json.dumps({'logtrace': logtrace, 'loglevel': msg_level,
+            'log': {'id': log_id, 'logpath': log.path,
+                'logserver': self.hostname}})
         body = self.send(self.service_uri, params)
         return body
 
     def register(self, log):
-        params = json.dumps({'logpath': log.path, 'logserver' : self.hostname})
+        params = json.dumps({'logpath': log.path, 'logserver': self.hostname})
         body = self.send(self.register_uri, params)
         if not body:
             return
         log_id = body
-        self.registered_logs[log] = {'id' : log_id, 'logserver' :
-                self.hostname}
+        self.registered_logs[log] = {'id': log_id, 'logserver': self.hostname}
 
     def unregister(self, log):
         if log in self.registered_logs:
             log_info = self.registered_logs[log]
             log_id = log_info['id']
-            params = {'id' : log_id}
+            params = {'id': log_id}
             body = self.send(self.unregister_uri, json.dumps(params))
             return body
 
