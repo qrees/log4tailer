@@ -387,6 +387,19 @@ class IgnoreAction(Filter):
             Print.notify(self, message, log)
 
 
+def term_num_cols():
+    """Returns the number columns in the current terminal using the Linux
+    tputs command line tool.
+
+    :return: The number of columns currently in the terminal.
+    """
+    termcols = os.popen("tput cols")
+    ttcols = termcols.readline()
+    termcols.close()
+    ttcols = int(ttcols)
+    return ttcols
+
+
 class CornerMark(object):
     """Displays a 5 char colored empty string
     at the bottom right corner of terminal in case an error, fatal or warning
@@ -410,18 +423,6 @@ class CornerMark(object):
 
     def corner_mark_time(self):
         return self.corner_time
-
-    def term_num_cols(self):
-        """Returns the number columns in the current terminal using the Linux
-        tputs command line tool.
-
-        :return: The number of columns currently in the terminal.
-        """
-        termcols = os.popen("tput cols")
-        ttcols = termcols.readline()
-        termcols.close()
-        ttcols = int(ttcols)
-        return ttcols
 
     def notify(self, message, log):
         """Displays a 5 char colored empty string in case a message comes in
@@ -448,7 +449,7 @@ class CornerMark(object):
                 self.timer.startTimer()
             self.count += 1
             if self.timer.corner_mark_ellapsed() < self.corner_time:
-                padding = self.term_num_cols() - self.len_mark
+                padding = term_num_cols() - self.len_mark
                 trace = (padding * " " + getattr(self.termcolors,
                     self.emphcolor) + self.MARK + self.termcolors.reset)
                 print trace
