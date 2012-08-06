@@ -8,6 +8,7 @@ from log4tailer.logcolors import LogColors
 from log4tailer import notifications
 from log4tailer.termcolorcodes import TermColorCodes
 from .utils import MemoryWriter
+from mock import patch
 
 
 class PropertiesStub(object):
@@ -26,10 +27,6 @@ def tcols_callback():
     return 5
 
 
-def patch_term_num_cols(notifier):
-    notifier.term_num_cols = tcols_callback
-
-
 class TestCornerMark(unittest.TestCase):
     """The purpose of the corner mark is to have an small square in the bottom
     right corner of the terminal to indicate something went wrong.
@@ -46,8 +43,8 @@ class TestCornerMark(unittest.TestCase):
         cornermark = notifications.CornerMark(10)
         self.assertTrue(getattr(cornermark, 'notify'))
 
+    @patch('log4tailer.notifications.term_num_cols', tcols_callback)
     def testWillMarkForSpecifiedTime(self):
-        level = 'FATAL'
         trace = "FATAL there could be an error in the application"
         sys.stdout = MemoryWriter()
         logcolors = LogColors()
@@ -56,15 +53,14 @@ class TestCornerMark(unittest.TestCase):
         notifier = notifications.CornerMark(10)
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        patch_term_num_cols(notifier)
         padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.backgroundemph + notifier.MARK +\
                 termcolors.reset
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
+    @patch('log4tailer.notifications.term_num_cols', tcols_callback)
     def testWillMarkforSpecifiedTimeandNotAfterwards(self):
-        level = 'FATAL'
         trace = "FATAL there could be an error in the application"
         sys.stdout = MemoryWriter()
         logcolors = LogColors()
@@ -76,7 +72,6 @@ class TestCornerMark(unittest.TestCase):
         padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.backgroundemph + notifier.MARK +\
                 termcolors.reset
-        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
         trace = "INFO this is an info trace"
@@ -86,6 +81,7 @@ class TestCornerMark(unittest.TestCase):
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
 
+    @patch('log4tailer.notifications.term_num_cols', tcols_callback)
     def testNotMarkMarkedNotMark(self):
         trace = "INFO this is an info trace"
         sys.stdout = MemoryWriter()
@@ -98,7 +94,6 @@ class TestCornerMark(unittest.TestCase):
         padding = self.ttcols - len(notifier.MARK)
         output = padding * " " + termcolors.backgroundemph + notifier.MARK +\
                 termcolors.reset
-        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
 
@@ -106,7 +101,6 @@ class TestCornerMark(unittest.TestCase):
             return 0
 
         notifier.timer.corner_mark_ellapsed = belowgap
-        level = 'FATAL'
         trace = "FATAL there could be an error in the application"
         message.parse(trace, anylog)
         notifier.notify(message, anylog)
@@ -119,6 +113,7 @@ class TestCornerMark(unittest.TestCase):
         notifier.notify(message, anylog)
         self.assertFalse(sys.stdout.captured)
 
+    @patch('log4tailer.notifications.term_num_cols', tcols_callback)
     def testMarkedFATALMarkedWARNING(self):
         trace = "FATAL this is a fatal trace"
         sys.stdout = MemoryWriter()
@@ -134,10 +129,10 @@ class TestCornerMark(unittest.TestCase):
                 termcolors.reset
         trace = "WARN this is just a warn"
         message.parse(trace, anylog)
-        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEquals(output, sys.stdout.captured[2])
 
+    @patch('log4tailer.notifications.term_num_cols', tcols_callback)
     def testMarkedTARGET(self):
         logfile = "/any/path/out.log"
         trace = "this is a targeted log trace"
@@ -151,10 +146,10 @@ class TestCornerMark(unittest.TestCase):
         output = padding * " " + termcolors.oncyanemph + notifier.MARK +\
                 termcolors.reset
         message.parse(trace, anylog)
-        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
+    @patch('log4tailer.notifications.term_num_cols', tcols_callback)
     def testMarkedTARGETOverMarkableLevel(self):
         logfile = "/any/path/out.log"
         trace = "this is a FATAL targeted log trace"
@@ -168,7 +163,6 @@ class TestCornerMark(unittest.TestCase):
         output = padding * " " + termcolors.oncyanemph + notifier.MARK +\
                 termcolors.reset
         message.parse(trace, anylog)
-        patch_term_num_cols(notifier)
         notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
