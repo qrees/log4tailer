@@ -7,7 +7,7 @@ from . import notifications
 from .utils import setup_mail
 import time
 
-__version__ = "3.0.8"
+__version__ = "3.0.9"
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger('log4tail')
 
