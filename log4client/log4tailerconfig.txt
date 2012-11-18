@@ -13,6 +13,7 @@
 # fatal = red, on_green
 # info = green
 # debug = black
+# trace = black
 
 # ====================================================
 # White lines in between log traces
@@ -43,6 +44,7 @@
 # you want. The value can be any number in seconds. 
 # ======================================================
 
+# pausetrace = 4
 # pausedebug = 4
 # pauseinfo = 2
 # pausewarn = 1
