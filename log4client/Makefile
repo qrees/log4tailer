@@ -9,6 +9,8 @@ BIN = ENV/bin
 ENV24 = ENV24
 PATH := $(BIN):${PATH}
 
+.PHONY: tests
+
 all: $(BUILDOUT)
 
 env: $(ENV)
@@ -38,6 +40,12 @@ $(EXE): $(BUILDOUT)
 $(BUILDOUT): bootstrap.py
 	$(PYTHON) bootstrap.py
 	$(BUILDOUT)
+
+tests:
+	bin/unittests
+
+functional:
+	bin/smoke smoke 
 
 # just sdist
 release: $(EXE)
