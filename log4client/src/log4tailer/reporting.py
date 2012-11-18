@@ -42,6 +42,7 @@ class Resume(object):
         self.logsReport = {}
         for log in arrayLog:
             self.logsReport[log.path] = {'TARGET': 0,
+                                         'TRACE': 0,
                                          'DEBUG': 0,
                                          'INFO': 0,
                                          'WARN': 0,
@@ -50,9 +51,9 @@ class Resume(object):
                                          'FATAL': [],
                                          'CRITICAL': []}
 
-        self.nonTimeStamped = ['DEBUG', 'INFO', 'WARN', 'TARGET']
+        self.nonTimeStamped = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'TARGET']
         self.orderReport = ['CRITICAL', 'FATAL', 'ERROR', 'WARN', 'INFO',
-                'DEBUG', 'TARGET', 'OTHERS']
+                'DEBUG', 'TRACE', 'TARGET', 'OTHERS']
         self.mailAction = None
         self.notificationType = PRINT
         self.gapTime = 3600

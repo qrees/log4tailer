@@ -41,6 +41,7 @@ class TestResume(unittest.TestCase):
                               'error> not so wrong',
                               'warn> be careful',
                               'debug> looking behind the scenes',
+                              'trace> more info than debug',
                               'info> the app is running',
                               'fatal> the app is in really bad state']
 
@@ -48,6 +49,7 @@ class TestResume(unittest.TestCase):
                               'error> not so wrong',
                               'warn> be careful',
                               'debug> looking behind the scenes',
+                              'trace> more info than debug',
                               'info> the app is running',
                               'fatal> the app is in really bad state']
 
@@ -188,7 +190,7 @@ class TestResume(unittest.TestCase):
         reportlength = len(fh.readlines())
         fh.close()
         os.remove(reportfileFullPath)
-        self.assertEquals(22, reportlength)
+        self.assertEquals(24, reportlength)
         os.remove('aconfig')
 
     def testShouldReportOtherNotifications(self):
@@ -230,6 +232,7 @@ class TestResume(unittest.TestCase):
         logs = [log1, log2]
         resume = reporting.Resume(logs)
         reports = {'TARGET': 0,
+             'TRACE': 0,
              'DEBUG': 0,
              'INFO': 0,
              'WARN': 0,
@@ -263,6 +266,7 @@ class TestResume(unittest.TestCase):
         resume.timer.inactivityEllapsed = overgap
         resume.update(message, log)
         expected = {'TARGET': 0,
+             'TRACE': 0,
              'DEBUG': 0,
              'INFO': 0,
              'WARN': 0,
