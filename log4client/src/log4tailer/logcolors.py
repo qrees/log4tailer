@@ -19,6 +19,7 @@
 from log4tailer.termcolorcodes import TermColorCodes
 from log4tailer import loglevels
 
+
 class LogColors(object):
     '''Provides the colors that will
     be used when printing Log4J levels'''
@@ -26,13 +27,14 @@ class LogColors(object):
     def __init__(self):
         self.color = TermColorCodes()
         # defaults
-        # color instance has dinamically assigned attributes 
+        # color instance has dinamically assigned attributes
         # so pylint complaints.
         # pylint: disable-msg=E1101
         self.warning = self.color.yellow
         self.warn = self.color.yellow
         self.error = self.color.magenta
         self.info = self.color.green
+        self.trace = self.color.black
         self.debug = self.color.black
         self.fatal = self.color.red
         self.critical = self.color.red
@@ -45,12 +47,11 @@ class LogColors(object):
             if not code:
                 continue
             setattr(self, key, code)
-            
+
     def getLogColor(self, color):
         return self.color.getCode(color)
-    
+
     def getLevelColor(self, level):
         level = level.lower()
         if level in loglevels.logLevels:
             return getattr(self, level)
-

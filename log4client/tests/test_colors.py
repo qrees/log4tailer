@@ -17,7 +17,8 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import os, sys
+import os
+import sys
 from log4tailer.logfile import Log
 from log4tailer.message import Message
 from log4tailer.logcolors import LogColors
@@ -42,6 +43,7 @@ class PropertiesMock(object):
         else:
             return 'joe'
 
+
 class PropertiesBackGround(PropertiesMock):
     """docstring for PropertiesBackGround"""
     def get_keys(self):
@@ -49,12 +51,12 @@ class PropertiesBackGround(PropertiesMock):
 
     def get_value(self, key):
         return "yellow, on_cyan"
-        
+
 
 class TestColors(unittest.TestCase):
     def setUp(self):
         self.logfile = 'out.log'
-        fh = open(self.logfile,'w')
+        fh = open(self.logfile, 'w')
         # levels in upper case
         # should be very weird an app
         # logging levels in lowercase
@@ -65,15 +67,15 @@ class TestColors(unittest.TestCase):
                               'DEBUG> looking behind the scenes',
                               'INFO> the app is running']
         for line in self.someLogTraces:
-            fh.write(line+'\n')
+            fh.write(line + '\n')
         fh.close()
 
     def testMessage(self):
-        logcolors = LogColors() #using default colors
+        logcolors = LogColors()  # using default colors
         termcolors = TermColorCodes()
         target = None
         notifier = notifications.Print()
-        message = Message(logcolors,target)
+        message = Message(logcolors, target)
         log = Log(self.logfile)
         log.openLog()
         sys.stdout = MemoryWriter()
@@ -83,15 +85,16 @@ class TestColors(unittest.TestCase):
             line = line.rstrip()
             level = line.split('>')
             message.parse(line, log)
-            output = logcolors.getLevelColor(level[0])+line+termcolors.reset
-            notifier.notify(message,log)
+            output = (logcolors.getLevelColor(level[0]) + line +
+                    termcolors.reset)
+            notifier.notify(message, log)
             self.assertTrue(output in sys.stdout.captured)
-        
+
         line = log.readLine()
-        self.assertEqual('',line)
+        self.assertEqual('', line)
         message.parse(line, log)
-        self.assertFalse(notifier.notify(message,log))
-    
+        self.assertFalse(notifier.notify(message, log))
+
     def testshouldColorizefirstLevelFoundignoringSecondinSameTrace(self):
         # Test for fix 5
         # Should give priority to FATAL in next trace
@@ -104,12 +107,12 @@ class TestColors(unittest.TestCase):
         notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        notifier.notify(message,anylog)
+        output = (logcolors.getLevelColor(level) + trace + termcolors.reset)
+        notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
     def testshouldNotColorizeifLevelKeyInaWord(self):
-        # Testing boundary regex as for suggestion of 
+        # Testing boundary regex as for suggestion of
         # Carlo Bertoldi
         trace = "this is a logtrace where someinfoword could be found"
         sys.stdout = MemoryWriter()
@@ -118,15 +121,15 @@ class TestColors(unittest.TestCase):
         notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        notifier.notify(message,anylog)
+        notifier.notify(message, anylog)
         self.assertEqual(trace, sys.stdout.captured[0])
-        self.assertEqual('', message.messageLevel)        
-    
+        self.assertEqual('', message.messageLevel)
+
     def testLogColorsParseConfig(self):
         logcolors = LogColors()
         logcolors.parse_config(PropertiesMock())
-        self.assertFalse(hasattr(logcolors,'one'))
-        self.assertFalse(hasattr(logcolors,'two'))
+        self.assertFalse(hasattr(logcolors, 'one'))
+        self.assertFalse(hasattr(logcolors, 'two'))
 
     def testshouldColorizeMultilineLogTraces(self):
         trace = 'FATAL> something went wrong\nin here as well'
@@ -146,11 +149,11 @@ class TestColors(unittest.TestCase):
         message.parse(trace0, anylog)
         notifier.notify(message, anylog)
         self.assertEqual(expectedLogTrace0, sys.stdout.captured[0])
-        self.assertEqual('FATAL', message.messageLevel)        
+        self.assertEqual('FATAL', message.messageLevel)
         message.parse(trace1, anylog)
         notifier.notify(message, anylog)
         self.assertEqual(expectedLogTrace1, sys.stdout.captured[2])
-        self.assertEqual('FATAL', message.messageLevel)        
+        self.assertEqual('FATAL', message.messageLevel)
 
     def testshouldColorizeWithBackground(self):
         trace = "FATAL there could be an error in the application"
@@ -163,10 +166,10 @@ class TestColors(unittest.TestCase):
         notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        notifier.notify(message,anylog)
+        output = logcolors.getLevelColor(level) + trace + termcolors.reset
+        notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
-    
+
     def testshouldFailColorizeWithBackground(self):
         trace = "FATAL there could be an error in the application"
         level = 'WARN'
@@ -178,8 +181,8 @@ class TestColors(unittest.TestCase):
         notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        notifier.notify(message,anylog)
+        output = logcolors.getLevelColor(level) + trace + termcolors.reset
+        notifier.notify(message, anylog)
         self.assertNotEqual(output, sys.stdout.captured[0])
 
     def testShouldColorizeWarningLevelAsWell(self):
@@ -193,8 +196,22 @@ class TestColors(unittest.TestCase):
         notifier = notifications.Print()
         anylog = Log('out.log')
         message.parse(trace, anylog)
-        output = logcolors.getLevelColor(level)+trace+termcolors.reset
-        notifier.notify(message,anylog)
+        output = logcolors.getLevelColor(level) + trace + termcolors.reset
+        notifier.notify(message, anylog)
+        self.assertEqual(output, sys.stdout.captured[0])
+
+    def test_trace_level(self):
+        level = 'TRACE'
+        trace = "TRACE level for finer informational log traces than DEBUG"
+        sys.stdout = MemoryWriter()
+        logcolors = LogColors()
+        termcolors = TermColorCodes()
+        message = Message(logcolors)
+        notifier = notifications.Print()
+        anylog = Log('out.log')
+        message.parse(trace, anylog)
+        output = logcolors.getLevelColor(level) + trace + termcolors.reset
+        notifier.notify(message, anylog)
         self.assertEqual(output, sys.stdout.captured[0])
 
     def tearDown(self):
@@ -203,6 +220,3 @@ class TestColors(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-

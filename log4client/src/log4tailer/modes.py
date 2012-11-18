@@ -23,19 +23,28 @@ class PauseMode(object):
     not miss a level'''
 
     def __init__(self):
-        self.defaultLevelPauses = {'debug':0,'info':0, 'warn':0, 
-                'warning':0, 
-                'error':0, 
-                'fatal':0, 
-                'critical':0,
-                'target':0}
+        self.defaultLevelPauses = {'trace': 0,
+                                   'debug': 0,
+                                   'info': 0,
+                                   'warn': 0,
+                                   'warning': 0,
+                                   'error': 0,
+                                   'fatal': 0,
+                                   'critical': 0,
+                                   'target': 0}
 
-    def getPause(self,level):
+    def getPause(self, level):
         return self.defaultLevelPauses[level]
 
-    def parse_config(self,properties):
-        pauseKeys = ['pausedebug','pauseinfo','pausewarn','pauseerror','pausefatal',
-                     'pausecritical','pausetarget']
+    def parse_config(self, properties):
+        pauseKeys = ['pausetrace',
+                     'pausedebug',
+                     'pauseinfo',
+                     'pausewarn',
+                     'pauseerror',
+                     'pausefatal',
+                     'pausecritical',
+                     'pausetarget']
         for pauseKey in pauseKeys:
             try:
                 level = pauseKey.split('pause')[1]
@@ -43,4 +52,3 @@ class PauseMode(object):
                 self.defaultLevelPauses[level] = pauseLevel
             except:
                 pass
-

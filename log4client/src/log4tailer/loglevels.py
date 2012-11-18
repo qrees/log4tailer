@@ -17,13 +17,11 @@
 # along with Log4Tailer.  If not, see <http://www.gnu.org/licenses/>.
 
 
-logLevels = ('debug',
+logLevels = ('trace',
+             'debug',
              'info',
              'warn',
              'warning',
              'error',
              'fatal',
              'critical')
-
-
-
