@@ -106,7 +106,7 @@ framework.
 \begin{center}
 \begin{tabular}{|l || c|}
 \hline
- black (default for debug) & {\color{black} \textbf{This is a test logtrace}} \\ 
+ black (default for debug and trace) & {\color{black} \textbf{This is a test logtrace}} \\ 
 \hline
  red (default for fatal and critical) & {\color{red} \textbf{This is a test logtrace}} \\ 
 \hline
@@ -170,6 +170,7 @@ colors in a config file combining foreground and background as you like, such as
  \item error = magenta {\color{magenta}\textbf{this is an ERROR test logtrace}}
  \item info = green, on\_black \colorbox{black}{\color{green}this is an INFO test logtrace}
  \item debug = cyan {\color{cyan}\textbf{this is a DEBUG test logtrace}}
+ \item trace = black {\color{black}\textbf{this is a TRACE test logtrace}}
 \end{itemize}
 and pass -c pathtoconfig as a parameter to \logftailer{}. 
 
